@@ -1,11 +1,10 @@
-module gcd_avalon(clock, resetn, address, readdata, writedata, read, write, byteenable, chipselect);
-    input  logic clock, resetn, read, write, chipselect;
+module gcd_avalon(clock, reset, address, readdata, writedata, read, write, byteenable, chipselect);
+    input  logic clock, reset, read, write, chipselect;
     input  logic [ 1:0] address;
     input  logic [ 3:0] byteenable;
     input  logic [31:0] writedata;
     output logic [31:0] readdata;
 
-    logic [31:0] wrData [0:3];
     logic [31:0] rdData [0:3];
     logic [31:0] result;
     logic [31:0] status;
@@ -15,41 +14,35 @@ module gcd_avalon(clock, resetn, address, readdata, writedata, read, write, byte
     logic done, doneR;
     logic doneSB;
 
-    // Address Decode
-    always @(*)
-    begin
-        wrData[address] = writedata;
-        readdata        = rdData[address];
-    end
-    assign be = (chipselect & write) ? (byteenable << address*4) : 16'h0;
-
     // 32 Bit Registers
-    // module reg32 (clock, resetn, D, byteenable, Q);
-    reg32 GCD_A(clock, resetn, wrData[0],                  be[3:0], rdData[0]); // OP_A
-    reg32 GCD_B(clock, resetn, wrData[1],                  be[7:4], rdData[1]); // OP_B
-    reg32 GCD_C(clock, resetn,    result,                {4{done}}, rdData[2]); // RESULT
-    reg32 GCD_S(clock, resetn,    status, ({4{doneR}}|{4{wrIntR}}), rdData[3]); // STATUS
+    // module reg32 (clock, reset, D, byteenable, Q);
+    reg32 GCD_A(clock, reset, writedata,                  be[3:0], rdData[0]); // OP_A
+    reg32 GCD_B(clock, reset, writedata,                  be[7:4], rdData[1]); // OP_B
+    reg32 GCD_C(clock, reset,    result,                {4{done}}, rdData[2]); // RESULT
+    reg32 GCD_S(clock, reset,    status, ({4{doneR}}|{4{wrIntR}}), rdData[3]); // STATUS
 
-    assign status = {{31{1'b0}},doneSB};
+    assign be       = (chipselect & write) ? (byteenable << address*4) : 16'h0;
+    assign readdata = rdData[address];
+    assign status   = {{31{1'b0}},doneSB};
 
     // Edge Detect
     // module edge_detect #(parameter RISING=1)(clk, clk_en, reset, in, e);
-    edge_detect WR (clock, 1'b1, ~resetn, |be[7:4], wrInt);
+    edge_detect WR (clock, 1'b1, reset, |be[7:4], wrInt);
 
     // Set Reset FF
     // module set_reset(clk, clk_en, reset, en, clr, out);
-    set_reset SR (clock, 1'b1, ~resetn, done, wrInt, doneSB);
+    set_reset SR (clock, 1'b1, reset, done, wrInt, doneSB);
 
     // Flip Flops
     // module FF #(parameter WIDTH=1)(clk, reset, d, q);
-    FF FF0 (clock, ~resetn, wrInt, wrIntR);
-    FF FF1 (clock, ~resetn, done, doneR);
+    FF FF0 (clock, reset, wrInt, wrIntR);
+    FF FF1 (clock, reset, done, doneR);
 
     // GCD Custom Instruction
     // module gcd_ci(clk, reset, clk_en, start, dataa, datab, done, result);
     gcd_ci GCD (
         .clk   (clock),
-        .reset (~resetn),
+        .reset (reset),
         .clk_en(1'b1),
         .start (wrIntR),
         .dataa (rdData[0]),
@@ -112,14 +105,14 @@ module gcd_ci(clk, reset, clk_en, start, dataa, datab, done, result);
 endmodule
 
 // 32 Bit Register
-module reg32 (clock, resetn, D, byteenable, Q);
-    input  logic clock, resetn;
+module reg32 (clock, reset, D, byteenable, Q);
+    input  logic clock, reset;
     input  logic [3:0] byteenable;
     input  logic [31:0] D;
     output logic [31:0] Q;
 
     always@(posedge clock) begin
-        if (!resetn)
+        if (reset)
             Q <= 32'b0;
         else begin
             // Enable writing to each byte separately

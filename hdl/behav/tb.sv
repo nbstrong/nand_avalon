@@ -9,7 +9,7 @@ module tb;
   // Instantiate design under test
   gcd_avalon GCD (
       .clock(clk),
-      .resetn(~rst),
+      .reset(rst),
       .address(addr),
       .readdata(rdData),
       .writedata(wrData),
