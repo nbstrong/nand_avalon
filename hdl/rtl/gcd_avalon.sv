@@ -15,7 +15,6 @@ module gcd_avalon(clock, resetn, address, readdata, writedata, read, write, byte
     logic done, doneR;
     logic doneSB;
 
-    assign be = (chipselect & write) ? (byteenable << address*4) : 16'h0;
 
     // Address Decode
     always @(*)
@@ -23,6 +22,7 @@ module gcd_avalon(clock, resetn, address, readdata, writedata, read, write, byte
         wrData[address] = writedata;
         readdata        = rdData[address];
     end
+    assign be = (chipselect & write) ? (byteenable << address*4) : 16'h0;
 
     // 32 Bit Registers
     // module reg32 (clock, resetn, D, byteenable, Q);
@@ -31,17 +31,20 @@ module gcd_avalon(clock, resetn, address, readdata, writedata, read, write, byte
     reg32 GCD_C(clock, resetn,    result,                {4{done}}, rdData[2]); // RESULT
     reg32 GCD_S(clock, resetn,    status, ({4{doneR}}|{4{wrIntR}}), rdData[3]); // STATUS
 
-    assign status = {{30{1'b0}},doneSB};
+    assign status = {{31{1'b0}},doneSB};
 
     // Edge Detect
     // module edge_detect #(parameter RISING=1)(clk, clk_en, reset, in, e);
     edge_detect WR (clock, 1'b1, ~resetn, |be[7:4], wrInt);
-    FF #(.WIDTH(4)) FF0 (clock, ~resetn, wrInt, wrIntR);
 
     // Set Reset FF
     // module set_reset(clk, clk_en, reset, en, clr, out);
     set_reset SR (clock, 1'b1, ~resetn, done, wrInt, doneSB);
-    FF FF1 (clock, ~reset, done, doneR);
+
+    // Flip Flops
+    // module FF #(parameter WIDTH=1)(clk, reset, d, q);
+    FF FF0 (clock, ~resetn, wrInt, wrIntR);
+    FF FF1 (clock, ~resetn, done, doneR);
 
     // GCD Custom Instruction
     // module gcd_ci(clk, reset, clk_en, start, dataa, datab, done, result);

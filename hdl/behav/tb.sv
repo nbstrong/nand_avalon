@@ -1,22 +1,22 @@
 // Testbench
 module tb;
 
-  logic clk, rst, rd, wr;
+  logic clk, rst, rd, wr, cs;
   logic [1:0] addr;
   logic [3:0] be;
-  logic [31:0] a, b, c;
+  logic [31:0] wrData, rdData;
 
   // Instantiate design under test
   gcd_avalon GCD (
       .clock(clk),
       .resetn(~rst),
       .address(addr),
-      .readdata(b),
-      .writedata(a),
+      .readdata(rdData),
+      .writedata(wrData),
       .read(rd),
       .write(wr),
-      .byteenable(4'hF),
-      .chipselect(1'b1)
+      .byteenable(be),
+      .chipselect(cs)
   );
 
   integer test_vec[][2] = '{
@@ -47,31 +47,39 @@ module tb;
     $dumpfile("dump.vcd");
     $dumpvars();
 
-    a = 0;
+    // Initialize
+    cs = 1;
+    be = 4'hF;
+    wrData = 0;
     addr = 0;
     wr = 0;
     rd = 0;
 
-    @(negedge rst)
+    // Take out of reset
+    @(negedge rst);
     repeat (3) @(posedge clk);
 
+    // Test
     foreach(test_vec[i])
     begin
       $display("i:%0h", i);
       addr = 0;
-      a = test_vec[i][0];
+      wrData = test_vec[i][0];
       wr = 1;
-      @(posedge clk)
+      @(posedge clk);
       addr = 1;
-      a = test_vec[i][1];
-      @(posedge clk)
+      wrData = test_vec[i][1];
+      @(posedge clk);
       addr = 3;
       wr = 0;
       rd = 1;
-      @(posedge b[0])
+      @(posedge rdData[0]);
       repeat (2)@(posedge clk);
+      rd = 0;
+      @(posedge clk);
+      rd = 1;
       addr = 2;
-      repeat (3) @(posedge clk);
+      @(posedge clk);
     end
 
     repeat (3) @(posedge clk);
