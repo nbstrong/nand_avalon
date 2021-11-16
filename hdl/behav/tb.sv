@@ -1,23 +1,33 @@
 // Testbench
 module tb;
 
-  logic clk, rst, clk_en, start, done;
+  logic clk, rst, rd, wr;
+  logic [1:0] addr;
+  logic [3:0] be;
   logic [31:0] a, b, c;
-  integer i;
 
   // Instantiate design under test
-  gcd_ci
-  GCD (.clk(clk), .rst(rst), .clk_en(clk_en), .start(start), .dataa(a), .datab(b), .done(done), .result(c));
+  gcd_avalon GCD (
+      .clock(clk),
+      .resetn(~rst),
+      .address(addr),
+      .readdata(b),
+      .writedata(a),
+      .read(rd),
+      .write(wr),
+      .byteenable(4'hF),
+      .chipselect(1'b1)
+  );
 
   integer test_vec[][2] = '{
-    '{2147483647,524287},
+    '{91, 21},
     '{1,1},
-    '{1000000000,1},
-    '{2,1023},
-    '{91, 21}
+    '{2,1023}
+    //'{2147483647,524287},
+    //'{1000000000,1},
   };
 
-  initial begin // You can absolutely have multiple initial blocks
+  initial begin
     clk = 0;
     #5
   	forever #5 clk = ~clk;
@@ -37,24 +47,34 @@ module tb;
     $dumpfile("dump.vcd");
     $dumpvars();
 
-    // Initialize
-    start = 0;
-    clk_en = 1;
+    a = 0;
+    addr = 0;
+    wr = 0;
+    rd = 0;
 
     @(negedge rst)
+    repeat (3) @(posedge clk);
 
     foreach(test_vec[i])
     begin
+      $display("i:%0h", i);
+      addr = 0;
       a = test_vec[i][0];
-      b = test_vec[i][1];
+      wr = 1;
       @(posedge clk)
-      start = 1;
-
-      @(posedge done)
-      start = 0;
+      addr = 1;
+      a = test_vec[i][1];
+      @(posedge clk)
+      addr = 3;
+      wr = 0;
+      rd = 1;
+      @(posedge b[0])
+      repeat (2)@(posedge clk);
+      addr = 2;
+      repeat (3) @(posedge clk);
     end
 
-    repeat (10) @(posedge clk);
+    repeat (3) @(posedge clk);
     $finish;
   end
 

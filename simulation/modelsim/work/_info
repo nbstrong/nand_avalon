@@ -1,0 +1,179 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+dZ:/intelFPGA_lite/18.1
+vedge_detect
+Z0 DXx6 sv_std 3 std 0 22 AD7iAPLo6nTIKk<N0eo=D3
+Z1 !s110 1637053014
+!i10b 1
+!s100 gDQU6ME2a5WdZC?gT?OVe2
+I?O3nQ<Po>4?K3QR>7z6:j3
+Z2 VDg1SIo80bB@j0V0VzS_@n1
+Z3 !s105 gcd_avalon_sv_unit
+S1
+Z4 dZ:/git_wa/quartus/DE1_SoC_Computer/simulation/modelsim
+Z5 w1637052093
+Z6 8Z:/git_wa/quartus/DE1_SoC_Computer/hdl/rtl/gcd_avalon.sv
+Z7 FZ:/git_wa/quartus/DE1_SoC_Computer/hdl/rtl/gcd_avalon.sv
+L0 133
+Z8 OV;L;10.5b;63
+r1
+!s85 0
+31
+Z9 !s108 1637053014.000000
+Z10 !s107 Z:/git_wa/quartus/DE1_SoC_Computer/hdl/rtl/gcd_avalon.sv|
+Z11 !s90 -reportprogress|300|-work|work|-sv|-stats=none|Z:/git_wa/quartus/DE1_SoC_Computer/hdl/rtl/gcd_avalon.sv|
+!i113 1
+Z12 o-work work -sv
+Z13 tCvgOpt 0
+vFF
+R0
+R1
+!i10b 1
+!s100 _oK=<6J:YWAj00Q^@kB3i3
+IO706UVofkPEDYJibVI[XK2
+R2
+R3
+S1
+R4
+R5
+R6
+R7
+L0 178
+R8
+r1
+!s85 0
+31
+R9
+R10
+R11
+!i113 1
+R12
+R13
+n@f@f
+vgcd_avalon
+R0
+R1
+!i10b 1
+!s100 B0B]To_8J>CkUH?>FF@6O3
+I@B@TF`WCBLm82<=oJoce50
+R2
+R3
+S1
+R4
+R5
+R6
+R7
+L0 1
+R8
+r1
+!s85 0
+31
+R9
+R10
+R11
+!i113 1
+R12
+R13
+vgcd_ci
+R0
+R1
+!i10b 1
+!s100 T?BIn^=lK>;`dj<SBcmL]2
+I7JT2mEC=GMHmP3QR=9BB10
+R2
+R3
+S1
+R4
+R5
+R6
+R7
+L0 61
+R8
+r1
+!s85 0
+31
+R9
+R10
+R11
+!i113 1
+R12
+R13
+vreg32
+R0
+R1
+!i10b 1
+!s100 ]Vf:9man8]UXl0abZzMA70
+I;MiWfc24M:VE1YzY>f11>3
+R2
+R3
+S1
+R4
+R5
+R6
+R7
+L0 113
+R8
+r1
+!s85 0
+31
+R9
+R10
+R11
+!i113 1
+R12
+R13
+vset_reset
+R0
+R1
+!i10b 1
+!s100 SBenBV58PT4gZjd:R[JBK1
+I[]7k0co]DTO6[X;RDYS?z1
+R2
+R3
+S1
+R4
+R5
+R6
+R7
+L0 156
+R8
+r1
+!s85 0
+31
+R9
+R10
+R11
+!i113 1
+R12
+R13
+vtb
+R0
+R1
+!i10b 1
+!s100 IaJWdT^T>mmo69IV7i;BP0
+IjjH1eUNN6AUPj8^<A9BF=0
+R2
+!s105 tb_sv_unit
+S1
+R4
+w1637052963
+8Z:/git_wa/quartus/DE1_SoC_Computer/hdl/behav/tb.sv
+FZ:/git_wa/quartus/DE1_SoC_Computer/hdl/behav/tb.sv
+L0 2
+R8
+r1
+!s85 0
+31
+R9
+!s107 Z:/git_wa/quartus/DE1_SoC_Computer/hdl/behav/tb.sv|
+!s90 -reportprogress|300|-work|work|-sv|-stats=none|Z:/git_wa/quartus/DE1_SoC_Computer/hdl/behav/tb.sv|
+!i113 1
+R12
+R13
