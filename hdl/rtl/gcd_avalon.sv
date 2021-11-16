@@ -15,7 +15,6 @@ module gcd_avalon(clock, resetn, address, readdata, writedata, read, write, byte
     logic done, doneR;
     logic doneSB;
 
-
     // Address Decode
     always @(*)
     begin
