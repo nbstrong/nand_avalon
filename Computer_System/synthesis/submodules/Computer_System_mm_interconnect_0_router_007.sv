@@ -47,7 +47,7 @@ module Computer_System_mm_interconnect_0_router_007_default_decode
      parameter DEFAULT_CHANNEL = 0,
                DEFAULT_WR_CHANNEL = -1,
                DEFAULT_RD_CHANNEL = -1,
-               DEFAULT_DESTID = 30 
+               DEFAULT_DESTID = 29 
    )
   (output [94 - 89 : 0] default_destination_id,
    output [40-1 : 0] default_wr_channel,
@@ -192,13 +192,13 @@ module Computer_System_mm_interconnect_0_router_007
     // ( 0x0 .. 0x4000000 )
     if ( {address[RG:PAD0],{PAD0{1'b0}}} == 28'h0   ) begin
             src_channel = 40'b01;
-            src_data[PKT_DEST_ID_H:PKT_DEST_ID_L] = 30;
+            src_data[PKT_DEST_ID_H:PKT_DEST_ID_L] = 29;
     end
 
     // ( 0x8000000 .. 0x8040000 )
     if ( {address[RG:PAD1],{PAD1{1'b0}}} == 28'h8000000   ) begin
             src_channel = 40'b10;
-            src_data[PKT_DEST_ID_H:PKT_DEST_ID_L] = 25;
+            src_data[PKT_DEST_ID_H:PKT_DEST_ID_L] = 24;
     end
 
 end

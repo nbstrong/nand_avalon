@@ -1,52 +1,55 @@
-module gcd_avalon(clock, reset, address, readdata, writedata, read, write, byteenable, chipselect);
-    input  logic clock, reset, read, write, chipselect;
-    input  logic [ 1:0] address;
-    input  logic [ 3:0] byteenable;
-    input  logic [31:0] writedata;
-    output logic [31:0] readdata;
+module gcd_avalon (
+        input  logic [1:0]  avs_s0_address,    // avs_s0.address
+        input  logic        avs_s0_read,       //       .read
+        output logic [31:0] avs_s0_readdata,   //       .readdata
+        input  logic        avs_s0_write,      //       .write
+        input  logic [31:0] avs_s0_writedata,  //       .writedata
+        input  logic        csi_clk,           //  clock.clk
+        input  logic        rsi_reset          //  reset.reset
+    );
 
-    logic [31:0] reg_sig [0:3];
-    logic [31:0] result;
-    logic [31:0] status;
-    logic [15:0] be;
-    logic [3:0]  byteenable_internal;
-    logic wrInt, wrIntR;
-    logic done, doneR;
-    logic doneSB;
+    logic [31:0] from_reg [0:3];
+    logic [31:0] to_reg [0:3]; // cant stack these - simulation warnings
+    logic [31:0] result, status;
+    logic local_write [0:3];
+    logic wrInt, done, doneSB;
+
+    assign to_reg[0] = (avs_s0_address == 2'h0) ? avs_s0_writedata : 32'h0;
+    assign to_reg[1] = (avs_s0_address == 2'h1) ? avs_s0_writedata : 32'h0;
+    assign to_reg[2] = result;
+    assign to_reg[3] = {{31{1'b0}},doneSB};
+
+    assign local_write[0] = (avs_s0_address == 2'h0) ? avs_s0_write : 1'b0;
+    assign local_write[1] = (avs_s0_address == 2'h1) ? avs_s0_write : 1'b0;
+    assign local_write[2] = done;
+    assign local_write[3] = 1'b1;
 
     // 32 Bit Registers
-    // module reg32 (clock, reset, D, byteenable, Q);
-    reg32 GCD_A(clock, reset, writedata,                  be[3:0], reg_sig[0]); // OP_A
-    reg32 GCD_B(clock, reset, writedata,                  be[7:4], reg_sig[1]); // OP_B
-    reg32 GCD_C(clock, reset,    result,                {4{done}}, reg_sig[2]); // RESULT
-    reg32 GCD_S(clock, reset,    status, ({4{doneR}}|{4{wrIntR}}), reg_sig[3]); // STATUS
+    // module FF (clk, reset, en, d, q);
+    FF #(32) GCD_A (csi_clk, rsi_reset, local_write[0], to_reg[0], from_reg[0]); // OP_A
+    FF #(32) GCD_B (csi_clk, rsi_reset, local_write[1], to_reg[1], from_reg[1]); // OP_B
+    FF #(32) GCD_C (csi_clk, rsi_reset, local_write[2], to_reg[2], from_reg[2]); // RESULT
+    FF #(32) GCD_S (csi_clk, rsi_reset, local_write[3], to_reg[3], from_reg[3]); // STATUS
 
-    assign be       = (chipselect & write) ? (byteenable << address*4) : 16'h0;
-    assign status   = {{31{1'b0}},doneSB};
-    assign readdata = reg_sig[address];
-
-    // Edge Detect
-    // module edge_detect #(parameter RISING=1)(clk, clk_en, reset, in, e);
-    edge_detect WR (clock, 1'b1, reset, |be[7:4], wrInt);
+    assign avs_s0_readdata = avs_s0_read ? from_reg[avs_s0_address] : 32'h0;
 
     // Set Reset FF
     // module set_reset(clk, clk_en, reset, en, clr, out);
-    set_reset SR (clock, 1'b1, reset, done, wrInt, doneSB);
+    set_reset SR (csi_clk, 1'b1, rsi_reset, done, local_write[1], doneSB);
 
     // Flip Flops
-    // module FF #(parameter WIDTH=1)(clk, reset, d, q);
-    FF FF0 (clock, reset, wrInt, wrIntR);
-    FF FF1 (clock, reset, done, doneR);
+    // module FF (clk, reset, en, d, q);
+    FF FF0 (csi_clk, rsi_reset, 1'b1, local_write[1], wrInt);
 
     // GCD Custom Instruction
     // module gcd_ci(clk, reset, clk_en, start, dataa, datab, done, result);
     gcd_ci GCD (
-        .clk   (clock),
-        .reset (reset),
+        .clk   (csi_clk),
+        .reset (rsi_reset),
         .clk_en(1'b1),
-        .start (wrIntR),
-        .dataa (reg_sig[0]),
-        .datab (reg_sig[1]),
+        .start (wrInt),
+        .dataa (from_reg[0]),
+        .datab (from_reg[1]),
         .done  (done),
         .result(result));
 
@@ -104,26 +107,6 @@ module gcd_ci(clk, reset, clk_en, start, dataa, datab, done, result);
     end
 endmodule
 
-// 32 Bit Register
-module reg32 (clock, reset, D, byteenable, Q);
-    input  logic clock, reset;
-    input  logic [3:0] byteenable;
-    input  logic [31:0] D;
-    output logic [31:0] Q;
-
-    always@(posedge clock) begin
-        if (reset)
-            Q <= 32'b0;
-        else begin
-            // Enable writing to each byte separately
-            if (byteenable[0]) Q[7:0]   <= D[7:0];
-            if (byteenable[1]) Q[15:8]  <= D[15:8];
-            if (byteenable[2]) Q[23:16] <= D[23:16];
-            if (byteenable[3]) Q[31:24] <= D[31:24];
-        end
-    end
-endmodule
-
 // Edge Detect
 module edge_detect #(parameter RISING=1)(clk, clk_en, reset, in, e);
     input  logic clk;
@@ -170,18 +153,23 @@ module set_reset(clk, clk_en, reset, en, clr, out);
 endmodule
 
  // Flip Flop
-module FF #(parameter WIDTH=1)(clk, reset, d, q);
+module FF (clk, reset, en, d, q);
+    parameter WIDTH = 1;
     input  logic clk;
     input  logic reset;
+    input  logic en;
     input  logic [WIDTH-1:0] d;
     output logic [WIDTH-1:0] q;
+
 
     always @(posedge clk)
     begin
         if (reset)
             q <= 0;
-        else
+        else if (en)
             q <= d;
+        else
+            q <= q;
     end
 endmodule
 

@@ -12,7 +12,7 @@
     <program>
         <type>C Program</type>
         <source_files>
-            <source_file filepath="true">getting_started.c</source_file>
+            <source_file filepath="true">main.c</source_file>
             <header_file filepath="true">address_map_arm.h</header_file>
         </source_files>
         <options>

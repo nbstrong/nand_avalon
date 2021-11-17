@@ -185,15 +185,11 @@ module Computer_System_mm_interconnect_0_router_038
 
 
         if (destid == 6 ) begin
-            src_channel = 40'b001;
-        end
-
-        if (destid == 4 ) begin
-            src_channel = 40'b010;
+            src_channel = 40'b01;
         end
 
         if (destid == 3 ) begin
-            src_channel = 40'b100;
+            src_channel = 40'b10;
         end
 
 

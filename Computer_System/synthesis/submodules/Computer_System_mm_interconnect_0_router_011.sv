@@ -47,7 +47,7 @@ module Computer_System_mm_interconnect_0_router_011_default_decode
      parameter DEFAULT_CHANNEL = 0,
                DEFAULT_WR_CHANNEL = -1,
                DEFAULT_RD_CHANNEL = -1,
-               DEFAULT_DESTID = 38 
+               DEFAULT_DESTID = 37 
    )
   (output [112 - 107 : 0] default_destination_id,
    output [40-1 : 0] default_wr_channel,
@@ -186,7 +186,7 @@ module Computer_System_mm_interconnect_0_router_011
          
           // ( 0 .. 10 )
           src_channel = 40'b1;
-          src_data[PKT_DEST_ID_H:PKT_DEST_ID_L] = 38;
+          src_data[PKT_DEST_ID_H:PKT_DEST_ID_L] = 37;
 	     
         
 

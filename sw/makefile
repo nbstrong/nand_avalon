@@ -28,17 +28,17 @@ OCFLAGS		:= -O srec
 
 # Files
 HDRS		:= address_map_arm.h
-SRCS		:= getting_started.c
+SRCS		:= main.c
 OBJS		:= $(patsubst %, %.o, $(SRCS))
 
 # Targets
-COMPILE: getting_started.srec
+COMPILE: main.srec
 
-getting_started.srec: getting_started.axf
+main.srec: main.axf
 	$(RM) $@
 	$(OC) $(OCFLAGS) $< $@
 
-getting_started.axf: $(OBJS)
+main.axf: $(OBJS)
 	$(RM) $@
 	$(CC) $(LDFLAGS) $(OBJS) -o $@
 
@@ -50,6 +50,6 @@ getting_started.axf: $(OBJS)
 	$(RM) $@
 	$(AS) $(ASFLAGS) $< -o $@
 
-CLEAN:
-	$(RM) getting_started.srec getting_started.axf $(OBJS)
+CLEAN: 
+	$(RM) main.srec main.axf $(OBJS)
 

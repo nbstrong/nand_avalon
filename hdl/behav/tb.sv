@@ -7,16 +7,14 @@ module tb;
   logic [31:0] wrData, rdData;
 
   // Instantiate design under test
-  gcd_avalon GCD (
-      .clock(clk),
-      .reset(rst),
-      .address(addr),
-      .readdata(rdData),
-      .writedata(wrData),
-      .read(rd),
-      .write(wr),
-      .byteenable(be),
-      .chipselect(cs)
+  gcd_avalon DUT (
+    .avs_s0_address(addr),
+    .avs_s0_read(rd),
+    .avs_s0_readdata(rdData),
+    .avs_s0_write(wr),
+    .avs_s0_writedata(wrData),
+    .csi_clk(clk),
+    .rsi_reset(rst)
   );
 
   integer test_vec[][2] = '{

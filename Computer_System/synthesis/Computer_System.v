@@ -134,7 +134,7 @@ module Computer_System (
 		input  wire        video_pll_ref_reset_reset        //  video_pll_ref_reset.reset
 	);
 
-	wire          system_pll_sys_clk_clk;                                                                // System_PLL:sys_clk_clk -> [ADC:clock, ARM_A9_HPS:f2h_axi_clk, ARM_A9_HPS:h2f_axi_clk, ARM_A9_HPS:h2f_lw_axi_clk, AV_Config:clk, Audio_Subsystem:sys_clk_clk, Char_DMA_Addr_Translation:clk, Expansion_JP1:clk, Expansion_JP2:clk, F2H_Mem_Window_00000000:clk, F2H_Mem_Window_FF600000:clk, F2H_Mem_Window_FF800000:clk, GCD_Avalon_0:clock, HEX3_HEX0:clk, HEX5_HEX4:clk, Interval_Timer:clk, Interval_Timer_2:clk, Interval_Timer_2nd_Core:clk, Interval_Timer_2nd_Core_2:clk, IrDA:clk, JTAG_UART:clk, JTAG_UART_2nd_Core:clk, JTAG_UART_for_ARM_0:clk, JTAG_UART_for_ARM_1:clk, JTAG_to_FPGA_Bridge:clk_clk, JTAG_to_HPS_Bridge:clk_clk, LEDs:clk, Nios2:clk, Nios2_2nd_Core:clk, Onchip_SRAM:clk, PS2_Port:clk, PS2_Port_Dual:clk, Pixel_DMA_Addr_Translation:clk, Pushbuttons:clk, SDRAM:clk, Slider_Switches:clk, SysID:clock, VGA_Subsystem:sys_clk_clk, Video_In_DMA_Addr_Translation:clk, Video_In_Subsystem:sys_clk_clk, irq_mapper_002:clk, irq_mapper_003:clk, mm_interconnect_0:System_PLL_sys_clk_clk, mm_interconnect_1:System_PLL_sys_clk_clk, rst_controller:clk, rst_controller_004:clk, rst_controller_005:clk, rst_controller_008:clk]
+	wire          system_pll_sys_clk_clk;                                                                // System_PLL:sys_clk_clk -> [ADC:clock, ARM_A9_HPS:f2h_axi_clk, ARM_A9_HPS:h2f_axi_clk, ARM_A9_HPS:h2f_lw_axi_clk, AV_Config:clk, Audio_Subsystem:sys_clk_clk, Char_DMA_Addr_Translation:clk, Expansion_JP1:clk, Expansion_JP2:clk, F2H_Mem_Window_00000000:clk, F2H_Mem_Window_FF600000:clk, F2H_Mem_Window_FF800000:clk, HEX3_HEX0:clk, HEX5_HEX4:clk, Interval_Timer:clk, Interval_Timer_2:clk, Interval_Timer_2nd_Core:clk, Interval_Timer_2nd_Core_2:clk, IrDA:clk, JTAG_UART:clk, JTAG_UART_2nd_Core:clk, JTAG_UART_for_ARM_0:clk, JTAG_UART_for_ARM_1:clk, JTAG_to_FPGA_Bridge:clk_clk, JTAG_to_HPS_Bridge:clk_clk, LEDs:clk, Nios2:clk, Nios2_2nd_Core:clk, Onchip_SRAM:clk, PS2_Port:clk, PS2_Port_Dual:clk, Pixel_DMA_Addr_Translation:clk, Pushbuttons:clk, SDRAM:clk, Slider_Switches:clk, SysID:clock, VGA_Subsystem:sys_clk_clk, Video_In_DMA_Addr_Translation:clk, Video_In_Subsystem:sys_clk_clk, gcd_avalon_0:csi_clk, irq_mapper_002:clk, irq_mapper_003:clk, mm_interconnect_0:System_PLL_sys_clk_clk, mm_interconnect_1:System_PLL_sys_clk_clk, rst_controller:clk, rst_controller_004:clk, rst_controller_005:clk, rst_controller_008:clk]
 	wire          video_pll_vga_clk_clk;                                                                 // Video_PLL:vga_clk_clk -> VGA_Subsystem:vga_clk_clk
 	wire          video_pll_reset_source_reset;                                                          // Video_PLL:reset_source_reset -> VGA_Subsystem:vga_reset_reset_n
 	wire   [31:0] nios2_custom_instruction_master_multi_dataa;                                           // Nios2:A_ci_multi_dataa -> Nios2_custom_instruction_master_translator:ci_slave_multi_dataa
@@ -441,13 +441,6 @@ module Computer_System (
 	wire    [3:0] mm_interconnect_0_ps2_port_dual_avalon_ps2_slave_byteenable;                           // mm_interconnect_0:PS2_Port_Dual_avalon_ps2_slave_byteenable -> PS2_Port_Dual:byteenable
 	wire          mm_interconnect_0_ps2_port_dual_avalon_ps2_slave_write;                                // mm_interconnect_0:PS2_Port_Dual_avalon_ps2_slave_write -> PS2_Port_Dual:write
 	wire   [31:0] mm_interconnect_0_ps2_port_dual_avalon_ps2_slave_writedata;                            // mm_interconnect_0:PS2_Port_Dual_avalon_ps2_slave_writedata -> PS2_Port_Dual:writedata
-	wire          mm_interconnect_0_gcd_avalon_0_avalon_slave_0_chipselect;                              // mm_interconnect_0:GCD_Avalon_0_avalon_slave_0_chipselect -> GCD_Avalon_0:chipselect
-	wire   [31:0] mm_interconnect_0_gcd_avalon_0_avalon_slave_0_readdata;                                // GCD_Avalon_0:readdata -> mm_interconnect_0:GCD_Avalon_0_avalon_slave_0_readdata
-	wire    [1:0] mm_interconnect_0_gcd_avalon_0_avalon_slave_0_address;                                 // mm_interconnect_0:GCD_Avalon_0_avalon_slave_0_address -> GCD_Avalon_0:address
-	wire          mm_interconnect_0_gcd_avalon_0_avalon_slave_0_read;                                    // mm_interconnect_0:GCD_Avalon_0_avalon_slave_0_read -> GCD_Avalon_0:read
-	wire    [3:0] mm_interconnect_0_gcd_avalon_0_avalon_slave_0_byteenable;                              // mm_interconnect_0:GCD_Avalon_0_avalon_slave_0_byteenable -> GCD_Avalon_0:byteenable
-	wire          mm_interconnect_0_gcd_avalon_0_avalon_slave_0_write;                                   // mm_interconnect_0:GCD_Avalon_0_avalon_slave_0_write -> GCD_Avalon_0:write
-	wire   [31:0] mm_interconnect_0_gcd_avalon_0_avalon_slave_0_writedata;                               // mm_interconnect_0:GCD_Avalon_0_avalon_slave_0_writedata -> GCD_Avalon_0:writedata
 	wire   [31:0] mm_interconnect_0_vga_subsystem_char_buffer_control_slave_readdata;                    // VGA_Subsystem:char_buffer_control_slave_readdata -> mm_interconnect_0:VGA_Subsystem_char_buffer_control_slave_readdata
 	wire    [1:0] mm_interconnect_0_vga_subsystem_char_buffer_control_slave_address;                     // mm_interconnect_0:VGA_Subsystem_char_buffer_control_slave_address -> VGA_Subsystem:char_buffer_control_slave_address
 	wire          mm_interconnect_0_vga_subsystem_char_buffer_control_slave_read;                        // mm_interconnect_0:VGA_Subsystem_char_buffer_control_slave_read -> VGA_Subsystem:char_buffer_control_slave_read
@@ -614,6 +607,11 @@ module Computer_System (
 	wire          mm_interconnect_0_jtag_uart_for_arm_1_avalon_jtag_slave_read;                          // mm_interconnect_0:JTAG_UART_for_ARM_1_avalon_jtag_slave_read -> JTAG_UART_for_ARM_1:av_read_n
 	wire          mm_interconnect_0_jtag_uart_for_arm_1_avalon_jtag_slave_write;                         // mm_interconnect_0:JTAG_UART_for_ARM_1_avalon_jtag_slave_write -> JTAG_UART_for_ARM_1:av_write_n
 	wire   [31:0] mm_interconnect_0_jtag_uart_for_arm_1_avalon_jtag_slave_writedata;                     // mm_interconnect_0:JTAG_UART_for_ARM_1_avalon_jtag_slave_writedata -> JTAG_UART_for_ARM_1:av_writedata
+	wire   [31:0] mm_interconnect_0_gcd_avalon_0_s0_readdata;                                            // gcd_avalon_0:avs_s0_readdata -> mm_interconnect_0:gcd_avalon_0_s0_readdata
+	wire    [1:0] mm_interconnect_0_gcd_avalon_0_s0_address;                                             // mm_interconnect_0:gcd_avalon_0_s0_address -> gcd_avalon_0:avs_s0_address
+	wire          mm_interconnect_0_gcd_avalon_0_s0_read;                                                // mm_interconnect_0:gcd_avalon_0_s0_read -> gcd_avalon_0:avs_s0_read
+	wire          mm_interconnect_0_gcd_avalon_0_s0_write;                                               // mm_interconnect_0:gcd_avalon_0_s0_write -> gcd_avalon_0:avs_s0_write
+	wire   [31:0] mm_interconnect_0_gcd_avalon_0_s0_writedata;                                           // mm_interconnect_0:gcd_avalon_0_s0_writedata -> gcd_avalon_0:avs_s0_writedata
 	wire   [31:0] mm_interconnect_0_pixel_dma_addr_translation_slave_readdata;                           // Pixel_DMA_Addr_Translation:slave_readdata -> mm_interconnect_0:Pixel_DMA_Addr_Translation_slave_readdata
 	wire          mm_interconnect_0_pixel_dma_addr_translation_slave_waitrequest;                        // Pixel_DMA_Addr_Translation:slave_waitrequest -> mm_interconnect_0:Pixel_DMA_Addr_Translation_slave_waitrequest
 	wire    [1:0] mm_interconnect_0_pixel_dma_addr_translation_slave_address;                            // mm_interconnect_0:Pixel_DMA_Addr_Translation_slave_address -> Pixel_DMA_Addr_Translation:slave_address
@@ -734,7 +732,7 @@ module Computer_System (
 	wire          irq_mapper_receiver1_irq;                                                              // PS2_Port:irq -> [irq_mapper:receiver1_irq, irq_mapper_002:receiver1_irq, irq_mapper_003:receiver1_irq]
 	wire          irq_mapper_receiver2_irq;                                                              // PS2_Port_Dual:irq -> [irq_mapper:receiver2_irq, irq_mapper_002:receiver2_irq, irq_mapper_003:receiver2_irq]
 	wire          irq_mapper_receiver4_irq;                                                              // Pushbuttons:irq -> [irq_mapper:receiver4_irq, irq_mapper_002:receiver4_irq, irq_mapper_003:receiver4_irq]
-	wire          rst_controller_reset_out_reset;                                                        // rst_controller:reset_out -> [ADC:reset, AV_Config:reset, Char_DMA_Addr_Translation:reset, Expansion_JP1:reset_n, Expansion_JP2:reset_n, F2H_Mem_Window_00000000:reset, F2H_Mem_Window_FF600000:reset, F2H_Mem_Window_FF800000:reset, GCD_Avalon_0:reset, HEX3_HEX0:reset_n, HEX5_HEX4:reset_n, Interval_Timer:reset_n, Interval_Timer_2:reset_n, Interval_Timer_2nd_Core:reset_n, Interval_Timer_2nd_Core_2:reset_n, IrDA:reset, JTAG_UART:rst_n, JTAG_UART_2nd_Core:rst_n, JTAG_UART_for_ARM_0:rst_n, JTAG_UART_for_ARM_1:rst_n, LEDs:reset_n, Onchip_SRAM:reset, PS2_Port:reset, PS2_Port_Dual:reset, Pixel_DMA_Addr_Translation:reset, Pushbuttons:reset_n, SDRAM:reset_n, Slider_Switches:reset_n, SysID:reset_n, Video_In_DMA_Addr_Translation:reset, mm_interconnect_0:JTAG_to_FPGA_Bridge_clk_reset_reset_bridge_in_reset_reset, mm_interconnect_0:Video_In_DMA_Addr_Translation_reset_reset_bridge_in_reset_reset, mm_interconnect_1:F2H_Mem_Window_00000000_reset_reset_bridge_in_reset_reset, mm_interconnect_1:JTAG_to_HPS_Bridge_clk_reset_reset_bridge_in_reset_reset, rst_translator:in_reset]
+	wire          rst_controller_reset_out_reset;                                                        // rst_controller:reset_out -> [ADC:reset, AV_Config:reset, Char_DMA_Addr_Translation:reset, Expansion_JP1:reset_n, Expansion_JP2:reset_n, F2H_Mem_Window_00000000:reset, F2H_Mem_Window_FF600000:reset, F2H_Mem_Window_FF800000:reset, HEX3_HEX0:reset_n, HEX5_HEX4:reset_n, Interval_Timer:reset_n, Interval_Timer_2:reset_n, Interval_Timer_2nd_Core:reset_n, Interval_Timer_2nd_Core_2:reset_n, IrDA:reset, JTAG_UART:rst_n, JTAG_UART_2nd_Core:rst_n, JTAG_UART_for_ARM_0:rst_n, JTAG_UART_for_ARM_1:rst_n, LEDs:reset_n, Onchip_SRAM:reset, PS2_Port:reset, PS2_Port_Dual:reset, Pixel_DMA_Addr_Translation:reset, Pushbuttons:reset_n, SDRAM:reset_n, Slider_Switches:reset_n, SysID:reset_n, Video_In_DMA_Addr_Translation:reset, gcd_avalon_0:rsi_reset, mm_interconnect_0:JTAG_to_FPGA_Bridge_clk_reset_reset_bridge_in_reset_reset, mm_interconnect_0:Video_In_DMA_Addr_Translation_reset_reset_bridge_in_reset_reset, mm_interconnect_1:F2H_Mem_Window_00000000_reset_reset_bridge_in_reset_reset, mm_interconnect_1:JTAG_to_HPS_Bridge_clk_reset_reset_bridge_in_reset_reset, rst_translator:in_reset]
 	wire          rst_controller_reset_out_reset_req;                                                    // rst_controller:reset_req -> [Onchip_SRAM:reset_req, rst_translator:reset_req_in]
 	wire          arm_a9_hps_h2f_reset_reset;                                                            // ARM_A9_HPS:h2f_rst_n -> [rst_controller:reset_in0, rst_controller_001:reset_in0, rst_controller_002:reset_in0, rst_controller_003:reset_in0, rst_controller_004:reset_in1, rst_controller_005:reset_in1, rst_controller_006:reset_in0, rst_controller_007:reset_in0, rst_controller_008:reset_in0]
 	wire          system_pll_reset_source_reset;                                                         // System_PLL:reset_source_reset -> [rst_controller:reset_in1, rst_controller_001:reset_in1, rst_controller_002:reset_in1, rst_controller_003:reset_in1, rst_controller_004:reset_in2, rst_controller_005:reset_in2, rst_controller_006:reset_in1, rst_controller_007:reset_in1]
@@ -1161,18 +1159,6 @@ module Computer_System (
 		.avs_cntl_write       (1'b0),                                                                   //     (terminated)
 		.avs_cntl_writedata   (64'b0000000000000000000000000000000000000000000000000000000000000000),   //     (terminated)
 		.avs_cntl_byteenable  (8'b00000000)                                                             //     (terminated)
-	);
-
-	gcd_avalon gcd_avalon_0 (
-		.clock      (system_pll_sys_clk_clk),                                   //          clock.clk
-		.reset      (rst_controller_reset_out_reset),                           //          reset.reset
-		.byteenable (mm_interconnect_0_gcd_avalon_0_avalon_slave_0_byteenable), // avalon_slave_0.byteenable
-		.address    (mm_interconnect_0_gcd_avalon_0_avalon_slave_0_address),    //               .address
-		.chipselect (mm_interconnect_0_gcd_avalon_0_avalon_slave_0_chipselect), //               .chipselect
-		.read       (mm_interconnect_0_gcd_avalon_0_avalon_slave_0_read),       //               .read
-		.readdata   (mm_interconnect_0_gcd_avalon_0_avalon_slave_0_readdata),   //               .readdata
-		.write      (mm_interconnect_0_gcd_avalon_0_avalon_slave_0_write),      //               .write
-		.writedata  (mm_interconnect_0_gcd_avalon_0_avalon_slave_0_writedata)   //               .writedata
 	);
 
 	Computer_System_HEX3_HEX0 hex3_hex0 (
@@ -1700,6 +1686,16 @@ module Computer_System (
 		.reset_source_reset (video_pll_reset_source_reset)  // reset_source.reset
 	);
 
+	gcd_avalon gcd_avalon_0 (
+		.avs_s0_address   (mm_interconnect_0_gcd_avalon_0_s0_address),   //    s0.address
+		.avs_s0_read      (mm_interconnect_0_gcd_avalon_0_s0_read),      //      .read
+		.avs_s0_readdata  (mm_interconnect_0_gcd_avalon_0_s0_readdata),  //      .readdata
+		.avs_s0_write     (mm_interconnect_0_gcd_avalon_0_s0_write),     //      .write
+		.avs_s0_writedata (mm_interconnect_0_gcd_avalon_0_s0_writedata), //      .writedata
+		.csi_clk          (system_pll_sys_clk_clk),                      // clock.clk
+		.rsi_reset        (rst_controller_reset_out_reset)               // reset.reset
+	);
+
 	altera_customins_master_translator #(
 		.SHARED_COMB_AND_MULTI (0)
 	) nios2_custom_instruction_master_translator (
@@ -2193,13 +2189,11 @@ module Computer_System (
 		.F2H_Mem_Window_FF800000_windowed_slave_byteenable                        (mm_interconnect_0_f2h_mem_window_ff800000_windowed_slave_byteenable),                   //                                                                   .byteenable
 		.F2H_Mem_Window_FF800000_windowed_slave_readdatavalid                     (mm_interconnect_0_f2h_mem_window_ff800000_windowed_slave_readdatavalid),                //                                                                   .readdatavalid
 		.F2H_Mem_Window_FF800000_windowed_slave_waitrequest                       (mm_interconnect_0_f2h_mem_window_ff800000_windowed_slave_waitrequest),                  //                                                                   .waitrequest
-		.GCD_Avalon_0_avalon_slave_0_address                                      (mm_interconnect_0_gcd_avalon_0_avalon_slave_0_address),                                 //                                        GCD_Avalon_0_avalon_slave_0.address
-		.GCD_Avalon_0_avalon_slave_0_write                                        (mm_interconnect_0_gcd_avalon_0_avalon_slave_0_write),                                   //                                                                   .write
-		.GCD_Avalon_0_avalon_slave_0_read                                         (mm_interconnect_0_gcd_avalon_0_avalon_slave_0_read),                                    //                                                                   .read
-		.GCD_Avalon_0_avalon_slave_0_readdata                                     (mm_interconnect_0_gcd_avalon_0_avalon_slave_0_readdata),                                //                                                                   .readdata
-		.GCD_Avalon_0_avalon_slave_0_writedata                                    (mm_interconnect_0_gcd_avalon_0_avalon_slave_0_writedata),                               //                                                                   .writedata
-		.GCD_Avalon_0_avalon_slave_0_byteenable                                   (mm_interconnect_0_gcd_avalon_0_avalon_slave_0_byteenable),                              //                                                                   .byteenable
-		.GCD_Avalon_0_avalon_slave_0_chipselect                                   (mm_interconnect_0_gcd_avalon_0_avalon_slave_0_chipselect),                              //                                                                   .chipselect
+		.gcd_avalon_0_s0_address                                                  (mm_interconnect_0_gcd_avalon_0_s0_address),                                             //                                                    gcd_avalon_0_s0.address
+		.gcd_avalon_0_s0_write                                                    (mm_interconnect_0_gcd_avalon_0_s0_write),                                               //                                                                   .write
+		.gcd_avalon_0_s0_read                                                     (mm_interconnect_0_gcd_avalon_0_s0_read),                                                //                                                                   .read
+		.gcd_avalon_0_s0_readdata                                                 (mm_interconnect_0_gcd_avalon_0_s0_readdata),                                            //                                                                   .readdata
+		.gcd_avalon_0_s0_writedata                                                (mm_interconnect_0_gcd_avalon_0_s0_writedata),                                           //                                                                   .writedata
 		.HEX3_HEX0_s1_address                                                     (mm_interconnect_0_hex3_hex0_s1_address),                                                //                                                       HEX3_HEX0_s1.address
 		.HEX3_HEX0_s1_write                                                       (mm_interconnect_0_hex3_hex0_s1_write),                                                  //                                                                   .write
 		.HEX3_HEX0_s1_readdata                                                    (mm_interconnect_0_hex3_hex0_s1_readdata),                                               //                                                                   .readdata

@@ -30,7 +30,7 @@
 //   output_name:         Computer_System_mm_interconnect_0_cmd_demux_004
 //   ST_DATA_W:           137
 //   ST_CHANNEL_W:        40
-//   NUM_OUTPUTS:         29
+//   NUM_OUTPUTS:         28
 //   VALID_WIDTH:         40
 // ------------------------------------------
 
@@ -251,13 +251,6 @@ module Computer_System_mm_interconnect_0_cmd_demux_004
     output reg                      src27_endofpacket,
     input                           src27_ready,
 
-    output reg                      src28_valid,
-    output reg [137-1    : 0] src28_data, // ST_DATA_W=137
-    output reg [40-1 : 0] src28_channel, // ST_CHANNEL_W=40
-    output reg                      src28_startofpacket,
-    output reg                      src28_endofpacket,
-    input                           src28_ready,
-
 
     // -------------------
     // Clock & Reset
@@ -269,7 +262,7 @@ module Computer_System_mm_interconnect_0_cmd_demux_004
 
 );
 
-    localparam NUM_OUTPUTS = 29;
+    localparam NUM_OUTPUTS = 28;
     wire [NUM_OUTPUTS - 1 : 0] ready_vector;
 
     // -------------------
@@ -472,13 +465,6 @@ module Computer_System_mm_interconnect_0_cmd_demux_004
 
         src27_valid         = sink_channel[27] && sink_valid[27];
 
-        src28_data          = sink_data;
-        src28_startofpacket = sink_startofpacket;
-        src28_endofpacket   = sink_endofpacket;
-        src28_channel       = sink_channel >> NUM_OUTPUTS;
-
-        src28_valid         = sink_channel[28] && sink_valid[28];
-
     end
 
     // -------------------
@@ -512,9 +498,8 @@ module Computer_System_mm_interconnect_0_cmd_demux_004
     assign ready_vector[25] = src25_ready;
     assign ready_vector[26] = src26_ready;
     assign ready_vector[27] = src27_ready;
-    assign ready_vector[28] = src28_ready;
 
-    assign sink_ready = |(sink_channel & {{11{1'b0}},{ready_vector[NUM_OUTPUTS - 1 : 0]}});
+    assign sink_ready = |(sink_channel & {{12{1'b0}},{ready_vector[NUM_OUTPUTS - 1 : 0]}});
 
 endmodule
 

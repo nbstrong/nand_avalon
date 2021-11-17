@@ -113,6 +113,14 @@
          type = "String";
       }
    }
+   element Computer_System
+   {
+      datum _originalDeviceFamily
+      {
+         value = "Cyclone V";
+         type = "String";
+      }
+   }
    element Expansion_JP1
    {
       datum _sortIndex
@@ -191,22 +199,6 @@
       {
          value = "1";
          type = "boolean";
-      }
-   }
-   element GCD_Avalon_0
-   {
-      datum _sortIndex
-      {
-         value = "41";
-         type = "int";
-      }
-   }
-   element GCD_Avalon_0.avalon_slave_0
-   {
-      datum baseAddress
-      {
-         value = "67108864";
-         type = "String";
       }
    }
    element HEX3_HEX0
@@ -700,6 +692,27 @@
       {
          value = "1";
          type = "int";
+      }
+   }
+   element gcd_avalon_0
+   {
+      datum _sortIndex
+      {
+         value = "41";
+         type = "int";
+      }
+   }
+   element gcd_avalon_0.s0
+   {
+      datum _lockedAddress
+      {
+         value = "1";
+         type = "boolean";
+      }
+      datum baseAddress
+      {
+         value = "16";
+         type = "String";
       }
    }
 }
@@ -1495,7 +1508,6 @@
   <parameter name="SLAVE_ADDRESS_WIDTH" value="21" />
   <parameter name="SUB_WINDOW_COUNT" value="1" />
  </module>
- <module name="GCD_Avalon_0" kind="GCD_Avalon" version="1.2" enabled="1" />
  <module name="HEX3_HEX0" kind="altera_avalon_pio" version="18.1" enabled="1">
   <parameter name="bitClearingEdgeCapReg" value="false" />
   <parameter name="bitModifyingOutReg" value="false" />
@@ -1735,7 +1747,7 @@
   <parameter name="dataAddrWidth" value="32" />
   <parameter name="dataMasterHighPerformanceAddrWidth" value="1" />
   <parameter name="dataMasterHighPerformanceMapParam" value="" />
-  <parameter name="dataSlaveMapParam"><![CDATA[<address-map><slave name='SDRAM.s1' start='0x0' end='0x4000000' type='altera_avalon_new_sdram_controller.s1' /><slave name='GCD_Avalon_0.avalon_slave_0' start='0x4000000' end='0x4000010' type='GCD_Avalon.avalon_slave_0' /><slave name='Onchip_SRAM.s1' start='0x8000000' end='0x8040000' type='altera_avalon_onchip_memory2.s1' /><slave name='VGA_Subsystem_Char_Buf_Subsystem_Onchip_SRAM.s1' start='0x9000000' end='0x9002000' type='altera_avalon_onchip_memory2.s1' /><slave name='Nios2.debug_mem_slave' start='0xA000000' end='0xA000800' type='altera_nios2_gen2.debug_mem_slave' /><slave name='ARM_A9_HPS_axi_sdram.axi_slave0' start='0x40000000' end='0x80000000' type='axi_sdram.axi_slave0' /><slave name='LEDs.s1' start='0xFF200000' end='0xFF200010' type='altera_avalon_pio.s1' /><slave name='HEX3_HEX0.s1' start='0xFF200020' end='0xFF200030' type='altera_avalon_pio.s1' /><slave name='HEX5_HEX4.s1' start='0xFF200030' end='0xFF200040' type='altera_avalon_pio.s1' /><slave name='Slider_Switches.s1' start='0xFF200040' end='0xFF200050' type='altera_avalon_pio.s1' /><slave name='Pushbuttons.s1' start='0xFF200050' end='0xFF200060' type='altera_avalon_pio.s1' /><slave name='Expansion_JP1.s1' start='0xFF200060' end='0xFF200070' type='altera_avalon_pio.s1' /><slave name='Expansion_JP2.s1' start='0xFF200070' end='0xFF200080' type='altera_avalon_pio.s1' /><slave name='PS2_Port.avalon_ps2_slave' start='0xFF200100' end='0xFF200108' type='altera_up_avalon_ps2.avalon_ps2_slave' /><slave name='PS2_Port_Dual.avalon_ps2_slave' start='0xFF200108' end='0xFF200110' type='altera_up_avalon_ps2.avalon_ps2_slave' /><slave name='JTAG_UART.avalon_jtag_slave' start='0xFF201000' end='0xFF201008' type='altera_avalon_jtag_uart.avalon_jtag_slave' /><slave name='IrDA.avalon_irda_slave' start='0xFF201020' end='0xFF201028' type='altera_up_avalon_irda.avalon_irda_slave' /><slave name='Interval_Timer.s1' start='0xFF202000' end='0xFF202020' type='altera_avalon_timer.s1' /><slave name='Interval_Timer_2.s1' start='0xFF202020' end='0xFF202040' type='altera_avalon_timer.s1' /><slave name='SysID.control_slave' start='0xFF202040' end='0xFF202048' type='altera_avalon_sysid_qsys.control_slave' /><slave name='AV_Config.avalon_av_config_slave' start='0xFF203000' end='0xFF203010' type='altera_up_avalon_audio_and_video_config.avalon_av_config_slave' /><slave name='VGA_Subsystem_VGA_Pixel_RGB_Resampler.avalon_rgb_slave' start='0xFF203010' end='0xFF203014' type='altera_up_avalon_video_rgb_resampler.avalon_rgb_slave' /><slave name='VGA_Subsystem_VGA_Pixel_DMA.avalon_dma_control_slave' start='0xFF203020' end='0xFF203030' type='altera_up_avalon_video_dma_controller.avalon_dma_control_slave' /><slave name='VGA_Subsystem_Char_Buf_Subsystem_Char_Buf_DMA.avalon_dma_control_slave' start='0xFF203030' end='0xFF203040' type='altera_up_avalon_video_dma_controller.avalon_dma_control_slave' /><slave name='Audio_Subsystem_Audio.avalon_audio_slave' start='0xFF203040' end='0xFF203050' type='altera_up_avalon_audio.avalon_audio_slave' /><slave name='Video_In_Subsystem_Video_In_DMA.avalon_dma_control_slave' start='0xFF203060' end='0xFF203070' type='altera_up_avalon_video_dma_controller.avalon_dma_control_slave' /><slave name='Video_In_Subsystem_Video_In_Edge_Detection_Subsystem_Edge_Detection_Router_Controller.s1' start='0xFF203070' end='0xFF203080' type='altera_avalon_pio.s1' /><slave name='ADC.adc_slave' start='0xFF204000' end='0xFF204020' type='altera_up_avalon_adc.adc_slave' /></address-map>]]></parameter>
+  <parameter name="dataSlaveMapParam"><![CDATA[<address-map><slave name='SDRAM.s1' start='0x0' end='0x4000000' type='altera_avalon_new_sdram_controller.s1' /><slave name='Onchip_SRAM.s1' start='0x8000000' end='0x8040000' type='altera_avalon_onchip_memory2.s1' /><slave name='VGA_Subsystem_Char_Buf_Subsystem_Onchip_SRAM.s1' start='0x9000000' end='0x9002000' type='altera_avalon_onchip_memory2.s1' /><slave name='Nios2.debug_mem_slave' start='0xA000000' end='0xA000800' type='altera_nios2_gen2.debug_mem_slave' /><slave name='ARM_A9_HPS_axi_sdram.axi_slave0' start='0x40000000' end='0x80000000' type='axi_sdram.axi_slave0' /><slave name='LEDs.s1' start='0xFF200000' end='0xFF200010' type='altera_avalon_pio.s1' /><slave name='HEX3_HEX0.s1' start='0xFF200020' end='0xFF200030' type='altera_avalon_pio.s1' /><slave name='HEX5_HEX4.s1' start='0xFF200030' end='0xFF200040' type='altera_avalon_pio.s1' /><slave name='Slider_Switches.s1' start='0xFF200040' end='0xFF200050' type='altera_avalon_pio.s1' /><slave name='Pushbuttons.s1' start='0xFF200050' end='0xFF200060' type='altera_avalon_pio.s1' /><slave name='Expansion_JP1.s1' start='0xFF200060' end='0xFF200070' type='altera_avalon_pio.s1' /><slave name='Expansion_JP2.s1' start='0xFF200070' end='0xFF200080' type='altera_avalon_pio.s1' /><slave name='PS2_Port.avalon_ps2_slave' start='0xFF200100' end='0xFF200108' type='altera_up_avalon_ps2.avalon_ps2_slave' /><slave name='PS2_Port_Dual.avalon_ps2_slave' start='0xFF200108' end='0xFF200110' type='altera_up_avalon_ps2.avalon_ps2_slave' /><slave name='JTAG_UART.avalon_jtag_slave' start='0xFF201000' end='0xFF201008' type='altera_avalon_jtag_uart.avalon_jtag_slave' /><slave name='IrDA.avalon_irda_slave' start='0xFF201020' end='0xFF201028' type='altera_up_avalon_irda.avalon_irda_slave' /><slave name='Interval_Timer.s1' start='0xFF202000' end='0xFF202020' type='altera_avalon_timer.s1' /><slave name='Interval_Timer_2.s1' start='0xFF202020' end='0xFF202040' type='altera_avalon_timer.s1' /><slave name='SysID.control_slave' start='0xFF202040' end='0xFF202048' type='altera_avalon_sysid_qsys.control_slave' /><slave name='AV_Config.avalon_av_config_slave' start='0xFF203000' end='0xFF203010' type='altera_up_avalon_audio_and_video_config.avalon_av_config_slave' /><slave name='VGA_Subsystem_VGA_Pixel_RGB_Resampler.avalon_rgb_slave' start='0xFF203010' end='0xFF203014' type='altera_up_avalon_video_rgb_resampler.avalon_rgb_slave' /><slave name='VGA_Subsystem_VGA_Pixel_DMA.avalon_dma_control_slave' start='0xFF203020' end='0xFF203030' type='altera_up_avalon_video_dma_controller.avalon_dma_control_slave' /><slave name='VGA_Subsystem_Char_Buf_Subsystem_Char_Buf_DMA.avalon_dma_control_slave' start='0xFF203030' end='0xFF203040' type='altera_up_avalon_video_dma_controller.avalon_dma_control_slave' /><slave name='Audio_Subsystem_Audio.avalon_audio_slave' start='0xFF203040' end='0xFF203050' type='altera_up_avalon_audio.avalon_audio_slave' /><slave name='Video_In_Subsystem_Video_In_DMA.avalon_dma_control_slave' start='0xFF203060' end='0xFF203070' type='altera_up_avalon_video_dma_controller.avalon_dma_control_slave' /><slave name='Video_In_Subsystem_Video_In_Edge_Detection_Subsystem_Edge_Detection_Router_Controller.s1' start='0xFF203070' end='0xFF203080' type='altera_avalon_pio.s1' /><slave name='ADC.adc_slave' start='0xFF204000' end='0xFF204020' type='altera_up_avalon_adc.adc_slave' /></address-map>]]></parameter>
   <parameter name="data_master_high_performance_paddr_base" value="0" />
   <parameter name="data_master_high_performance_paddr_size" value="0" />
   <parameter name="data_master_paddr_base" value="0" />
@@ -1917,7 +1929,7 @@
   <parameter name="dataAddrWidth" value="32" />
   <parameter name="dataMasterHighPerformanceAddrWidth" value="1" />
   <parameter name="dataMasterHighPerformanceMapParam" value="" />
-  <parameter name="dataSlaveMapParam"><![CDATA[<address-map><slave name='SDRAM.s1' start='0x0' end='0x4000000' type='altera_avalon_new_sdram_controller.s1' /><slave name='GCD_Avalon_0.avalon_slave_0' start='0x4000000' end='0x4000010' type='GCD_Avalon.avalon_slave_0' /><slave name='Onchip_SRAM.s1' start='0x8000000' end='0x8040000' type='altera_avalon_onchip_memory2.s1' /><slave name='VGA_Subsystem_Char_Buf_Subsystem_Onchip_SRAM.s1' start='0x9000000' end='0x9002000' type='altera_avalon_onchip_memory2.s1' /><slave name='Nios2_2nd_Core.debug_mem_slave' start='0xA000000' end='0xA000800' type='altera_nios2_gen2.debug_mem_slave' /><slave name='ARM_A9_HPS_axi_sdram.axi_slave0' start='0x40000000' end='0x80000000' type='axi_sdram.axi_slave0' /><slave name='LEDs.s1' start='0xFF200000' end='0xFF200010' type='altera_avalon_pio.s1' /><slave name='HEX3_HEX0.s1' start='0xFF200020' end='0xFF200030' type='altera_avalon_pio.s1' /><slave name='HEX5_HEX4.s1' start='0xFF200030' end='0xFF200040' type='altera_avalon_pio.s1' /><slave name='Slider_Switches.s1' start='0xFF200040' end='0xFF200050' type='altera_avalon_pio.s1' /><slave name='Pushbuttons.s1' start='0xFF200050' end='0xFF200060' type='altera_avalon_pio.s1' /><slave name='Expansion_JP1.s1' start='0xFF200060' end='0xFF200070' type='altera_avalon_pio.s1' /><slave name='Expansion_JP2.s1' start='0xFF200070' end='0xFF200080' type='altera_avalon_pio.s1' /><slave name='PS2_Port.avalon_ps2_slave' start='0xFF200100' end='0xFF200108' type='altera_up_avalon_ps2.avalon_ps2_slave' /><slave name='PS2_Port_Dual.avalon_ps2_slave' start='0xFF200108' end='0xFF200110' type='altera_up_avalon_ps2.avalon_ps2_slave' /><slave name='JTAG_UART_2nd_Core.avalon_jtag_slave' start='0xFF201000' end='0xFF201008' type='altera_avalon_jtag_uart.avalon_jtag_slave' /><slave name='IrDA.avalon_irda_slave' start='0xFF201020' end='0xFF201028' type='altera_up_avalon_irda.avalon_irda_slave' /><slave name='Interval_Timer_2nd_Core.s1' start='0xFF202000' end='0xFF202020' type='altera_avalon_timer.s1' /><slave name='Interval_Timer_2nd_Core_2.s1' start='0xFF202020' end='0xFF202040' type='altera_avalon_timer.s1' /><slave name='SysID.control_slave' start='0xFF202040' end='0xFF202048' type='altera_avalon_sysid_qsys.control_slave' /><slave name='AV_Config.avalon_av_config_slave' start='0xFF203000' end='0xFF203010' type='altera_up_avalon_audio_and_video_config.avalon_av_config_slave' /><slave name='VGA_Subsystem_VGA_Pixel_RGB_Resampler.avalon_rgb_slave' start='0xFF203010' end='0xFF203014' type='altera_up_avalon_video_rgb_resampler.avalon_rgb_slave' /><slave name='VGA_Subsystem_VGA_Pixel_DMA.avalon_dma_control_slave' start='0xFF203020' end='0xFF203030' type='altera_up_avalon_video_dma_controller.avalon_dma_control_slave' /><slave name='VGA_Subsystem_Char_Buf_Subsystem_Char_Buf_DMA.avalon_dma_control_slave' start='0xFF203030' end='0xFF203040' type='altera_up_avalon_video_dma_controller.avalon_dma_control_slave' /><slave name='Audio_Subsystem_Audio.avalon_audio_slave' start='0xFF203040' end='0xFF203050' type='altera_up_avalon_audio.avalon_audio_slave' /><slave name='Video_In_Subsystem_Video_In_DMA.avalon_dma_control_slave' start='0xFF203060' end='0xFF203070' type='altera_up_avalon_video_dma_controller.avalon_dma_control_slave' /><slave name='Video_In_Subsystem_Video_In_Edge_Detection_Subsystem_Edge_Detection_Router_Controller.s1' start='0xFF203070' end='0xFF203080' type='altera_avalon_pio.s1' /><slave name='ADC.adc_slave' start='0xFF204000' end='0xFF204020' type='altera_up_avalon_adc.adc_slave' /></address-map>]]></parameter>
+  <parameter name="dataSlaveMapParam"><![CDATA[<address-map><slave name='SDRAM.s1' start='0x0' end='0x4000000' type='altera_avalon_new_sdram_controller.s1' /><slave name='Onchip_SRAM.s1' start='0x8000000' end='0x8040000' type='altera_avalon_onchip_memory2.s1' /><slave name='VGA_Subsystem_Char_Buf_Subsystem_Onchip_SRAM.s1' start='0x9000000' end='0x9002000' type='altera_avalon_onchip_memory2.s1' /><slave name='Nios2_2nd_Core.debug_mem_slave' start='0xA000000' end='0xA000800' type='altera_nios2_gen2.debug_mem_slave' /><slave name='ARM_A9_HPS_axi_sdram.axi_slave0' start='0x40000000' end='0x80000000' type='axi_sdram.axi_slave0' /><slave name='LEDs.s1' start='0xFF200000' end='0xFF200010' type='altera_avalon_pio.s1' /><slave name='HEX3_HEX0.s1' start='0xFF200020' end='0xFF200030' type='altera_avalon_pio.s1' /><slave name='HEX5_HEX4.s1' start='0xFF200030' end='0xFF200040' type='altera_avalon_pio.s1' /><slave name='Slider_Switches.s1' start='0xFF200040' end='0xFF200050' type='altera_avalon_pio.s1' /><slave name='Pushbuttons.s1' start='0xFF200050' end='0xFF200060' type='altera_avalon_pio.s1' /><slave name='Expansion_JP1.s1' start='0xFF200060' end='0xFF200070' type='altera_avalon_pio.s1' /><slave name='Expansion_JP2.s1' start='0xFF200070' end='0xFF200080' type='altera_avalon_pio.s1' /><slave name='PS2_Port.avalon_ps2_slave' start='0xFF200100' end='0xFF200108' type='altera_up_avalon_ps2.avalon_ps2_slave' /><slave name='PS2_Port_Dual.avalon_ps2_slave' start='0xFF200108' end='0xFF200110' type='altera_up_avalon_ps2.avalon_ps2_slave' /><slave name='JTAG_UART_2nd_Core.avalon_jtag_slave' start='0xFF201000' end='0xFF201008' type='altera_avalon_jtag_uart.avalon_jtag_slave' /><slave name='IrDA.avalon_irda_slave' start='0xFF201020' end='0xFF201028' type='altera_up_avalon_irda.avalon_irda_slave' /><slave name='Interval_Timer_2nd_Core.s1' start='0xFF202000' end='0xFF202020' type='altera_avalon_timer.s1' /><slave name='Interval_Timer_2nd_Core_2.s1' start='0xFF202020' end='0xFF202040' type='altera_avalon_timer.s1' /><slave name='SysID.control_slave' start='0xFF202040' end='0xFF202048' type='altera_avalon_sysid_qsys.control_slave' /><slave name='AV_Config.avalon_av_config_slave' start='0xFF203000' end='0xFF203010' type='altera_up_avalon_audio_and_video_config.avalon_av_config_slave' /><slave name='VGA_Subsystem_VGA_Pixel_RGB_Resampler.avalon_rgb_slave' start='0xFF203010' end='0xFF203014' type='altera_up_avalon_video_rgb_resampler.avalon_rgb_slave' /><slave name='VGA_Subsystem_VGA_Pixel_DMA.avalon_dma_control_slave' start='0xFF203020' end='0xFF203030' type='altera_up_avalon_video_dma_controller.avalon_dma_control_slave' /><slave name='VGA_Subsystem_Char_Buf_Subsystem_Char_Buf_DMA.avalon_dma_control_slave' start='0xFF203030' end='0xFF203040' type='altera_up_avalon_video_dma_controller.avalon_dma_control_slave' /><slave name='Audio_Subsystem_Audio.avalon_audio_slave' start='0xFF203040' end='0xFF203050' type='altera_up_avalon_audio.avalon_audio_slave' /><slave name='Video_In_Subsystem_Video_In_DMA.avalon_dma_control_slave' start='0xFF203060' end='0xFF203070' type='altera_up_avalon_video_dma_controller.avalon_dma_control_slave' /><slave name='Video_In_Subsystem_Video_In_Edge_Detection_Subsystem_Edge_Detection_Router_Controller.s1' start='0xFF203070' end='0xFF203080' type='altera_avalon_pio.s1' /><slave name='ADC.adc_slave' start='0xFF204000' end='0xFF204020' type='altera_up_avalon_adc.adc_slave' /></address-map>]]></parameter>
   <parameter name="data_master_high_performance_paddr_base" value="0" />
   <parameter name="data_master_high_performance_paddr_size" value="0" />
   <parameter name="data_master_paddr_base" value="0" />
@@ -2290,6 +2302,7 @@
   <parameter name="vga_clk_en" value="true" />
   <parameter name="video_in_clk_en" value="false" />
  </module>
+ <module name="gcd_avalon_0" kind="gcd_avalon" version="1.0" enabled="1" />
  <connection
    kind="avalon"
    version="18.1"
@@ -2414,24 +2427,6 @@
    end="PS2_Port_Dual.avalon_ps2_slave">
   <parameter name="arbitrationPriority" value="1" />
   <parameter name="baseAddress" value="0xff200108" />
-  <parameter name="defaultConnection" value="false" />
- </connection>
- <connection
-   kind="avalon"
-   version="18.1"
-   start="Nios2.data_master"
-   end="GCD_Avalon_0.avalon_slave_0">
-  <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x04000000" />
-  <parameter name="defaultConnection" value="false" />
- </connection>
- <connection
-   kind="avalon"
-   version="18.1"
-   start="Nios2_2nd_Core.data_master"
-   end="GCD_Avalon_0.avalon_slave_0">
-  <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x04000000" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -2970,6 +2965,15 @@
    kind="avalon"
    version="18.1"
    start="ARM_A9_HPS.h2f_lw_axi_master"
+   end="gcd_avalon_0.s0">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x0010" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="18.1"
+   start="ARM_A9_HPS.h2f_lw_axi_master"
    end="LEDs.s1">
   <parameter name="arbitrationPriority" value="1" />
   <parameter name="baseAddress" value="0x0000" />
@@ -3198,15 +3202,6 @@
    end="PS2_Port_Dual.avalon_ps2_slave">
   <parameter name="arbitrationPriority" value="1" />
   <parameter name="baseAddress" value="0xff200108" />
-  <parameter name="defaultConnection" value="false" />
- </connection>
- <connection
-   kind="avalon"
-   version="18.1"
-   start="JTAG_to_FPGA_Bridge.master"
-   end="GCD_Avalon_0.avalon_slave_0">
-  <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x04000000" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -3627,7 +3622,7 @@
    kind="clock"
    version="18.1"
    start="System_PLL.sys_clk"
-   end="GCD_Avalon_0.clock" />
+   end="gcd_avalon_0.clock" />
  <connection
    kind="clock"
    version="18.1"
@@ -4068,7 +4063,7 @@
    kind="reset"
    version="18.1"
    start="ARM_A9_HPS.h2f_reset"
-   end="GCD_Avalon_0.reset" />
+   end="gcd_avalon_0.reset" />
  <connection
    kind="reset"
    version="18.1"
@@ -4253,7 +4248,7 @@
    kind="reset"
    version="18.1"
    start="System_PLL.reset_source"
-   end="GCD_Avalon_0.reset" />
+   end="gcd_avalon_0.reset" />
  <connection
    kind="reset"
    version="18.1"

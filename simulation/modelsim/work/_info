@@ -10,34 +10,34 @@ cModel Technology
 dZ:/intelFPGA_lite/18.1
 vedge_detect
 Z0 DXx6 sv_std 3 std 0 22 AD7iAPLo6nTIKk<N0eo=D3
-Z1 !s110 1637114248
+Z1 !s110 1637133009
 !i10b 1
-!s100 C8hHC[BVSmoYQkJW0WCXc2
-Ic?RG4Ll:HRF8Sdg0Em1210
+!s100 bRJ;jTPYHoSF^Jk6RTAQm3
+IEj5KGM:AR^4J<VZH]edH>1
 Z2 VDg1SIo80bB@j0V0VzS_@n1
 Z3 !s105 gcd_avalon_sv_unit
 S1
 Z4 dZ:/git_wa/quartus/DE1_SoC_Computer/simulation/modelsim
-Z5 w1637114174
+Z5 w1637128578
 Z6 8Z:/git_wa/quartus/DE1_SoC_Computer/hdl/rtl/gcd_avalon.sv
 Z7 FZ:/git_wa/quartus/DE1_SoC_Computer/hdl/rtl/gcd_avalon.sv
-L0 128
-Z8 OV;L;10.5b;63
+Z8 L0 111
+Z9 OV;L;10.5b;63
 r1
 !s85 0
 31
-Z9 !s108 1637114248.000000
-Z10 !s107 Z:/git_wa/quartus/DE1_SoC_Computer/hdl/rtl/gcd_avalon.sv|
-Z11 !s90 -reportprogress|300|-work|work|-sv|-stats=none|Z:/git_wa/quartus/DE1_SoC_Computer/hdl/rtl/gcd_avalon.sv|
+Z10 !s108 1637133009.000000
+Z11 !s107 Z:/git_wa/quartus/DE1_SoC_Computer/hdl/rtl/gcd_avalon.sv|
+Z12 !s90 -reportprogress|300|-work|work|-sv|-stats=none|Z:/git_wa/quartus/DE1_SoC_Computer/hdl/rtl/gcd_avalon.sv|
 !i113 1
-Z12 o-work work -sv
-Z13 tCvgOpt 0
+Z13 o-work work -sv
+Z14 tCvgOpt 0
 vFF
 R0
 R1
 !i10b 1
-!s100 ?9[U4YSPEF^>DLY2l;?[60
-IZcEgPn[NDM<O2BiV`f7GG3
+!s100 ^2FCYo[;ojXf7g:3ggDk^3
+ITLg?0k609>Zj3RZXh>RfR0
 R2
 R3
 S1
@@ -45,24 +45,24 @@ R4
 R5
 R6
 R7
-L0 173
-R8
+L0 156
+R9
 r1
 !s85 0
 31
-R9
 R10
 R11
-!i113 1
 R12
+!i113 1
 R13
+R14
 n@f@f
 vgcd_avalon
 R0
 R1
 !i10b 1
-!s100 UO2QYHnKJkiPYHgkambfP1
-IC28aZ2^V1h]=[T_<<naB91
+!s100 @CP5`lb;]hGhddWm;Zk040
+IiHWok>V=LMQG1:zgCIZ=W1
 R2
 R3
 S1
@@ -71,22 +71,22 @@ R5
 R6
 R7
 L0 1
-R8
+R9
 r1
 !s85 0
 31
-R9
 R10
 R11
-!i113 1
 R12
+!i113 1
 R13
+R14
 vgcd_ci
 R0
 R1
 !i10b 1
-!s100 aXMa7];lWZh?Q=S=zhnM63
-IVVMlI<H<NbO7RiVg^_JYe3
+!s100 BTHQU>QIDSE@7Af3A^Vle1
+I50BPR5z1[CRlEME>]iA>V2
 R2
 R3
 S1
@@ -94,47 +94,47 @@ R4
 R5
 R6
 R7
-L0 56
-R8
+L0 59
+R9
 r1
 !s85 0
 31
-R9
 R10
 R11
-!i113 1
 R12
+!i113 1
 R13
+R14
 vreg32
 R0
-R1
+!s110 1637122914
 !i10b 1
-!s100 ja`Sm9o]C3P444a3@n`QW1
-IWP^ijnHm4bRFm7=C6]XM<2
+!s100 nMGkRTC<2V_`Mche:gZ<@0
+I2GnCBegf^2_[3WSMOH0`Z3
 R2
 R3
 S1
 R4
-R5
+w1637122877
 R6
 R7
-L0 108
 R8
+R9
 r1
 !s85 0
 31
-R9
-R10
+!s108 1637122914.000000
 R11
-!i113 1
 R12
+!i113 1
 R13
+R14
 vset_reset
 R0
 R1
 !i10b 1
-!s100 aWnFdkJ3egYPXL1EnGgKQ0
-IfaVL::BQ@8l>C4C1_946K3
+!s100 93L84:B_J[@1`zFhmDi4X0
+IGLU4T<@CQcom[^nmW;5P;2
 R2
 R3
 S1
@@ -142,38 +142,38 @@ R4
 R5
 R6
 R7
-L0 151
-R8
+L0 134
+R9
 r1
 !s85 0
 31
-R9
 R10
 R11
-!i113 1
 R12
+!i113 1
 R13
+R14
 vtb
 R0
 R1
 !i10b 1
-!s100 [DVO;ef348hGQ18_7LmQI2
-I4`XLJiz5VZ][m4^NicJ^^2
+!s100 E@ETi[O2TV>NKN;5Q;JKY3
+I<^91;R3YS_jRK<FH2>9FP0
 R2
 !s105 tb_sv_unit
 S1
 R4
-w1637081403
+w1637128636
 8Z:/git_wa/quartus/DE1_SoC_Computer/hdl/behav/tb.sv
 FZ:/git_wa/quartus/DE1_SoC_Computer/hdl/behav/tb.sv
 L0 2
-R8
+R9
 r1
 !s85 0
 31
-R9
+R10
 !s107 Z:/git_wa/quartus/DE1_SoC_Computer/hdl/behav/tb.sv|
 !s90 -reportprogress|300|-work|work|-sv|-stats=none|Z:/git_wa/quartus/DE1_SoC_Computer/hdl/behav/tb.sv|
 !i113 1
-R12
 R13
+R14
