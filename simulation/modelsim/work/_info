@@ -10,23 +10,23 @@ cModel Technology
 dZ:/intelFPGA_lite/18.1
 vedge_detect
 Z0 DXx6 sv_std 3 std 0 22 AD7iAPLo6nTIKk<N0eo=D3
-Z1 !s110 1637079440
+Z1 !s110 1637114248
 !i10b 1
-!s100 []fNNcik75^JSDR^HH<e>2
-I74Oi?Zl^f]enfZ?o@[iTH0
+!s100 C8hHC[BVSmoYQkJW0WCXc2
+Ic?RG4Ll:HRF8Sdg0Em1210
 Z2 VDg1SIo80bB@j0V0VzS_@n1
 Z3 !s105 gcd_avalon_sv_unit
 S1
 Z4 dZ:/git_wa/quartus/DE1_SoC_Computer/simulation/modelsim
-Z5 w1637078355
+Z5 w1637114174
 Z6 8Z:/git_wa/quartus/DE1_SoC_Computer/hdl/rtl/gcd_avalon.sv
 Z7 FZ:/git_wa/quartus/DE1_SoC_Computer/hdl/rtl/gcd_avalon.sv
-L0 136
+L0 128
 Z8 OV;L;10.5b;63
 r1
 !s85 0
 31
-Z9 !s108 1637079440.000000
+Z9 !s108 1637114248.000000
 Z10 !s107 Z:/git_wa/quartus/DE1_SoC_Computer/hdl/rtl/gcd_avalon.sv|
 Z11 !s90 -reportprogress|300|-work|work|-sv|-stats=none|Z:/git_wa/quartus/DE1_SoC_Computer/hdl/rtl/gcd_avalon.sv|
 !i113 1
@@ -36,8 +36,8 @@ vFF
 R0
 R1
 !i10b 1
-!s100 SEXNmHo7G0W2W=aP_l<^c2
-I3j`MJik_iBLoM@9Ba_=hE0
+!s100 ?9[U4YSPEF^>DLY2l;?[60
+IZcEgPn[NDM<O2BiV`f7GG3
 R2
 R3
 S1
@@ -45,7 +45,7 @@ R4
 R5
 R6
 R7
-L0 181
+L0 173
 R8
 r1
 !s85 0
@@ -61,8 +61,8 @@ vgcd_avalon
 R0
 R1
 !i10b 1
-!s100 Zdm3@RS6lK:OIn>OzD:0C0
-I4U?]`gU2`[>0b;K=zO0z<1
+!s100 UO2QYHnKJkiPYHgkambfP1
+IC28aZ2^V1h]=[T_<<naB91
 R2
 R3
 S1
@@ -85,8 +85,8 @@ vgcd_ci
 R0
 R1
 !i10b 1
-!s100 n5YXo1Dze2EbJk;jg<6J^1
-I;fenU>IK9;b=kN^1OLDe>1
+!s100 aXMa7];lWZh?Q=S=zhnM63
+IVVMlI<H<NbO7RiVg^_JYe3
 R2
 R3
 S1
@@ -94,7 +94,7 @@ R4
 R5
 R6
 R7
-L0 64
+L0 56
 R8
 r1
 !s85 0
@@ -109,8 +109,8 @@ vreg32
 R0
 R1
 !i10b 1
-!s100 f44`_UV9Wlm`OP0[OFAnz1
-I:L=TEP8m3BKIPeMJAHFc<2
+!s100 ja`Sm9o]C3P444a3@n`QW1
+IWP^ijnHm4bRFm7=C6]XM<2
 R2
 R3
 S1
@@ -118,7 +118,7 @@ R4
 R5
 R6
 R7
-L0 116
+L0 108
 R8
 r1
 !s85 0
@@ -133,8 +133,8 @@ vset_reset
 R0
 R1
 !i10b 1
-!s100 EJ`L5zKMF6znPYSe3XgAa2
-I7GSVUPbi2hRiZPSoTXPaO3
+!s100 aWnFdkJ3egYPXL1EnGgKQ0
+IfaVL::BQ@8l>C4C1_946K3
 R2
 R3
 S1
@@ -142,7 +142,7 @@ R4
 R5
 R6
 R7
-L0 159
+L0 151
 R8
 r1
 !s85 0
@@ -157,13 +157,13 @@ vtb
 R0
 R1
 !i10b 1
-!s100 mYDm2?eCeiYfMiZ0bEoi50
-I=cUFk[OFSFeNIWLYK=YPn2
+!s100 [DVO;ef348hGQ18_7LmQI2
+I4`XLJiz5VZ][m4^NicJ^^2
 R2
 !s105 tb_sv_unit
 S1
 R4
-w1637079420
+w1637081403
 8Z:/git_wa/quartus/DE1_SoC_Computer/hdl/behav/tb.sv
 FZ:/git_wa/quartus/DE1_SoC_Computer/hdl/behav/tb.sv
 L0 2

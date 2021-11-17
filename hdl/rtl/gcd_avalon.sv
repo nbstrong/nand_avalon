@@ -5,7 +5,7 @@ module gcd_avalon(clock, reset, address, readdata, writedata, read, write, bytee
     input  logic [31:0] writedata;
     output logic [31:0] readdata;
 
-    logic [31:0] rdData [0:3];
+    logic [31:0] reg_sig [0:3];
     logic [31:0] result;
     logic [31:0] status;
     logic [15:0] be;
@@ -16,14 +16,14 @@ module gcd_avalon(clock, reset, address, readdata, writedata, read, write, bytee
 
     // 32 Bit Registers
     // module reg32 (clock, reset, D, byteenable, Q);
-    reg32 GCD_A(clock, reset, writedata,                  be[3:0], rdData[0]); // OP_A
-    reg32 GCD_B(clock, reset, writedata,                  be[7:4], rdData[1]); // OP_B
-    reg32 GCD_C(clock, reset,    result,                {4{done}}, rdData[2]); // RESULT
-    reg32 GCD_S(clock, reset,    status, ({4{doneR}}|{4{wrIntR}}), rdData[3]); // STATUS
+    reg32 GCD_A(clock, reset, writedata,                  be[3:0], reg_sig[0]); // OP_A
+    reg32 GCD_B(clock, reset, writedata,                  be[7:4], reg_sig[1]); // OP_B
+    reg32 GCD_C(clock, reset,    result,                {4{done}}, reg_sig[2]); // RESULT
+    reg32 GCD_S(clock, reset,    status, ({4{doneR}}|{4{wrIntR}}), reg_sig[3]); // STATUS
 
     assign be       = (chipselect & write) ? (byteenable << address*4) : 16'h0;
-    assign readdata = rdData[address];
     assign status   = {{31{1'b0}},doneSB};
+    assign readdata = reg_sig[address];
 
     // Edge Detect
     // module edge_detect #(parameter RISING=1)(clk, clk_en, reset, in, e);
@@ -45,8 +45,8 @@ module gcd_avalon(clock, reset, address, readdata, writedata, read, write, bytee
         .reset (reset),
         .clk_en(1'b1),
         .start (wrIntR),
-        .dataa (rdData[0]),
-        .datab (rdData[1]),
+        .dataa (reg_sig[0]),
+        .datab (reg_sig[1]),
         .done  (done),
         .result(result));
 

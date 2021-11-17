@@ -1,5 +1,5 @@
 $date
-	Tue Nov 16 10:18:14 2021
+	Tue Nov 16 19:58:02 2021
 $end
 $version
 	ModelSim Version 10.5b
@@ -21,7 +21,7 @@ $var reg 32 ) rdData [31:0] $end
 
 $scope module GCD $end
 $var reg 1 * clock $end
-$var reg 1 + resetn $end
+$var reg 1 + reset $end
 $var reg 1 , read $end
 $var reg 1 - write $end
 $var reg 1 . chipselect $end
@@ -41,7 +41,7 @@ $var reg 1 ; doneSB $end
 
 $scope module GCD_A $end
 $var reg 1 < clock $end
-$var reg 1 = resetn $end
+$var reg 1 = reset $end
 $var reg 4 > byteenable [3:0] $end
 $var reg 32 ? D [31:0] $end
 $var reg 32 @ Q [31:0] $end
@@ -49,7 +49,7 @@ $upscope $end
 
 $scope module GCD_B $end
 $var reg 1 A clock $end
-$var reg 1 B resetn $end
+$var reg 1 B reset $end
 $var reg 4 C byteenable [3:0] $end
 $var reg 32 D D [31:0] $end
 $var reg 32 E Q [31:0] $end
@@ -57,7 +57,7 @@ $upscope $end
 
 $scope module GCD_C $end
 $var reg 1 F clock $end
-$var reg 1 G resetn $end
+$var reg 1 G reset $end
 $var reg 4 H byteenable [3:0] $end
 $var reg 32 I D [31:0] $end
 $var reg 32 J Q [31:0] $end
@@ -65,7 +65,7 @@ $upscope $end
 
 $scope module GCD_S $end
 $var reg 1 K clock $end
-$var reg 1 L resetn $end
+$var reg 1 L reset $end
 $var reg 4 M byteenable [3:0] $end
 $var reg 32 N D [31:0] $end
 $var reg 32 O Q [31:0] $end
@@ -147,7 +147,7 @@ b1111 '
 b0 (
 bx )
 0*
-0+
+1+
 0,
 0-
 1.
@@ -165,22 +165,22 @@ x9
 x:
 x;
 0<
-0=
+1=
 b0 >
 b0 ?
 bx @
 0A
-0B
+1B
 b0 C
-bx D
+b0 D
 bx E
 0F
-0G
+1G
 bx H
 bx I
 bx J
 0K
-0L
+1L
 bx M
 b0x N
 bx O
@@ -220,9 +220,9 @@ b1 P
 b1 ]
 b1 b
 b1 r
-1Y
 1X
 0W
+1Y
 xZ
 0[
 $end
@@ -261,10 +261,10 @@ b11011110101011011101111010101101 I
 0j
 b0 k
 b0 l
-b0 M
-b0 N
 b0 2
+b0 M
 b0 )
+b0 N
 #15
 0!
 0*
@@ -292,16 +292,16 @@ b0 )
 1s
 1W
 0"
-1+
-0Y
+0+
+0=
+0B
+0G
+0L
 0S
 0_
 0d
 0h
-1=
-1B
-1G
-1L
+0Y
 0u
 1x
 0w
@@ -392,9 +392,10 @@ b1011011 (
 1$
 1-
 b1011011 1
+b1011011 ?
+b1011011 D
 b1111 5
 b1111 >
-b1011011 ?
 #55
 0!
 0*
@@ -426,6 +427,8 @@ b10101 (
 b10101 1
 b1 /
 b11110000 5
+b10101 ?
+b10101 D
 b0 >
 b1111 C
 1T
@@ -433,7 +436,6 @@ b1111 C
 17
 b1 `
 1[
-b10101 D
 b1011011 @
 b1011011 k
 #65
@@ -814,8 +816,8 @@ b0 H
 b0 f
 b1 O
 0:
-b0 M
 b1 2
+b0 M
 b1 )
 #185
 0!
@@ -935,11 +937,12 @@ b1 (
 1-
 b1 1
 b0 /
+b1011011 2
+b1 ?
+b1 D
 b1111 5
 b1111 >
-b1011011 2
 b1011011 )
-b1 ?
 #225
 0!
 0*
@@ -969,6 +972,8 @@ b1 ?
 b1 &
 b1 /
 b11110000 5
+b10101 2
+b10101 )
 b0 >
 b1111 C
 1T
@@ -976,9 +981,6 @@ b1111 C
 17
 b1 `
 1[
-b10101 2
-b10101 )
-b1 D
 b1 @
 b1 k
 #235
@@ -1011,15 +1013,15 @@ b11 &
 0$
 0-
 b11 /
+b1 2
 b0 5
 b0 C
+b1 )
 0T
 0U
 07
 b0 `
 0[
-b1 2
-b1 )
 0\
 b1 a
 1V
@@ -1066,8 +1068,8 @@ b0 O
 08
 0v
 0j
-b0 M
 b0 2
+b0 M
 b0 )
 #255
 0!
@@ -1204,8 +1206,8 @@ b0 H
 b0 f
 b1 O
 0:
-b0 M
 b1 2
+b0 M
 b1 )
 #295
 0!
@@ -1323,9 +1325,10 @@ b10 (
 1-
 b10 1
 b0 /
+b10 ?
+b10 D
 b1111 5
 b1111 >
-b10 ?
 #335
 0!
 0*
@@ -1357,6 +1360,8 @@ b1111111111 (
 b1111111111 1
 b1 /
 b11110000 5
+b1111111111 ?
+b1111111111 D
 b0 >
 b1111 C
 1T
@@ -1364,7 +1369,6 @@ b1111 C
 17
 b1 `
 1[
-b1111111111 D
 b10 @
 b10 k
 #345
@@ -1451,8 +1455,8 @@ b0 O
 08
 0v
 0j
-b0 M
 b0 2
+b0 M
 b0 )
 #365
 0!
@@ -15253,3 +15257,350 @@ b11 p
 1W
 b1 p
 #5475
+0!
+0*
+0<
+0A
+0F
+0K
+0Q
+0^
+0c
+0g
+0s
+0W
+#5480
+1!
+1*
+1<
+1A
+1F
+1K
+1Q
+1^
+1c
+1g
+1s
+1W
+b1 o
+#5485
+0!
+0*
+0<
+0A
+0F
+0K
+0Q
+0^
+0c
+0g
+0s
+0W
+#5490
+1!
+1*
+1<
+1A
+1F
+1K
+1Q
+1^
+1c
+1g
+1s
+1W
+b0 p
+#5495
+0!
+0*
+0<
+0A
+0F
+0K
+0Q
+0^
+0c
+0g
+0s
+0W
+#5500
+1!
+1*
+1<
+1A
+1F
+1K
+1Q
+1^
+1c
+1g
+1s
+1W
+1q
+1v
+1w
+1m
+19
+b1 e
+1Z
+b1111 H
+#5505
+0!
+0*
+0<
+0A
+0F
+0K
+0Q
+0^
+0c
+0g
+0s
+0W
+#5510
+1!
+1*
+1<
+1A
+1F
+1K
+1Q
+1^
+1c
+1g
+1s
+1W
+1\
+1x
+b1 f
+1:
+0w
+1;
+b1 4
+0m
+b1111 M
+09
+b1 N
+b0 e
+0Z
+b0 H
+#5515
+0!
+0*
+0<
+0A
+0F
+0K
+0Q
+0^
+0c
+0g
+0s
+0W
+#5520
+1!
+1*
+1<
+1A
+1F
+1K
+1Q
+1^
+1c
+1g
+1s
+1W
+b0 f
+b1 O
+0:
+b1 2
+b0 M
+b1 )
+#5525
+0!
+0*
+0<
+0A
+0F
+0K
+0Q
+0^
+0c
+0g
+0s
+0W
+#5530
+1!
+1*
+1<
+1A
+1F
+1K
+1Q
+1^
+1c
+1g
+1s
+1W
+#5535
+0!
+0*
+0<
+0A
+0F
+0K
+0Q
+0^
+0c
+0g
+0s
+0W
+#5540
+1!
+1*
+1<
+1A
+1F
+1K
+1Q
+1^
+1c
+1g
+1s
+1W
+0#
+0,
+#5545
+0!
+0*
+0<
+0A
+0F
+0K
+0Q
+0^
+0c
+0g
+0s
+0W
+#5550
+1!
+1*
+1<
+1A
+1F
+1K
+1Q
+1^
+1c
+1g
+1s
+1W
+1#
+b10 &
+b10 /
+1,
+#5555
+0!
+0*
+0<
+0A
+0F
+0K
+0Q
+0^
+0c
+0g
+0s
+0W
+#5560
+1!
+1*
+1<
+1A
+1F
+1K
+1Q
+1^
+1c
+1g
+1s
+1W
+#5565
+0!
+0*
+0<
+0A
+0F
+0K
+0Q
+0^
+0c
+0g
+0s
+0W
+#5570
+1!
+1*
+1<
+1A
+1F
+1K
+1Q
+1^
+1c
+1g
+1s
+1W
+#5575
+0!
+0*
+0<
+0A
+0F
+0K
+0Q
+0^
+0c
+0g
+0s
+0W
+#5580
+1!
+1*
+1<
+1A
+1F
+1K
+1Q
+1^
+1c
+1g
+1s
+1W
+#5585
+0!
+0*
+0<
+0A
+0F
+0K
+0Q
+0^
+0c
+0g
+0s
+0W
+#5590
+1!
+1*
+1<
+1A
+1F
+1K
+1Q
+1^
+1c
+1g
+1s
+1W
