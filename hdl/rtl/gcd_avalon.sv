@@ -1,3 +1,10 @@
+/*******************************************************************************/
+// Design: GCD Calculator Avalon Slave
+//  * Wraps NIOS2 GCD Custom Instruction hardware with an Avalon compliant
+//    interface. Design supports auto-inferring of interface through
+//    Quartus Component Designer.
+// Author: Nicholas Strong
+/*******************************************************************************/
 module gcd_avalon (
         input  logic [1:0]  avs_s0_address,    // avs_s0.address
         input  logic        avs_s0_read,       //       .read
@@ -9,7 +16,7 @@ module gcd_avalon (
     );
 
     logic [31:0] from_reg [0:3];
-    logic [31:0] to_reg [0:3]; // cant stack these - simulation warnings
+    logic [31:0] to_reg [0:3]; // cant do from_reg, to_reg - simulation warnings
     logic [31:0] result, status;
     logic local_write [0:3];
     logic wrInt, done, doneSB;
@@ -54,8 +61,13 @@ module gcd_avalon (
         .result(result));
 
 endmodule
+/**endmodule********************************************************************/
 
+
+/*******************************************************************************/
 // GCD Custom Instruction
+// * Implements Euclid's algorithm via subtraction
+/*******************************************************************************/
 module gcd_ci(clk, reset, clk_en, start, dataa, datab, done, result);
     input logic clk;
     input logic reset;
@@ -100,14 +112,21 @@ module gcd_ci(clk, reset, clk_en, start, dataa, datab, done, result);
                     else begin
                         b <= b - a;
                     end
-                    //$display("a:%0d, b:%0d result:%0h done:%0h",a, b, result, done);
                 end
             end
         end
     end
 endmodule
+/**endmodule********************************************************************/
 
+
+/*******************************************************************************/
 // Edge Detect
+// * Supports rising and falling edges
+// * May produce incorrect edges off reset.
+// * TODO: Add parameterized initial value.
+// * TODO: Add logic to prevent reset edges (hint: xor)
+/*******************************************************************************/
 module edge_detect #(parameter RISING=1)(clk, clk_en, reset, in, e);
     input  logic clk;
     input  logic clk_en;
@@ -129,15 +148,21 @@ module edge_detect #(parameter RISING=1)(clk, clk_en, reset, in, e);
 
     assign e = RISING ? (~tmp & in) : (tmp & ~in);
 endmodule
+/**endmodule********************************************************************/
 
-// Set Clear FF
+
+/*******************************************************************************/
+// Set Reset FF
+// * Also called a sticky bit
+// * Intended to be used for custom instruction, thus the clk_en. Was not.
+/*******************************************************************************/
 module set_reset(clk, clk_en, reset, en, clr, out);
-    input  clk;
-    input  clk_en;
-    input  reset;
-    input  en;
-  	input  clr;
-    output reg out;
+    input  logic clk;
+    input  logic clk_en;
+    input  logic reset;
+    input  logic en;
+  	input  logic clr;
+    output logic out;
 
     always @(posedge clk)
     begin
@@ -151,8 +176,14 @@ module set_reset(clk, clk_en, reset, en, clr, out);
         end
     end
 endmodule
+/**endmodule********************************************************************/
 
+
+/*******************************************************************************/
  // Flip Flop
+ // * Width customizable flip flop with en
+ // * TODO: Add parameterized initial value.
+ /*******************************************************************************/
 module FF (clk, reset, en, d, q);
     parameter WIDTH = 1;
     input  logic clk;
@@ -172,4 +203,4 @@ module FF (clk, reset, en, d, q);
             q <= q;
     end
 endmodule
-
+/**endmodule********************************************************************/
