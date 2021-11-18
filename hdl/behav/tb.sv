@@ -1,7 +1,7 @@
 // Testbench
 module tb;
 
-  logic clk, rst, rd, wr, cs;
+  logic clk, rst, rd, wr, cs, doneInt;
   logic [1:0] addr;
   logic [3:0] be;
   logic [31:0] wrData, rdData;
@@ -13,6 +13,7 @@ module tb;
     .avs_s0_readdata(rdData),
     .avs_s0_write(wr),
     .avs_s0_writedata(wrData),
+    .ins_irq0_irq(doneInt),
     .csi_clk(clk),
     .rsi_reset(rst)
   );

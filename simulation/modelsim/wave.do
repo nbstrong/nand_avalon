@@ -6,6 +6,7 @@ add wave -noupdate -radix unsigned /tb/rst
 add wave -noupdate -radix unsigned /tb/rd
 add wave -noupdate -radix unsigned /tb/wr
 add wave -noupdate -radix unsigned /tb/cs
+add wave -noupdate /tb/doneInt
 add wave -noupdate -radix unsigned /tb/addr
 add wave -noupdate -radix unsigned /tb/be
 add wave -noupdate -radix unsigned /tb/wrData
@@ -41,4 +42,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ps
 update
-WaveRestoreZoom {0 ps} {419 ps}
+WaveRestoreZoom {5192 ps} {5611 ps}

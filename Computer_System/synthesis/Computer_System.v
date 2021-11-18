@@ -732,6 +732,7 @@ module Computer_System (
 	wire          irq_mapper_receiver1_irq;                                                              // PS2_Port:irq -> [irq_mapper:receiver1_irq, irq_mapper_002:receiver1_irq, irq_mapper_003:receiver1_irq]
 	wire          irq_mapper_receiver2_irq;                                                              // PS2_Port_Dual:irq -> [irq_mapper:receiver2_irq, irq_mapper_002:receiver2_irq, irq_mapper_003:receiver2_irq]
 	wire          irq_mapper_receiver4_irq;                                                              // Pushbuttons:irq -> [irq_mapper:receiver4_irq, irq_mapper_002:receiver4_irq, irq_mapper_003:receiver4_irq]
+	wire          irq_mapper_receiver10_irq;                                                             // gcd_avalon_0:ins_irq0_irq -> [irq_mapper:receiver10_irq, irq_mapper_002:receiver10_irq, irq_mapper_003:receiver10_irq]
 	wire          rst_controller_reset_out_reset;                                                        // rst_controller:reset_out -> [ADC:reset, AV_Config:reset, Char_DMA_Addr_Translation:reset, Expansion_JP1:reset_n, Expansion_JP2:reset_n, F2H_Mem_Window_00000000:reset, F2H_Mem_Window_FF600000:reset, F2H_Mem_Window_FF800000:reset, HEX3_HEX0:reset_n, HEX5_HEX4:reset_n, Interval_Timer:reset_n, Interval_Timer_2:reset_n, Interval_Timer_2nd_Core:reset_n, Interval_Timer_2nd_Core_2:reset_n, IrDA:reset, JTAG_UART:rst_n, JTAG_UART_2nd_Core:rst_n, JTAG_UART_for_ARM_0:rst_n, JTAG_UART_for_ARM_1:rst_n, LEDs:reset_n, Onchip_SRAM:reset, PS2_Port:reset, PS2_Port_Dual:reset, Pixel_DMA_Addr_Translation:reset, Pushbuttons:reset_n, SDRAM:reset_n, Slider_Switches:reset_n, SysID:reset_n, Video_In_DMA_Addr_Translation:reset, gcd_avalon_0:rsi_reset, mm_interconnect_0:JTAG_to_FPGA_Bridge_clk_reset_reset_bridge_in_reset_reset, mm_interconnect_0:Video_In_DMA_Addr_Translation_reset_reset_bridge_in_reset_reset, mm_interconnect_1:F2H_Mem_Window_00000000_reset_reset_bridge_in_reset_reset, mm_interconnect_1:JTAG_to_HPS_Bridge_clk_reset_reset_bridge_in_reset_reset, rst_translator:in_reset]
 	wire          rst_controller_reset_out_reset_req;                                                    // rst_controller:reset_req -> [Onchip_SRAM:reset_req, rst_translator:reset_req_in]
 	wire          arm_a9_hps_h2f_reset_reset;                                                            // ARM_A9_HPS:h2f_rst_n -> [rst_controller:reset_in0, rst_controller_001:reset_in0, rst_controller_002:reset_in0, rst_controller_003:reset_in0, rst_controller_004:reset_in1, rst_controller_005:reset_in1, rst_controller_006:reset_in0, rst_controller_007:reset_in0, rst_controller_008:reset_in0]
@@ -1693,7 +1694,8 @@ module Computer_System (
 		.avs_s0_write     (mm_interconnect_0_gcd_avalon_0_s0_write),     //      .write
 		.avs_s0_writedata (mm_interconnect_0_gcd_avalon_0_s0_writedata), //      .writedata
 		.csi_clk          (system_pll_sys_clk_clk),                      // clock.clk
-		.rsi_reset        (rst_controller_reset_out_reset)               // reset.reset
+		.rsi_reset        (rst_controller_reset_out_reset),              // reset.reset
+		.ins_irq0_irq     (irq_mapper_receiver10_irq)                    //  irq0.irq
 	);
 
 	altera_customins_master_translator #(
@@ -2457,19 +2459,20 @@ module Computer_System (
 	);
 
 	Computer_System_irq_mapper irq_mapper (
-		.clk           (),                         //       clk.clk
-		.reset         (),                         // clk_reset.reset
-		.receiver0_irq (irq_mapper_receiver0_irq), // receiver0.irq
-		.receiver1_irq (irq_mapper_receiver1_irq), // receiver1.irq
-		.receiver2_irq (irq_mapper_receiver2_irq), // receiver2.irq
-		.receiver3_irq (irq_mapper_receiver3_irq), // receiver3.irq
-		.receiver4_irq (irq_mapper_receiver4_irq), // receiver4.irq
-		.receiver5_irq (irq_mapper_receiver5_irq), // receiver5.irq
-		.receiver6_irq (irq_mapper_receiver6_irq), // receiver6.irq
-		.receiver7_irq (irq_mapper_receiver7_irq), // receiver7.irq
-		.receiver8_irq (irq_mapper_receiver8_irq), // receiver8.irq
-		.receiver9_irq (irq_mapper_receiver9_irq), // receiver9.irq
-		.sender_irq    (arm_a9_hps_f2h_irq0_irq)   //    sender.irq
+		.clk            (),                          //        clk.clk
+		.reset          (),                          //  clk_reset.reset
+		.receiver0_irq  (irq_mapper_receiver0_irq),  //  receiver0.irq
+		.receiver1_irq  (irq_mapper_receiver1_irq),  //  receiver1.irq
+		.receiver2_irq  (irq_mapper_receiver2_irq),  //  receiver2.irq
+		.receiver3_irq  (irq_mapper_receiver3_irq),  //  receiver3.irq
+		.receiver4_irq  (irq_mapper_receiver4_irq),  //  receiver4.irq
+		.receiver5_irq  (irq_mapper_receiver5_irq),  //  receiver5.irq
+		.receiver6_irq  (irq_mapper_receiver6_irq),  //  receiver6.irq
+		.receiver7_irq  (irq_mapper_receiver7_irq),  //  receiver7.irq
+		.receiver8_irq  (irq_mapper_receiver8_irq),  //  receiver8.irq
+		.receiver9_irq  (irq_mapper_receiver9_irq),  //  receiver9.irq
+		.receiver10_irq (irq_mapper_receiver10_irq), // receiver10.irq
+		.sender_irq     (arm_a9_hps_f2h_irq0_irq)    //     sender.irq
 	);
 
 	Computer_System_irq_mapper_001 irq_mapper_001 (
@@ -2480,35 +2483,37 @@ module Computer_System (
 	);
 
 	Computer_System_irq_mapper irq_mapper_002 (
-		.clk           (system_pll_sys_clk_clk),             //       clk.clk
-		.reset         (rst_controller_004_reset_out_reset), // clk_reset.reset
-		.receiver0_irq (irq_mapper_receiver0_irq),           // receiver0.irq
-		.receiver1_irq (irq_mapper_receiver1_irq),           // receiver1.irq
-		.receiver2_irq (irq_mapper_receiver2_irq),           // receiver2.irq
-		.receiver3_irq (irq_mapper_receiver3_irq),           // receiver3.irq
-		.receiver4_irq (irq_mapper_receiver4_irq),           // receiver4.irq
-		.receiver5_irq (irq_mapper_receiver5_irq),           // receiver5.irq
-		.receiver6_irq (irq_mapper_receiver6_irq),           // receiver6.irq
-		.receiver7_irq (irq_mapper_002_receiver7_irq),       // receiver7.irq
-		.receiver8_irq (irq_mapper_receiver8_irq),           // receiver8.irq
-		.receiver9_irq (irq_mapper_receiver9_irq),           // receiver9.irq
-		.sender_irq    (nios2_irq_irq)                       //    sender.irq
+		.clk            (system_pll_sys_clk_clk),             //        clk.clk
+		.reset          (rst_controller_004_reset_out_reset), //  clk_reset.reset
+		.receiver0_irq  (irq_mapper_receiver0_irq),           //  receiver0.irq
+		.receiver1_irq  (irq_mapper_receiver1_irq),           //  receiver1.irq
+		.receiver2_irq  (irq_mapper_receiver2_irq),           //  receiver2.irq
+		.receiver3_irq  (irq_mapper_receiver3_irq),           //  receiver3.irq
+		.receiver4_irq  (irq_mapper_receiver4_irq),           //  receiver4.irq
+		.receiver5_irq  (irq_mapper_receiver5_irq),           //  receiver5.irq
+		.receiver6_irq  (irq_mapper_receiver6_irq),           //  receiver6.irq
+		.receiver7_irq  (irq_mapper_002_receiver7_irq),       //  receiver7.irq
+		.receiver8_irq  (irq_mapper_receiver8_irq),           //  receiver8.irq
+		.receiver9_irq  (irq_mapper_receiver9_irq),           //  receiver9.irq
+		.receiver10_irq (irq_mapper_receiver10_irq),          // receiver10.irq
+		.sender_irq     (nios2_irq_irq)                       //     sender.irq
 	);
 
 	Computer_System_irq_mapper irq_mapper_003 (
-		.clk           (system_pll_sys_clk_clk),             //       clk.clk
-		.reset         (rst_controller_005_reset_out_reset), // clk_reset.reset
-		.receiver0_irq (irq_mapper_receiver0_irq),           // receiver0.irq
-		.receiver1_irq (irq_mapper_receiver1_irq),           // receiver1.irq
-		.receiver2_irq (irq_mapper_receiver2_irq),           // receiver2.irq
-		.receiver3_irq (irq_mapper_receiver3_irq),           // receiver3.irq
-		.receiver4_irq (irq_mapper_receiver4_irq),           // receiver4.irq
-		.receiver5_irq (irq_mapper_receiver5_irq),           // receiver5.irq
-		.receiver6_irq (irq_mapper_receiver6_irq),           // receiver6.irq
-		.receiver7_irq (irq_mapper_003_receiver7_irq),       // receiver7.irq
-		.receiver8_irq (irq_mapper_003_receiver8_irq),       // receiver8.irq
-		.receiver9_irq (irq_mapper_003_receiver9_irq),       // receiver9.irq
-		.sender_irq    (nios2_2nd_core_irq_irq)              //    sender.irq
+		.clk            (system_pll_sys_clk_clk),             //        clk.clk
+		.reset          (rst_controller_005_reset_out_reset), //  clk_reset.reset
+		.receiver0_irq  (irq_mapper_receiver0_irq),           //  receiver0.irq
+		.receiver1_irq  (irq_mapper_receiver1_irq),           //  receiver1.irq
+		.receiver2_irq  (irq_mapper_receiver2_irq),           //  receiver2.irq
+		.receiver3_irq  (irq_mapper_receiver3_irq),           //  receiver3.irq
+		.receiver4_irq  (irq_mapper_receiver4_irq),           //  receiver4.irq
+		.receiver5_irq  (irq_mapper_receiver5_irq),           //  receiver5.irq
+		.receiver6_irq  (irq_mapper_receiver6_irq),           //  receiver6.irq
+		.receiver7_irq  (irq_mapper_003_receiver7_irq),       //  receiver7.irq
+		.receiver8_irq  (irq_mapper_003_receiver8_irq),       //  receiver8.irq
+		.receiver9_irq  (irq_mapper_003_receiver9_irq),       //  receiver9.irq
+		.receiver10_irq (irq_mapper_receiver10_irq),          // receiver10.irq
+		.sender_irq     (nios2_2nd_core_irq_irq)              //     sender.irq
 	);
 
 	altera_reset_controller #(

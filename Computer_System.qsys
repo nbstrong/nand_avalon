@@ -121,6 +121,22 @@
          type = "String";
       }
    }
+   element Computer_System
+   {
+      datum _originalDeviceFamily
+      {
+         value = "Cyclone V";
+         type = "String";
+      }
+   }
+   element Computer_System
+   {
+      datum _originalDeviceFamily
+      {
+         value = "Cyclone V";
+         type = "String";
+      }
+   }
    element Expansion_JP1
    {
       datum _sortIndex
@@ -1411,9 +1427,9 @@
    kind="Audio_Subsystem"
    version="1.0"
    enabled="1">
-  <parameter name="AUTO_AUDIO_PLL_REF_CLK_CLOCK_DOMAIN" value="2" />
+  <parameter name="AUTO_AUDIO_PLL_REF_CLK_CLOCK_DOMAIN" value="3" />
   <parameter name="AUTO_AUDIO_PLL_REF_CLK_CLOCK_RATE" value="0" />
-  <parameter name="AUTO_AUDIO_PLL_REF_CLK_RESET_DOMAIN" value="2" />
+  <parameter name="AUTO_AUDIO_PLL_REF_CLK_RESET_DOMAIN" value="3" />
   <parameter name="AUTO_DEVICE" value="5CSEMA5F31C6" />
   <parameter name="AUTO_DEVICE_FAMILY" value="Cyclone V" />
   <parameter name="AUTO_DEVICE_SPEEDGRADE" value="6" />
@@ -1421,7 +1437,7 @@
   <parameter name="AUTO_SYS_CLK_CLOCK_DOMAIN" value="13" />
   <parameter name="AUTO_SYS_CLK_CLOCK_RATE" value="100000000" />
   <parameter name="AUTO_SYS_CLK_RESET_DOMAIN" value="13" />
-  <parameter name="AUTO_UNIQUE_ID">$${FILENAME}_Audio_Subsystem</parameter>
+  <parameter name="AUTO_UNIQUE_ID">Computer_System_Audio_Subsystem</parameter>
  </module>
  <module
    name="Char_DMA_Addr_Translation"
@@ -1793,7 +1809,7 @@
   <parameter name="instruction_master_high_performance_paddr_size" value="0" />
   <parameter name="instruction_master_paddr_base" value="0" />
   <parameter name="instruction_master_paddr_size" value="0" />
-  <parameter name="internalIrqMaskSystemInfo" value="8395719" />
+  <parameter name="internalIrqMaskSystemInfo" value="8395727" />
   <parameter name="io_regionbase" value="0" />
   <parameter name="io_regionsize" value="0" />
   <parameter name="master_addr_map" value="false" />
@@ -1975,7 +1991,7 @@
   <parameter name="instruction_master_high_performance_paddr_size" value="0" />
   <parameter name="instruction_master_paddr_base" value="0" />
   <parameter name="instruction_master_paddr_size" value="0" />
-  <parameter name="internalIrqMaskSystemInfo" value="8395719" />
+  <parameter name="internalIrqMaskSystemInfo" value="8395727" />
   <parameter name="io_regionbase" value="0" />
   <parameter name="io_regionsize" value="0" />
   <parameter name="master_addr_map" value="false" />
@@ -2107,7 +2123,7 @@
    version="18.1"
    enabled="1">
   <parameter name="allowInSystemMemoryContentEditor" value="false" />
-  <parameter name="autoInitializationFileName">$${FILENAME}_Onchip_SRAM</parameter>
+  <parameter name="autoInitializationFileName">Computer_System_Onchip_SRAM</parameter>
   <parameter name="blockType" value="AUTO" />
   <parameter name="copyInitFile" value="false" />
   <parameter name="dataWidth" value="32" />
@@ -2190,7 +2206,7 @@
   <parameter name="casLatency" value="3" />
   <parameter name="clockRate" value="100000000" />
   <parameter name="columnWidth" value="10" />
-  <parameter name="componentName" value="$${FILENAME}_SDRAM" />
+  <parameter name="componentName">Computer_System_SDRAM</parameter>
   <parameter name="dataWidth" value="16" />
   <parameter name="generateSimulationModel" value="true" />
   <parameter name="initNOPDelay" value="0.0" />
@@ -2256,7 +2272,7 @@
   <parameter name="AUTO_SYS_CLK_CLOCK_DOMAIN" value="13" />
   <parameter name="AUTO_SYS_CLK_CLOCK_RATE" value="100000000" />
   <parameter name="AUTO_SYS_CLK_RESET_DOMAIN" value="13" />
-  <parameter name="AUTO_UNIQUE_ID">$${FILENAME}_VGA_Subsystem</parameter>
+  <parameter name="AUTO_UNIQUE_ID">Computer_System_VGA_Subsystem</parameter>
   <parameter name="AUTO_VGA_CLK_CLOCK_DOMAIN" value="15" />
   <parameter name="AUTO_VGA_CLK_CLOCK_RATE" value="25000000" />
   <parameter name="AUTO_VGA_CLK_RESET_DOMAIN" value="15" />
@@ -2302,7 +2318,7 @@
   <parameter name="vga_clk_en" value="true" />
   <parameter name="video_in_clk_en" value="false" />
  </module>
- <module name="gcd_avalon_0" kind="gcd_avalon" version="1.0" enabled="1" />
+ <module name="gcd_avalon_0" kind="gcd_avalon" version="1.2" enabled="1" />
  <connection
    kind="avalon"
    version="18.1"
@@ -3731,6 +3747,13 @@
  <connection
    kind="interrupt"
    version="18.1"
+   start="ARM_A9_HPS.f2h_irq0"
+   end="gcd_avalon_0.irq0">
+  <parameter name="irqNumber" value="3" />
+ </connection>
+ <connection
+   kind="interrupt"
+   version="18.1"
    start="ARM_A9_HPS.f2h_irq1"
    end="JTAG_UART_for_ARM_1.irq">
   <parameter name="irqNumber" value="8" />
@@ -3870,6 +3893,20 @@
    start="Nios2_2nd_Core.irq"
    end="Interval_Timer_2nd_Core_2.irq">
   <parameter name="irqNumber" value="2" />
+ </connection>
+ <connection
+   kind="interrupt"
+   version="18.1"
+   start="Nios2_2nd_Core.irq"
+   end="gcd_avalon_0.irq0">
+  <parameter name="irqNumber" value="3" />
+ </connection>
+ <connection
+   kind="interrupt"
+   version="18.1"
+   start="Nios2.irq"
+   end="gcd_avalon_0.irq0">
+  <parameter name="irqNumber" value="3" />
  </connection>
  <connection
    kind="nios_custom_instruction"
