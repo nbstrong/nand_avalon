@@ -11,15 +11,9 @@
 */
 
 extern volatile int gcd_done;
-extern volatile int tick;
-extern volatile int key_dir;
-extern volatile int pattern;
 
 void config_interrupt(int N, int CPU_target);
 void GCD_Avalon_ISR(void);
-void HPS_timer_ISR(void);
-void interval_timer_ISR(void);
-void pushbutton_ISR(void);
 
 // Define the IRQ exception handler
 void __attribute__((interrupt)) __cs3_isr_irq(void)
@@ -30,13 +24,6 @@ void __attribute__((interrupt)) __cs3_isr_irq(void)
 
     if (int_ID == GCD_AVALON_IRQ) // check if interrupt is from the GCD Avalon
         GCD_Avalon_ISR();
-    else if (int_ID == HPS_TIMER0_IRQ) // check if interrupt is from the HPS timer
-        HPS_timer_ISR();
-    else if (int_ID ==
-             INTERVAL_TIMER_IRQ) // check if interrupt is from the Altera timer
-        interval_timer_ISR();
-    else if (int_ID == KEYS_IRQ) // check if interrupt is from the KEYs
-        pushbutton_ISR();
     else
         while (1)
             ; // if unexpected, then stay here
@@ -119,13 +106,6 @@ void config_GIC(void)
 {
     int address; // used to calculate register addresses
 
-    /* configure the HPS timer interrupt */
-    config_interrupt(HPS_TIMER0_IRQ, 1);
-
-    /* configure the FPGA interval timer and KEYs interrupts */
-    config_interrupt(INTERVAL_TIMER_IRQ, 1);
-    config_interrupt(KEYS_IRQ, 1);
-
     /* configure GCD_Avalon */
     config_interrupt(GCD_AVALON_IRQ, 1);
 
@@ -182,72 +162,7 @@ void GCD_Avalon_ISR()
 {
     volatile int tmp;
     gcd_done = 1;
-    printf(" T!");
+    printf("!T!");
     tmp = *((volatile int*) 0xFF200010+3); // Clear interrupt
-    return;
-}
-
-/******************************************************************************
- * HPS timer0 interrupt service routine
- *
- * This code increments the tick variable, and clears the interrupt
- *****************************************************************************/
-void HPS_timer_ISR()
-{
-    volatile int * HPS_timer_ptr = (int *)HPS_TIMER0_BASE; // HPS timer address
-
-    ++tick; // used by main program
-
-    *(HPS_timer_ptr + 3); // Read timer end of interrupt register to
-                          // clear the interrupt
-    return;
-}
-
-/*****************************************************************************
- * Interval timer interrupt service routine
- *
- * Shifts a PATTERN being displayed on the LED lights. The shift direction
- * is determined by the external variable key_dir.
- *
-******************************************************************************/
-void interval_timer_ISR()
-{
-    volatile int * interval_timer_ptr = (int *)TIMER_BASE;
-    volatile int * LED_ptr            = (int *)LED_BASE; // LED address
-
-    *(interval_timer_ptr) = 0; // Clear the interrupt
-
-    *(LED_ptr) = pattern; // Display pattern on LED
-
-    /* rotate the pattern shown on the LED lights */
-    if (key_dir == 0) // for 0 rotate left
-        if (pattern & 0x80000000)
-            pattern = (pattern << 1) | 1;
-        else
-            pattern = pattern << 1;
-    else // rotate right
-        if (pattern & 0x00000001)
-        pattern = (pattern >> 1) | 0x80000000;
-    else
-        pattern = (pattern >> 1) & 0x7FFFFFFF;
-
-    return;
-}
-
-/***************************************************************************************
- * Pushbutton - Interrupt Service Routine
- *
- * This routine toggles the key_dir variable from 0 <-> 1
-****************************************************************************************/
-void pushbutton_ISR(void)
-{
-    volatile int * KEY_ptr = (int *)KEY_BASE;
-    int            press;
-
-    press          = *(KEY_ptr + 3); // read the pushbutton interrupt register
-    *(KEY_ptr + 3) = press;          // Clear the interrupt
-
-    key_dir ^= 1; // Toggle key_dir value
-
     return;
 }
