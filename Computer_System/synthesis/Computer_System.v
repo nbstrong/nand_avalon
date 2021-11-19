@@ -134,7 +134,7 @@ module Computer_System (
 		input  wire        video_pll_ref_reset_reset        //  video_pll_ref_reset.reset
 	);
 
-	wire          system_pll_sys_clk_clk;                                                                // System_PLL:sys_clk_clk -> [ADC:clock, ARM_A9_HPS:f2h_axi_clk, ARM_A9_HPS:h2f_axi_clk, ARM_A9_HPS:h2f_lw_axi_clk, AV_Config:clk, Audio_Subsystem:sys_clk_clk, Char_DMA_Addr_Translation:clk, Expansion_JP1:clk, Expansion_JP2:clk, F2H_Mem_Window_00000000:clk, F2H_Mem_Window_FF600000:clk, F2H_Mem_Window_FF800000:clk, HEX3_HEX0:clk, HEX5_HEX4:clk, Interval_Timer:clk, Interval_Timer_2:clk, Interval_Timer_2nd_Core:clk, Interval_Timer_2nd_Core_2:clk, IrDA:clk, JTAG_UART:clk, JTAG_UART_2nd_Core:clk, JTAG_UART_for_ARM_0:clk, JTAG_UART_for_ARM_1:clk, JTAG_to_FPGA_Bridge:clk_clk, JTAG_to_HPS_Bridge:clk_clk, LEDs:clk, Nios2:clk, Nios2_2nd_Core:clk, Onchip_SRAM:clk, PS2_Port:clk, PS2_Port_Dual:clk, Pixel_DMA_Addr_Translation:clk, Pushbuttons:clk, SDRAM:clk, Slider_Switches:clk, SysID:clock, VGA_Subsystem:sys_clk_clk, Video_In_DMA_Addr_Translation:clk, Video_In_Subsystem:sys_clk_clk, irq_mapper_002:clk, irq_mapper_003:clk, mm_interconnect_0:System_PLL_sys_clk_clk, mm_interconnect_1:System_PLL_sys_clk_clk, rst_controller:clk, rst_controller_004:clk, rst_controller_005:clk, rst_controller_008:clk]
+	wire          system_pll_sys_clk_clk;                                                                // System_PLL:sys_clk_clk -> [ADC:clock, ARM_A9_HPS:f2h_axi_clk, ARM_A9_HPS:h2f_axi_clk, ARM_A9_HPS:h2f_lw_axi_clk, AV_Config:clk, Audio_Subsystem:sys_clk_clk, Char_DMA_Addr_Translation:clk, Expansion_JP1:clk, Expansion_JP2:clk, F2H_Mem_Window_00000000:clk, F2H_Mem_Window_FF600000:clk, F2H_Mem_Window_FF800000:clk, HEX3_HEX0:clk, HEX5_HEX4:clk, Interval_Timer:clk, Interval_Timer_2:clk, Interval_Timer_2nd_Core:clk, Interval_Timer_2nd_Core_2:clk, IrDA:clk, JTAG_UART:clk, JTAG_UART_2nd_Core:clk, JTAG_UART_for_ARM_0:clk, JTAG_UART_for_ARM_1:clk, JTAG_to_FPGA_Bridge:clk_clk, JTAG_to_HPS_Bridge:clk_clk, LEDs:clk, Nios2:clk, Nios2_2nd_Core:clk, Onchip_SRAM:clk, PS2_Port:clk, PS2_Port_Dual:clk, Pixel_DMA_Addr_Translation:clk, Pushbuttons:clk, SDRAM:clk, Slider_Switches:clk, SysID:clock, VGA_Subsystem:sys_clk_clk, Video_In_DMA_Addr_Translation:clk, Video_In_Subsystem:sys_clk_clk, gcd_avalon_0:csi_clk, irq_mapper_002:clk, irq_mapper_003:clk, mm_interconnect_0:System_PLL_sys_clk_clk, mm_interconnect_1:System_PLL_sys_clk_clk, rst_controller:clk, rst_controller_004:clk, rst_controller_005:clk, rst_controller_008:clk]
 	wire          video_pll_vga_clk_clk;                                                                 // Video_PLL:vga_clk_clk -> VGA_Subsystem:vga_clk_clk
 	wire          video_pll_reset_source_reset;                                                          // Video_PLL:reset_source_reset -> VGA_Subsystem:vga_reset_reset_n
 	wire   [31:0] nios2_custom_instruction_master_multi_dataa;                                           // Nios2:A_ci_multi_dataa -> Nios2_custom_instruction_master_translator:ci_slave_multi_dataa
@@ -607,6 +607,11 @@ module Computer_System (
 	wire          mm_interconnect_0_jtag_uart_for_arm_1_avalon_jtag_slave_read;                          // mm_interconnect_0:JTAG_UART_for_ARM_1_avalon_jtag_slave_read -> JTAG_UART_for_ARM_1:av_read_n
 	wire          mm_interconnect_0_jtag_uart_for_arm_1_avalon_jtag_slave_write;                         // mm_interconnect_0:JTAG_UART_for_ARM_1_avalon_jtag_slave_write -> JTAG_UART_for_ARM_1:av_write_n
 	wire   [31:0] mm_interconnect_0_jtag_uart_for_arm_1_avalon_jtag_slave_writedata;                     // mm_interconnect_0:JTAG_UART_for_ARM_1_avalon_jtag_slave_writedata -> JTAG_UART_for_ARM_1:av_writedata
+	wire   [31:0] mm_interconnect_0_gcd_avalon_0_s0_readdata;                                            // gcd_avalon_0:avs_s0_readdata -> mm_interconnect_0:gcd_avalon_0_s0_readdata
+	wire    [1:0] mm_interconnect_0_gcd_avalon_0_s0_address;                                             // mm_interconnect_0:gcd_avalon_0_s0_address -> gcd_avalon_0:avs_s0_address
+	wire          mm_interconnect_0_gcd_avalon_0_s0_read;                                                // mm_interconnect_0:gcd_avalon_0_s0_read -> gcd_avalon_0:avs_s0_read
+	wire          mm_interconnect_0_gcd_avalon_0_s0_write;                                               // mm_interconnect_0:gcd_avalon_0_s0_write -> gcd_avalon_0:avs_s0_write
+	wire   [31:0] mm_interconnect_0_gcd_avalon_0_s0_writedata;                                           // mm_interconnect_0:gcd_avalon_0_s0_writedata -> gcd_avalon_0:avs_s0_writedata
 	wire   [31:0] mm_interconnect_0_pixel_dma_addr_translation_slave_readdata;                           // Pixel_DMA_Addr_Translation:slave_readdata -> mm_interconnect_0:Pixel_DMA_Addr_Translation_slave_readdata
 	wire          mm_interconnect_0_pixel_dma_addr_translation_slave_waitrequest;                        // Pixel_DMA_Addr_Translation:slave_waitrequest -> mm_interconnect_0:Pixel_DMA_Addr_Translation_slave_waitrequest
 	wire    [1:0] mm_interconnect_0_pixel_dma_addr_translation_slave_address;                            // mm_interconnect_0:Pixel_DMA_Addr_Translation_slave_address -> Pixel_DMA_Addr_Translation:slave_address
@@ -727,7 +732,8 @@ module Computer_System (
 	wire          irq_mapper_receiver1_irq;                                                              // PS2_Port:irq -> [irq_mapper:receiver1_irq, irq_mapper_002:receiver1_irq, irq_mapper_003:receiver1_irq]
 	wire          irq_mapper_receiver2_irq;                                                              // PS2_Port_Dual:irq -> [irq_mapper:receiver2_irq, irq_mapper_002:receiver2_irq, irq_mapper_003:receiver2_irq]
 	wire          irq_mapper_receiver4_irq;                                                              // Pushbuttons:irq -> [irq_mapper:receiver4_irq, irq_mapper_002:receiver4_irq, irq_mapper_003:receiver4_irq]
-	wire          rst_controller_reset_out_reset;                                                        // rst_controller:reset_out -> [ADC:reset, AV_Config:reset, Char_DMA_Addr_Translation:reset, Expansion_JP1:reset_n, Expansion_JP2:reset_n, F2H_Mem_Window_00000000:reset, F2H_Mem_Window_FF600000:reset, F2H_Mem_Window_FF800000:reset, HEX3_HEX0:reset_n, HEX5_HEX4:reset_n, Interval_Timer:reset_n, Interval_Timer_2:reset_n, Interval_Timer_2nd_Core:reset_n, Interval_Timer_2nd_Core_2:reset_n, IrDA:reset, JTAG_UART:rst_n, JTAG_UART_2nd_Core:rst_n, JTAG_UART_for_ARM_0:rst_n, JTAG_UART_for_ARM_1:rst_n, LEDs:reset_n, Onchip_SRAM:reset, PS2_Port:reset, PS2_Port_Dual:reset, Pixel_DMA_Addr_Translation:reset, Pushbuttons:reset_n, SDRAM:reset_n, Slider_Switches:reset_n, SysID:reset_n, Video_In_DMA_Addr_Translation:reset, mm_interconnect_0:JTAG_to_FPGA_Bridge_clk_reset_reset_bridge_in_reset_reset, mm_interconnect_0:Video_In_DMA_Addr_Translation_reset_reset_bridge_in_reset_reset, mm_interconnect_1:F2H_Mem_Window_00000000_reset_reset_bridge_in_reset_reset, mm_interconnect_1:JTAG_to_HPS_Bridge_clk_reset_reset_bridge_in_reset_reset, rst_translator:in_reset]
+	wire          irq_mapper_receiver10_irq;                                                             // gcd_avalon_0:ins_irq0_irq -> [irq_mapper:receiver10_irq, irq_mapper_002:receiver10_irq, irq_mapper_003:receiver10_irq]
+	wire          rst_controller_reset_out_reset;                                                        // rst_controller:reset_out -> [ADC:reset, AV_Config:reset, Char_DMA_Addr_Translation:reset, Expansion_JP1:reset_n, Expansion_JP2:reset_n, F2H_Mem_Window_00000000:reset, F2H_Mem_Window_FF600000:reset, F2H_Mem_Window_FF800000:reset, HEX3_HEX0:reset_n, HEX5_HEX4:reset_n, Interval_Timer:reset_n, Interval_Timer_2:reset_n, Interval_Timer_2nd_Core:reset_n, Interval_Timer_2nd_Core_2:reset_n, IrDA:reset, JTAG_UART:rst_n, JTAG_UART_2nd_Core:rst_n, JTAG_UART_for_ARM_0:rst_n, JTAG_UART_for_ARM_1:rst_n, LEDs:reset_n, Onchip_SRAM:reset, PS2_Port:reset, PS2_Port_Dual:reset, Pixel_DMA_Addr_Translation:reset, Pushbuttons:reset_n, SDRAM:reset_n, Slider_Switches:reset_n, SysID:reset_n, Video_In_DMA_Addr_Translation:reset, gcd_avalon_0:rsi_reset, mm_interconnect_0:JTAG_to_FPGA_Bridge_clk_reset_reset_bridge_in_reset_reset, mm_interconnect_0:Video_In_DMA_Addr_Translation_reset_reset_bridge_in_reset_reset, mm_interconnect_1:F2H_Mem_Window_00000000_reset_reset_bridge_in_reset_reset, mm_interconnect_1:JTAG_to_HPS_Bridge_clk_reset_reset_bridge_in_reset_reset, rst_translator:in_reset]
 	wire          rst_controller_reset_out_reset_req;                                                    // rst_controller:reset_req -> [Onchip_SRAM:reset_req, rst_translator:reset_req_in]
 	wire          arm_a9_hps_h2f_reset_reset;                                                            // ARM_A9_HPS:h2f_rst_n -> [rst_controller:reset_in0, rst_controller_001:reset_in0, rst_controller_002:reset_in0, rst_controller_003:reset_in0, rst_controller_004:reset_in1, rst_controller_005:reset_in1, rst_controller_006:reset_in0, rst_controller_007:reset_in0, rst_controller_008:reset_in0]
 	wire          system_pll_reset_source_reset;                                                         // System_PLL:reset_source_reset -> [rst_controller:reset_in1, rst_controller_001:reset_in1, rst_controller_002:reset_in1, rst_controller_003:reset_in1, rst_controller_004:reset_in2, rst_controller_005:reset_in2, rst_controller_006:reset_in1, rst_controller_007:reset_in1]
@@ -1681,6 +1687,17 @@ module Computer_System (
 		.reset_source_reset (video_pll_reset_source_reset)  // reset_source.reset
 	);
 
+	gcd_avalon gcd_avalon_0 (
+		.avs_s0_address   (mm_interconnect_0_gcd_avalon_0_s0_address),   //    s0.address
+		.avs_s0_read      (mm_interconnect_0_gcd_avalon_0_s0_read),      //      .read
+		.avs_s0_readdata  (mm_interconnect_0_gcd_avalon_0_s0_readdata),  //      .readdata
+		.avs_s0_write     (mm_interconnect_0_gcd_avalon_0_s0_write),     //      .write
+		.avs_s0_writedata (mm_interconnect_0_gcd_avalon_0_s0_writedata), //      .writedata
+		.csi_clk          (system_pll_sys_clk_clk),                      // clock.clk
+		.rsi_reset        (rst_controller_reset_out_reset),              // reset.reset
+		.ins_irq0_irq     (irq_mapper_receiver10_irq)                    //  irq0.irq
+	);
+
 	altera_customins_master_translator #(
 		.SHARED_COMB_AND_MULTI (0)
 	) nios2_custom_instruction_master_translator (
@@ -2174,6 +2191,11 @@ module Computer_System (
 		.F2H_Mem_Window_FF800000_windowed_slave_byteenable                        (mm_interconnect_0_f2h_mem_window_ff800000_windowed_slave_byteenable),                   //                                                                   .byteenable
 		.F2H_Mem_Window_FF800000_windowed_slave_readdatavalid                     (mm_interconnect_0_f2h_mem_window_ff800000_windowed_slave_readdatavalid),                //                                                                   .readdatavalid
 		.F2H_Mem_Window_FF800000_windowed_slave_waitrequest                       (mm_interconnect_0_f2h_mem_window_ff800000_windowed_slave_waitrequest),                  //                                                                   .waitrequest
+		.gcd_avalon_0_s0_address                                                  (mm_interconnect_0_gcd_avalon_0_s0_address),                                             //                                                    gcd_avalon_0_s0.address
+		.gcd_avalon_0_s0_write                                                    (mm_interconnect_0_gcd_avalon_0_s0_write),                                               //                                                                   .write
+		.gcd_avalon_0_s0_read                                                     (mm_interconnect_0_gcd_avalon_0_s0_read),                                                //                                                                   .read
+		.gcd_avalon_0_s0_readdata                                                 (mm_interconnect_0_gcd_avalon_0_s0_readdata),                                            //                                                                   .readdata
+		.gcd_avalon_0_s0_writedata                                                (mm_interconnect_0_gcd_avalon_0_s0_writedata),                                           //                                                                   .writedata
 		.HEX3_HEX0_s1_address                                                     (mm_interconnect_0_hex3_hex0_s1_address),                                                //                                                       HEX3_HEX0_s1.address
 		.HEX3_HEX0_s1_write                                                       (mm_interconnect_0_hex3_hex0_s1_write),                                                  //                                                                   .write
 		.HEX3_HEX0_s1_readdata                                                    (mm_interconnect_0_hex3_hex0_s1_readdata),                                               //                                                                   .readdata
@@ -2437,19 +2459,20 @@ module Computer_System (
 	);
 
 	Computer_System_irq_mapper irq_mapper (
-		.clk           (),                         //       clk.clk
-		.reset         (),                         // clk_reset.reset
-		.receiver0_irq (irq_mapper_receiver0_irq), // receiver0.irq
-		.receiver1_irq (irq_mapper_receiver1_irq), // receiver1.irq
-		.receiver2_irq (irq_mapper_receiver2_irq), // receiver2.irq
-		.receiver3_irq (irq_mapper_receiver3_irq), // receiver3.irq
-		.receiver4_irq (irq_mapper_receiver4_irq), // receiver4.irq
-		.receiver5_irq (irq_mapper_receiver5_irq), // receiver5.irq
-		.receiver6_irq (irq_mapper_receiver6_irq), // receiver6.irq
-		.receiver7_irq (irq_mapper_receiver7_irq), // receiver7.irq
-		.receiver8_irq (irq_mapper_receiver8_irq), // receiver8.irq
-		.receiver9_irq (irq_mapper_receiver9_irq), // receiver9.irq
-		.sender_irq    (arm_a9_hps_f2h_irq0_irq)   //    sender.irq
+		.clk            (),                          //        clk.clk
+		.reset          (),                          //  clk_reset.reset
+		.receiver0_irq  (irq_mapper_receiver0_irq),  //  receiver0.irq
+		.receiver1_irq  (irq_mapper_receiver1_irq),  //  receiver1.irq
+		.receiver2_irq  (irq_mapper_receiver2_irq),  //  receiver2.irq
+		.receiver3_irq  (irq_mapper_receiver3_irq),  //  receiver3.irq
+		.receiver4_irq  (irq_mapper_receiver4_irq),  //  receiver4.irq
+		.receiver5_irq  (irq_mapper_receiver5_irq),  //  receiver5.irq
+		.receiver6_irq  (irq_mapper_receiver6_irq),  //  receiver6.irq
+		.receiver7_irq  (irq_mapper_receiver7_irq),  //  receiver7.irq
+		.receiver8_irq  (irq_mapper_receiver8_irq),  //  receiver8.irq
+		.receiver9_irq  (irq_mapper_receiver9_irq),  //  receiver9.irq
+		.receiver10_irq (irq_mapper_receiver10_irq), // receiver10.irq
+		.sender_irq     (arm_a9_hps_f2h_irq0_irq)    //     sender.irq
 	);
 
 	Computer_System_irq_mapper_001 irq_mapper_001 (
@@ -2460,35 +2483,37 @@ module Computer_System (
 	);
 
 	Computer_System_irq_mapper irq_mapper_002 (
-		.clk           (system_pll_sys_clk_clk),             //       clk.clk
-		.reset         (rst_controller_004_reset_out_reset), // clk_reset.reset
-		.receiver0_irq (irq_mapper_receiver0_irq),           // receiver0.irq
-		.receiver1_irq (irq_mapper_receiver1_irq),           // receiver1.irq
-		.receiver2_irq (irq_mapper_receiver2_irq),           // receiver2.irq
-		.receiver3_irq (irq_mapper_receiver3_irq),           // receiver3.irq
-		.receiver4_irq (irq_mapper_receiver4_irq),           // receiver4.irq
-		.receiver5_irq (irq_mapper_receiver5_irq),           // receiver5.irq
-		.receiver6_irq (irq_mapper_receiver6_irq),           // receiver6.irq
-		.receiver7_irq (irq_mapper_002_receiver7_irq),       // receiver7.irq
-		.receiver8_irq (irq_mapper_receiver8_irq),           // receiver8.irq
-		.receiver9_irq (irq_mapper_receiver9_irq),           // receiver9.irq
-		.sender_irq    (nios2_irq_irq)                       //    sender.irq
+		.clk            (system_pll_sys_clk_clk),             //        clk.clk
+		.reset          (rst_controller_004_reset_out_reset), //  clk_reset.reset
+		.receiver0_irq  (irq_mapper_receiver0_irq),           //  receiver0.irq
+		.receiver1_irq  (irq_mapper_receiver1_irq),           //  receiver1.irq
+		.receiver2_irq  (irq_mapper_receiver2_irq),           //  receiver2.irq
+		.receiver3_irq  (irq_mapper_receiver3_irq),           //  receiver3.irq
+		.receiver4_irq  (irq_mapper_receiver4_irq),           //  receiver4.irq
+		.receiver5_irq  (irq_mapper_receiver5_irq),           //  receiver5.irq
+		.receiver6_irq  (irq_mapper_receiver6_irq),           //  receiver6.irq
+		.receiver7_irq  (irq_mapper_002_receiver7_irq),       //  receiver7.irq
+		.receiver8_irq  (irq_mapper_receiver8_irq),           //  receiver8.irq
+		.receiver9_irq  (irq_mapper_receiver9_irq),           //  receiver9.irq
+		.receiver10_irq (irq_mapper_receiver10_irq),          // receiver10.irq
+		.sender_irq     (nios2_irq_irq)                       //     sender.irq
 	);
 
 	Computer_System_irq_mapper irq_mapper_003 (
-		.clk           (system_pll_sys_clk_clk),             //       clk.clk
-		.reset         (rst_controller_005_reset_out_reset), // clk_reset.reset
-		.receiver0_irq (irq_mapper_receiver0_irq),           // receiver0.irq
-		.receiver1_irq (irq_mapper_receiver1_irq),           // receiver1.irq
-		.receiver2_irq (irq_mapper_receiver2_irq),           // receiver2.irq
-		.receiver3_irq (irq_mapper_receiver3_irq),           // receiver3.irq
-		.receiver4_irq (irq_mapper_receiver4_irq),           // receiver4.irq
-		.receiver5_irq (irq_mapper_receiver5_irq),           // receiver5.irq
-		.receiver6_irq (irq_mapper_receiver6_irq),           // receiver6.irq
-		.receiver7_irq (irq_mapper_003_receiver7_irq),       // receiver7.irq
-		.receiver8_irq (irq_mapper_003_receiver8_irq),       // receiver8.irq
-		.receiver9_irq (irq_mapper_003_receiver9_irq),       // receiver9.irq
-		.sender_irq    (nios2_2nd_core_irq_irq)              //    sender.irq
+		.clk            (system_pll_sys_clk_clk),             //        clk.clk
+		.reset          (rst_controller_005_reset_out_reset), //  clk_reset.reset
+		.receiver0_irq  (irq_mapper_receiver0_irq),           //  receiver0.irq
+		.receiver1_irq  (irq_mapper_receiver1_irq),           //  receiver1.irq
+		.receiver2_irq  (irq_mapper_receiver2_irq),           //  receiver2.irq
+		.receiver3_irq  (irq_mapper_receiver3_irq),           //  receiver3.irq
+		.receiver4_irq  (irq_mapper_receiver4_irq),           //  receiver4.irq
+		.receiver5_irq  (irq_mapper_receiver5_irq),           //  receiver5.irq
+		.receiver6_irq  (irq_mapper_receiver6_irq),           //  receiver6.irq
+		.receiver7_irq  (irq_mapper_003_receiver7_irq),       //  receiver7.irq
+		.receiver8_irq  (irq_mapper_003_receiver8_irq),       //  receiver8.irq
+		.receiver9_irq  (irq_mapper_003_receiver9_irq),       //  receiver9.irq
+		.receiver10_irq (irq_mapper_receiver10_irq),          // receiver10.irq
+		.sender_irq     (nios2_2nd_core_irq_irq)              //     sender.irq
 	);
 
 	altera_reset_controller #(

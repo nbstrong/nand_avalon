@@ -6,7 +6,7 @@
    version="1.0"
    description=""
    tags=""
-   categories="" />
+   categories="System" />
  <parameter name="bonusData"><![CDATA[bonusData 
 {
    element ADC
@@ -87,6 +87,54 @@
       {
          value = "1";
          type = "boolean";
+      }
+   }
+   element Computer_System
+   {
+      datum _originalDeviceFamily
+      {
+         value = "Cyclone V";
+         type = "String";
+      }
+   }
+   element Computer_System
+   {
+      datum _originalDeviceFamily
+      {
+         value = "Cyclone V";
+         type = "String";
+      }
+   }
+   element Computer_System
+   {
+      datum _originalDeviceFamily
+      {
+         value = "Cyclone V";
+         type = "String";
+      }
+   }
+   element Computer_System
+   {
+      datum _originalDeviceFamily
+      {
+         value = "Cyclone V";
+         type = "String";
+      }
+   }
+   element Computer_System
+   {
+      datum _originalDeviceFamily
+      {
+         value = "Cyclone V";
+         type = "String";
+      }
+   }
+   element Computer_System
+   {
+      datum _originalDeviceFamily
+      {
+         value = "Cyclone V";
+         type = "String";
       }
    }
    element Expansion_JP1
@@ -601,6 +649,19 @@
          type = "boolean";
       }
    }
+   element VGA_Subsystem.rgb_slave
+   {
+      datum _lockedAddress
+      {
+         value = "1";
+         type = "boolean";
+      }
+      datum baseAddress
+      {
+         value = "4280299536";
+         type = "String";
+      }
+   }
    element Video_In_DMA_Addr_Translation
    {
       datum _sortIndex
@@ -649,6 +710,27 @@
          type = "int";
       }
    }
+   element gcd_avalon_0
+   {
+      datum _sortIndex
+      {
+         value = "41";
+         type = "int";
+      }
+   }
+   element gcd_avalon_0.s0
+   {
+      datum _lockedAddress
+      {
+         value = "1";
+         type = "boolean";
+      }
+      datum baseAddress
+      {
+         value = "16";
+         type = "String";
+      }
+   }
 }
 ]]></parameter>
  <parameter name="clockCrossingAdapter" value="HANDSHAKE" />
@@ -663,7 +745,7 @@
  <parameter name="hideFromIPCatalog" value="false" />
  <parameter name="lockedInterfaceDefinition" value="" />
  <parameter name="maxAdditionalLatency" value="1" />
- <parameter name="projectName" value="" />
+ <parameter name="projectName">DE1_SoC_Computer.qpf</parameter>
  <parameter name="sopcBorderPoints" value="false" />
  <parameter name="systemHash" value="0" />
  <parameter name="testBenchDutName" value="" />
@@ -1727,7 +1809,7 @@
   <parameter name="instruction_master_high_performance_paddr_size" value="0" />
   <parameter name="instruction_master_paddr_base" value="0" />
   <parameter name="instruction_master_paddr_size" value="0" />
-  <parameter name="internalIrqMaskSystemInfo" value="8395719" />
+  <parameter name="internalIrqMaskSystemInfo" value="8395727" />
   <parameter name="io_regionbase" value="0" />
   <parameter name="io_regionsize" value="0" />
   <parameter name="master_addr_map" value="false" />
@@ -1909,7 +1991,7 @@
   <parameter name="instruction_master_high_performance_paddr_size" value="0" />
   <parameter name="instruction_master_paddr_base" value="0" />
   <parameter name="instruction_master_paddr_size" value="0" />
-  <parameter name="internalIrqMaskSystemInfo" value="8395719" />
+  <parameter name="internalIrqMaskSystemInfo" value="8395727" />
   <parameter name="io_regionbase" value="0" />
   <parameter name="io_regionsize" value="0" />
   <parameter name="master_addr_map" value="false" />
@@ -2214,7 +2296,7 @@
   <parameter name="AUTO_SYS_CLK_CLOCK_DOMAIN" value="13" />
   <parameter name="AUTO_SYS_CLK_CLOCK_RATE" value="100000000" />
   <parameter name="AUTO_SYS_CLK_RESET_DOMAIN" value="13" />
-  <parameter name="AUTO_UNIQUE_ID">Computer_System_Video_In_Subsystem</parameter>
+  <parameter name="AUTO_UNIQUE_ID">$${FILENAME}_Video_In_Subsystem</parameter>
   <parameter name="AUTO_VIDEO_IN_DMA_MASTER_ADDRESS_MAP"><![CDATA[<address-map><slave name='SDRAM.s1' start='0x0' end='0x4000000' /><slave name='Onchip_SRAM.s1' start='0x8000000' end='0x8040000' /></address-map>]]></parameter>
   <parameter
      name="AUTO_VIDEO_IN_DMA_MASTER_ADDRESS_WIDTH"
@@ -2236,6 +2318,7 @@
   <parameter name="vga_clk_en" value="true" />
   <parameter name="video_in_clk_en" value="false" />
  </module>
+ <module name="gcd_avalon_0" kind="gcd_avalon" version="1.2" enabled="1" />
  <connection
    kind="avalon"
    version="18.1"
@@ -2898,6 +2981,15 @@
    kind="avalon"
    version="18.1"
    start="ARM_A9_HPS.h2f_lw_axi_master"
+   end="gcd_avalon_0.s0">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x0010" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="18.1"
+   start="ARM_A9_HPS.h2f_lw_axi_master"
    end="LEDs.s1">
   <parameter name="arbitrationPriority" value="1" />
   <parameter name="baseAddress" value="0x0000" />
@@ -3546,6 +3638,11 @@
    kind="clock"
    version="18.1"
    start="System_PLL.sys_clk"
+   end="gcd_avalon_0.clock" />
+ <connection
+   kind="clock"
+   version="18.1"
+   start="System_PLL.sys_clk"
    end="ARM_A9_HPS.f2h_axi_clock" />
  <connection
    kind="clock"
@@ -3646,6 +3743,13 @@
    start="ARM_A9_HPS.f2h_irq0"
    end="Interval_Timer_2.irq">
   <parameter name="irqNumber" value="2" />
+ </connection>
+ <connection
+   kind="interrupt"
+   version="18.1"
+   start="ARM_A9_HPS.f2h_irq0"
+   end="gcd_avalon_0.irq0">
+  <parameter name="irqNumber" value="3" />
  </connection>
  <connection
    kind="interrupt"
@@ -3789,6 +3893,20 @@
    start="Nios2_2nd_Core.irq"
    end="Interval_Timer_2nd_Core_2.irq">
   <parameter name="irqNumber" value="2" />
+ </connection>
+ <connection
+   kind="interrupt"
+   version="18.1"
+   start="Nios2_2nd_Core.irq"
+   end="gcd_avalon_0.irq0">
+  <parameter name="irqNumber" value="3" />
+ </connection>
+ <connection
+   kind="interrupt"
+   version="18.1"
+   start="Nios2.irq"
+   end="gcd_avalon_0.irq0">
+  <parameter name="irqNumber" value="3" />
  </connection>
  <connection
    kind="nios_custom_instruction"
@@ -3982,6 +4100,11 @@
    kind="reset"
    version="18.1"
    start="ARM_A9_HPS.h2f_reset"
+   end="gcd_avalon_0.reset" />
+ <connection
+   kind="reset"
+   version="18.1"
+   start="ARM_A9_HPS.h2f_reset"
    end="Onchip_SRAM.reset1" />
  <connection
    kind="reset"
@@ -4158,6 +4281,11 @@
    version="18.1"
    start="System_PLL.reset_source"
    end="F2H_Mem_Window_FF800000.reset" />
+ <connection
+   kind="reset"
+   version="18.1"
+   start="System_PLL.reset_source"
+   end="gcd_avalon_0.reset" />
  <connection
    kind="reset"
    version="18.1"

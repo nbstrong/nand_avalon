@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<preferences>
+ <debug showDebugMenu="0" />
+ <systemtable filter="All Interfaces">
+  <columns>
+   <connections preferredWidth="575" />
+   <irq preferredWidth="79" />
+   <name preferredWidth="211" />
+   <inputclock preferredWidth="141" />
+   <autoexport visible="1" />
+   <security visible="1" />
+   <defaultSlave visible="1" />
+  </columns>
+ </systemtable>
+ <library expandedCategories="Library,Project" />
+ <window width="1920" height="1050" x="0" y="0" />
+ <generation simulation="NONE" />
+</preferences>

@@ -12,16 +12,24 @@
     <program>
         <type>C Program</type>
         <source_files>
-            <source_file filepath="true">getting_started.c</source_file>
+            <source_file filepath="true">main.c</source_file>
             <header_file filepath="true">address_map_arm.h</header_file>
+            <source_file filepath="true">defines.h</source_file>
+            <source_file filepath="true">exceptions.c</source_file>
+            <source_file filepath="true">interrupt_ID.h</source_file>
         </source_files>
         <options>
             <compiler_flags>-g -O1</compiler_flags>
         </options>
-        <linker_sections type="Basic">
-            <linker_section name=".text">
+        <linker_sections type="Custom">
+            <linker_section name=".vectors">
                 <memory_device>ARM_DDR3_SDRAM.axi_slave</memory_device>
                 <base_address>0x00000000</base_address>
+                <end_address>0x0000003F</end_address>
+            </linker_section>
+            <linker_section name=".text">
+                <memory_device>ARM_DDR3_SDRAM.axi_slave</memory_device>
+                <base_address>0x00000040</base_address>
                 <end_address>0x3FFFFFF7</end_address>
                 <required_section/>
             </linker_section>

@@ -50,9 +50,9 @@ module Computer_System_mm_interconnect_0_router_043_default_decode
                DEFAULT_DESTID = 6 
    )
   (output [112 - 107 : 0] default_destination_id,
-   output [39-1 : 0] default_wr_channel,
-   output [39-1 : 0] default_rd_channel,
-   output [39-1 : 0] default_src_channel
+   output [40-1 : 0] default_wr_channel,
+   output [40-1 : 0] default_rd_channel,
+   output [40-1 : 0] default_src_channel
   );
 
   assign default_destination_id = 
@@ -63,7 +63,7 @@ module Computer_System_mm_interconnect_0_router_043_default_decode
       assign default_src_channel = '0;
     end
     else begin : default_channel_assignment
-      assign default_src_channel = 39'b1 << DEFAULT_CHANNEL;
+      assign default_src_channel = 40'b1 << DEFAULT_CHANNEL;
     end
   endgenerate
 
@@ -73,8 +73,8 @@ module Computer_System_mm_interconnect_0_router_043_default_decode
       assign default_rd_channel = '0;
     end
     else begin : default_rw_channel_assignment
-      assign default_wr_channel = 39'b1 << DEFAULT_WR_CHANNEL;
-      assign default_rd_channel = 39'b1 << DEFAULT_RD_CHANNEL;
+      assign default_wr_channel = 40'b1 << DEFAULT_WR_CHANNEL;
+      assign default_rd_channel = 40'b1 << DEFAULT_RD_CHANNEL;
     end
   endgenerate
 
@@ -103,7 +103,7 @@ module Computer_System_mm_interconnect_0_router_043
     // -------------------
     output                          src_valid,
     output reg [137-1    : 0] src_data,
-    output reg [39-1 : 0] src_channel,
+    output reg [40-1 : 0] src_channel,
     output                          src_startofpacket,
     output                          src_endofpacket,
     input                           src_ready
@@ -119,7 +119,7 @@ module Computer_System_mm_interconnect_0_router_043
     localparam PKT_PROTECTION_H = 127;
     localparam PKT_PROTECTION_L = 125;
     localparam ST_DATA_W = 137;
-    localparam ST_CHANNEL_W = 39;
+    localparam ST_CHANNEL_W = 40;
     localparam DECODER_TYPE = 1;
 
     localparam PKT_TRANS_WRITE = 70;
@@ -158,11 +158,18 @@ module Computer_System_mm_interconnect_0_router_043
     assign src_valid         = sink_valid;
     assign src_startofpacket = sink_startofpacket;
     assign src_endofpacket   = sink_endofpacket;
-    wire [39-1 : 0] default_src_channel;
+    wire [40-1 : 0] default_src_channel;
 
 
 
 
+    // -------------------------------------------------------
+    // Write and read transaction signals
+    // -------------------------------------------------------
+    wire write_transaction;
+    assign write_transaction = sink_data[PKT_TRANS_WRITE];
+    wire read_transaction;
+    assign read_transaction  = sink_data[PKT_TRANS_READ];
 
 
     Computer_System_mm_interconnect_0_router_043_default_decode the_default_decode(
@@ -185,19 +192,27 @@ module Computer_System_mm_interconnect_0_router_043
 
 
         if (destid == 6 ) begin
-            src_channel = 39'b0001;
+            src_channel = 40'b000001;
         end
 
         if (destid == 4 ) begin
-            src_channel = 39'b0010;
+            src_channel = 40'b000010;
         end
 
         if (destid == 3 ) begin
-            src_channel = 39'b0100;
+            src_channel = 40'b000100;
         end
 
-        if (destid == 10 ) begin
-            src_channel = 39'b1000;
+        if (destid == 0  && write_transaction) begin
+            src_channel = 40'b001000;
+        end
+
+        if (destid == 0  && read_transaction) begin
+            src_channel = 40'b010000;
+        end
+
+        if (destid == 11  && write_transaction) begin
+            src_channel = 40'b100000;
         end
 
 
