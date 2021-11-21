@@ -1693,9 +1693,9 @@ module Computer_System (
 		.avs_s0_readdata  (mm_interconnect_0_gcd_avalon_0_s0_readdata),  //      .readdata
 		.avs_s0_write     (mm_interconnect_0_gcd_avalon_0_s0_write),     //      .write
 		.avs_s0_writedata (mm_interconnect_0_gcd_avalon_0_s0_writedata), //      .writedata
+		.ins_irq0_irq     (irq_mapper_receiver10_irq),                   //  irq0.irq
 		.csi_clk          (system_pll_sys_clk_clk),                      // clock.clk
-		.rsi_reset        (rst_controller_reset_out_reset),              // reset.reset
-		.ins_irq0_irq     (irq_mapper_receiver10_irq)                    //  irq0.irq
+		.rsi_reset        (rst_controller_reset_out_reset)               // reset.reset
 	);
 
 	altera_customins_master_translator #(

@@ -1,10 +1,11 @@
 /*******************************************************************************/
 // Design: GCD Calculator Avalon Slave
 //  * Wraps NIOS2 GCD Custom Instruction hardware with an Avalon compliant
-//    interface. Design supports auto-inferring of interface through
-//    Quartus Component Designer.
+//    interface. Port names are constructed such that the Quartus
+//    Component Designer will auto-infer interface assignments.
+//  * Includes done interrupt. Read status to clear.
 // Author: Nicholas Strong
-/*******************************************************************************/
+/******************************************************************************/
 module gcd_avalon (
         input  logic [1:0]  avs_s0_address,    //   avs_s0.address
         input  logic        avs_s0_read,       //         .read
@@ -16,60 +17,73 @@ module gcd_avalon (
         input  logic        rsi_reset          //    reset.reset
     );
 
+    /***** Parameters *********************************************************/
     localparam   OP_A = 0;
     localparam   OP_B = 1;
     localparam RESULT = 2;
     localparam STATUS = 3;
-
+    /***** Signals ************************************************************/
     logic [31:0] from_reg [0:3];
     logic [31:0] to_reg [0:3]; // cant do from_reg, to_reg - simulation warnings
     logic [31:0] result, status;
-    logic local_write [0:3];
-    logic wrInt, done, doneSB, intClr;
+    logic write_en [0:3];
+    logic wr_int, done, done_sb, int_clr;
+    /**************************************************************************/
 
+    // Register Write Data Assignment //
     assign to_reg[  OP_A] = (avs_s0_address == OP_A) ? avs_s0_writedata : 32'h0;
     assign to_reg[  OP_B] = (avs_s0_address == OP_B) ? avs_s0_writedata : 32'h0;
     assign to_reg[RESULT] = result;
-    assign to_reg[STATUS] = {{31{1'b0}},doneSB};
+    assign to_reg[STATUS] = {{31{1'b0}},done_sb};
 
-    assign local_write[  OP_A] = (avs_s0_address == OP_A) ? avs_s0_write : 1'b0;
-    assign local_write[  OP_B] = (avs_s0_address == OP_B) ? avs_s0_write : 1'b0;
-    assign local_write[RESULT] = done;
-    assign local_write[STATUS] = 1'b1;
+    // Register Write Enable Assignment //
+    assign write_en[  OP_A] = (avs_s0_address == OP_A) ? avs_s0_write : 1'b0;
+    assign write_en[  OP_B] = (avs_s0_address == OP_B) ? avs_s0_write : 1'b0;
+    assign write_en[RESULT] = done;
+    assign write_en[STATUS] = 1'b1;
 
-    // 32 Bit Registers
+    // 32 Bit Registers //
     // module FF (clk, reset, en, d, q);
-    FF #(32) GCD_A (csi_clk, rsi_reset, local_write[  OP_A], to_reg[  OP_A], from_reg[  OP_A]);
-    FF #(32) GCD_B (csi_clk, rsi_reset, local_write[  OP_B], to_reg[  OP_B], from_reg[  OP_B]);
-    FF #(32) GCD_C (csi_clk, rsi_reset, local_write[RESULT], to_reg[RESULT], from_reg[RESULT]);
-    FF #(32) GCD_S (csi_clk, rsi_reset, local_write[STATUS], to_reg[STATUS], from_reg[STATUS]);
+    FF #(32) GCD_A (csi_clk, rsi_reset, write_en[  OP_A], to_reg[  OP_A], from_reg[  OP_A]);
+    FF #(32) GCD_B (csi_clk, rsi_reset, write_en[  OP_B], to_reg[  OP_B], from_reg[  OP_B]);
+    FF #(32) GCD_C (csi_clk, rsi_reset, write_en[RESULT], to_reg[RESULT], from_reg[RESULT]);
+    FF #(32) GCD_S (csi_clk, rsi_reset, write_en[STATUS], to_reg[STATUS], from_reg[STATUS]);
 
     assign avs_s0_readdata = avs_s0_read ? from_reg[avs_s0_address] : 32'h0;
 
-    // Set Reset FF
+    // Set Reset FF //
+    // Creates a sticky bit for holding status. Set on done.
+    // Cleared on write to OP_B.
+    //
     // module set_reset(clk, clk_en, reset, en, clr, out);
-    set_reset SR (csi_clk, 1'b1, rsi_reset, done, local_write[OP_B], doneSB);
+    set_reset SR (csi_clk, 1'b1, rsi_reset, done, write_en[OP_B], done_sb);
 
-    // Flip Flops
+    // Flip Flops //
+    // Delays the write enable to OP_B by one cycle, allowing
+    // time for the OP_B to show up at the output.
+    //
     // module FF (clk, reset, en, d, q);
-    FF FF0 (csi_clk, rsi_reset, 1'b1, local_write[OP_B], wrInt);
+    FF FF0 (csi_clk, rsi_reset, 1'b1, write_en[OP_B], wr_int);
 
-    // GCD Custom Instruction
+    // GCD Custom Instruction //
     // module gcd_ci(clk, reset, clk_en, start, dataa, datab, done, result);
     gcd_ci GCD (
         .clk   (csi_clk),
         .reset (rsi_reset),
         .clk_en(1'b1),
-        .start (wrInt),
+        .start (wr_int),
         .dataa (from_reg[OP_A]),
         .datab (from_reg[OP_B]),
         .done  (done),
         .result(result));
 
-    // Done Interrupt
+    // Done Interrupt //
+    // Creates a sticky bit for the irq interrupt. Set on done.
+    // Cleared by a read to the status register.
+    //
     // module set_reset(clk, clk_en, reset, en, clr, out);
-    set_reset D_INT (csi_clk, 1'b1, rsi_reset, done, intClr, ins_irq0_irq);
-    assign intClr = (avs_s0_read & ((avs_s0_address == STATUS))) ? 1'b1 : 1'b0;
+    set_reset D_INT (csi_clk, 1'b1, rsi_reset, done, int_clr, ins_irq0_irq);
+    assign int_clr = (avs_s0_read & ((avs_s0_address == STATUS))) ? 1'b1 : 1'b0;
 
 endmodule
 /**endmodule********************************************************************/

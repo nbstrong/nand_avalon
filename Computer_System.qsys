@@ -1427,9 +1427,9 @@
    kind="Audio_Subsystem"
    version="1.0"
    enabled="1">
-  <parameter name="AUTO_AUDIO_PLL_REF_CLK_CLOCK_DOMAIN" value="3" />
+  <parameter name="AUTO_AUDIO_PLL_REF_CLK_CLOCK_DOMAIN" value="2" />
   <parameter name="AUTO_AUDIO_PLL_REF_CLK_CLOCK_RATE" value="0" />
-  <parameter name="AUTO_AUDIO_PLL_REF_CLK_RESET_DOMAIN" value="3" />
+  <parameter name="AUTO_AUDIO_PLL_REF_CLK_RESET_DOMAIN" value="2" />
   <parameter name="AUTO_DEVICE" value="5CSEMA5F31C6" />
   <parameter name="AUTO_DEVICE_FAMILY" value="Cyclone V" />
   <parameter name="AUTO_DEVICE_SPEEDGRADE" value="6" />
@@ -1437,7 +1437,7 @@
   <parameter name="AUTO_SYS_CLK_CLOCK_DOMAIN" value="13" />
   <parameter name="AUTO_SYS_CLK_CLOCK_RATE" value="100000000" />
   <parameter name="AUTO_SYS_CLK_RESET_DOMAIN" value="13" />
-  <parameter name="AUTO_UNIQUE_ID">Computer_System_Audio_Subsystem</parameter>
+  <parameter name="AUTO_UNIQUE_ID">$${FILENAME}_Audio_Subsystem</parameter>
  </module>
  <module
    name="Char_DMA_Addr_Translation"
@@ -2123,7 +2123,7 @@
    version="18.1"
    enabled="1">
   <parameter name="allowInSystemMemoryContentEditor" value="false" />
-  <parameter name="autoInitializationFileName">Computer_System_Onchip_SRAM</parameter>
+  <parameter name="autoInitializationFileName">$${FILENAME}_Onchip_SRAM</parameter>
   <parameter name="blockType" value="AUTO" />
   <parameter name="copyInitFile" value="false" />
   <parameter name="dataWidth" value="32" />
@@ -2206,7 +2206,7 @@
   <parameter name="casLatency" value="3" />
   <parameter name="clockRate" value="100000000" />
   <parameter name="columnWidth" value="10" />
-  <parameter name="componentName">Computer_System_SDRAM</parameter>
+  <parameter name="componentName" value="$${FILENAME}_SDRAM" />
   <parameter name="dataWidth" value="16" />
   <parameter name="generateSimulationModel" value="true" />
   <parameter name="initNOPDelay" value="0.0" />
@@ -2272,7 +2272,7 @@
   <parameter name="AUTO_SYS_CLK_CLOCK_DOMAIN" value="13" />
   <parameter name="AUTO_SYS_CLK_CLOCK_RATE" value="100000000" />
   <parameter name="AUTO_SYS_CLK_RESET_DOMAIN" value="13" />
-  <parameter name="AUTO_UNIQUE_ID">Computer_System_VGA_Subsystem</parameter>
+  <parameter name="AUTO_UNIQUE_ID">$${FILENAME}_VGA_Subsystem</parameter>
   <parameter name="AUTO_VGA_CLK_CLOCK_DOMAIN" value="15" />
   <parameter name="AUTO_VGA_CLK_CLOCK_RATE" value="25000000" />
   <parameter name="AUTO_VGA_CLK_RESET_DOMAIN" value="15" />
