@@ -5,7 +5,7 @@
    displayName="$${FILENAME}"
    version="1.0"
    description=""
-   tags=""
+   tags="INTERNAL_COMPONENT=false"
    categories="System" />
  <parameter name="bonusData"><![CDATA[bonusData 
 {
@@ -3897,14 +3897,14 @@
  <connection
    kind="interrupt"
    version="18.1"
-   start="Nios2_2nd_Core.irq"
+   start="Nios2.irq"
    end="gcd_avalon_0.irq0">
   <parameter name="irqNumber" value="3" />
  </connection>
  <connection
    kind="interrupt"
    version="18.1"
-   start="Nios2.irq"
+   start="Nios2_2nd_Core.irq"
    end="gcd_avalon_0.irq0">
   <parameter name="irqNumber" value="3" />
  </connection>
