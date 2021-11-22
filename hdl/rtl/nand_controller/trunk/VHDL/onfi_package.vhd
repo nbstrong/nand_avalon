@@ -6,7 +6,7 @@
 -- License						: LGPL
 -------------------------------------------------------------------------------------------------
 -- Description:
--- This file contains clock cycle duration definition, delay timing constants as well as 
+-- This file contains clock cycle duration definition, delay timing constants as well as
 -- definition of FSM states and types used in the module.
 -------------------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------------------
@@ -17,7 +17,8 @@ use ieee.std_logic_1164.all;
 package onfi is
 	-- Clock cycle length in ns
 	-- IMPORTANT!!! The 'clock_cycle' is configured for 400MHz, change it appropriately!
-	constant clock_cycle	: real := 2.5;
+    -- Changed to 10 ns. Author: Nicholas Strong
+	constant clock_cycle	: real := 10.0;
 
 	-- NAND interface delays.
 	-- Delays of 7.5ns may need to be fixed to 7.0.
@@ -40,11 +41,11 @@ package onfi is
 	constant	t_whr		:	integer	:=	integer(80.0	/ clock_cycle);
 	constant	t_prog	:	integer	:=	integer(600000.0 / clock_cycle);
 	constant	t_adl		:	integer	:=	integer(70.0	/ clock_cycle);
-	
+
 	type latch_t is (LATCH_CMD, LATCH_ADDR);
 	type io_t is (IO_READ, IO_WRITE);
-	
-	type master_state_t is 
+
+	type master_state_t is
 	(
 		M_IDLE,								-- NAND Master is in idle state - awaits commands.
 		M_RESET,								-- NAND Master is being reset.
@@ -80,7 +81,7 @@ package onfi is
 		MI_BYPASS_DATA_WR,				-- Send data byte directly to NAND chip
 		MI_BYPASS_DATA_RD					-- Read data byte directly from NAND chip
 	);
-	
+
 	type master_substate_t is
 	(
 		MS_BEGIN,
@@ -98,12 +99,12 @@ package onfi is
 		MS_WAIT,
 		MS_END
 	);
-	
+
 	type page_t is array (0 to 8628) of std_logic_vector(7 downto 0);
 	type param_page_t is array (0 to 255) of std_logic_vector(7 downto 0);
 	type nand_id_t is array (0 to 4) of std_logic_vector(7 downto 0);
 	type nand_address_t is array (0 to 4) of std_logic_vector(7 downto 0);
 	type states_t is array (0 to 255) of master_state_t;
-	
+
 	constant	max_page_idx	:	integer	:=	8626;
 end onfi;
