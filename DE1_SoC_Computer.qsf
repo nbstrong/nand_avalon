@@ -5,7 +5,6 @@
 
 set_global_assignment -name FAMILY "Cyclone V"
 set_global_assignment -name DEVICE 5CSEMA5F31C6
-set_global_assignment -name TOP_LEVEL_ENTITY "DE1_SoC_Computer"
 set_global_assignment -name DEVICE_FILTER_PACKAGE FBGA
 set_global_assignment -name CYCLONEII_RESERVE_NCEO_AFTER_CONFIGURATION "USE AS REGULAR IO"
 
@@ -161,18 +160,26 @@ set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to FPGA_I2C_SDAT
 #============================================================
 # GPIO
 #============================================================
-set_location_assignment PIN_AC18 -to GPIO_0[0]
-set_location_assignment PIN_AH18 -to GPIO_0[10]
-set_location_assignment PIN_AH17 -to GPIO_0[11]
-set_location_assignment PIN_AG16 -to GPIO_0[12]
-set_location_assignment PIN_AE16 -to GPIO_0[13]
-set_location_assignment PIN_AF16 -to GPIO_0[14]
-set_location_assignment PIN_AG17 -to GPIO_0[15]
-set_location_assignment PIN_AA18 -to GPIO_0[16]
-set_location_assignment PIN_AA19 -to GPIO_0[17]
+set_location_assignment PIN_Y17 -to NAND_DQ[0]
+set_location_assignment PIN_Y18 -to NAND_DQ[1]
+set_location_assignment PIN_AK16 -to NAND_DQ[2]
+set_location_assignment PIN_AK18 -to NAND_DQ[3]
+set_location_assignment PIN_AK19 -to NAND_DQ[4]
+set_location_assignment PIN_AJ19 -to NAND_DQ[5]
+set_location_assignment PIN_AJ17 -to NAND_DQ[6]
+set_location_assignment PIN_AJ16 -to NAND_DQ[7]
+set_location_assignment PIN_AH18 -to NAND_NWP
+set_location_assignment PIN_AH17 -to NAND_NWE
+set_location_assignment PIN_AG16 -to NAND_ALE
+set_location_assignment PIN_AE16 -to NAND_CLE
+set_location_assignment PIN_AF16 -to NAND_NCE
+set_location_assignment PIN_AG17 -to NAND_NRE
+set_location_assignment PIN_AA19 -to NAND_RNB
+set_location_assignment PIN_AC18 -to GPIO_0[15]
+set_location_assignment PIN_AD17 -to GPIO_0[16]
+set_location_assignment PIN_AA18 -to GPIO_0[17]
 set_location_assignment PIN_AE17 -to GPIO_0[18]
 set_location_assignment PIN_AC20 -to GPIO_0[19]
-set_location_assignment PIN_Y17 -to GPIO_0[1]
 set_location_assignment PIN_AH19 -to GPIO_0[20]
 set_location_assignment PIN_AJ20 -to GPIO_0[21]
 set_location_assignment PIN_AH20 -to GPIO_0[22]
@@ -183,32 +190,32 @@ set_location_assignment PIN_AE18 -to GPIO_0[26]
 set_location_assignment PIN_AE19 -to GPIO_0[27]
 set_location_assignment PIN_AF20 -to GPIO_0[28]
 set_location_assignment PIN_AF21 -to GPIO_0[29]
-set_location_assignment PIN_AD17 -to GPIO_0[2]
 set_location_assignment PIN_AF19 -to GPIO_0[30]
 set_location_assignment PIN_AG21 -to GPIO_0[31]
 set_location_assignment PIN_AF18 -to GPIO_0[32]
 set_location_assignment PIN_AG20 -to GPIO_0[33]
 set_location_assignment PIN_AG18 -to GPIO_0[34]
 set_location_assignment PIN_AJ21 -to GPIO_0[35]
-set_location_assignment PIN_Y18 -to GPIO_0[3]
-set_location_assignment PIN_AK16 -to GPIO_0[4]
-set_location_assignment PIN_AK18 -to GPIO_0[5]
-set_location_assignment PIN_AK19 -to GPIO_0[6]
-set_location_assignment PIN_AJ19 -to GPIO_0[7]
-set_location_assignment PIN_AJ17 -to GPIO_0[8]
-set_location_assignment PIN_AJ16 -to GPIO_0[9]
-set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPIO_0[0]
-set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPIO_0[10]
-set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPIO_0[11]
-set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPIO_0[12]
-set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPIO_0[13]
-set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPIO_0[14]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to NAND_DQ[0]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to NAND_DQ[1]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to NAND_DQ[2]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to NAND_DQ[3]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to NAND_DQ[4]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to NAND_DQ[5]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to NAND_DQ[6]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to NAND_DQ[7]
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to NAND_NWP
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to NAND_NWE
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to NAND_ALE
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to NAND_CLE
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to NAND_NCE
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to NAND_NRE
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to NAND_RNB
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPIO_0[15]
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPIO_0[16]
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPIO_0[17]
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPIO_0[18]
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPIO_0[19]
-set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPIO_0[1]
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPIO_0[20]
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPIO_0[21]
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPIO_0[22]
@@ -219,20 +226,12 @@ set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPIO_0[26]
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPIO_0[27]
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPIO_0[28]
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPIO_0[29]
-set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPIO_0[2]
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPIO_0[30]
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPIO_0[31]
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPIO_0[32]
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPIO_0[33]
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPIO_0[34]
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPIO_0[35]
-set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPIO_0[3]
-set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPIO_0[4]
-set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPIO_0[5]
-set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPIO_0[6]
-set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPIO_0[7]
-set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPIO_0[8]
-set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPIO_0[9]
 
 set_location_assignment PIN_AB17 -to GPIO_1[0]
 set_location_assignment PIN_AG26 -to GPIO_1[10]
@@ -973,4 +972,5 @@ set_instance_assignment -name FAST_OUTPUT_ENABLE_REGISTER ON -to *
 set_global_assignment -name EDA_SIMULATION_TOOL "<None>"
 set_global_assignment -name EDA_OUTPUT_DATA_FORMAT NONE -section_id eda_simulation
 set_global_assignment -name PROJECT_IP_REGENERATION_POLICY ALWAYS_REGENERATE_IP
+set_global_assignment -name TOP_LEVEL_ENTITY DE1_SoC_Computer
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

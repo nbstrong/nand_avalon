@@ -41,6 +41,14 @@ module DE1_SoC_Computer (
     FPGA_I2C_SDAT,
 
     // 40-Pin Headers
+    NAND_DQ,
+    NAND_NWP,
+    NAND_NWE,
+    NAND_ALE,
+    NAND_CLE,
+    NAND_NCE,
+    NAND_NRE,
+    NAND_RNB,
     GPIO_0,
     GPIO_1,
 
@@ -173,7 +181,9 @@ module DE1_SoC_Computer (
 //=======================================================
 //  PARAMETER declarations
 //=======================================================
-
+/* synthesis translate_off */
+parameter SIM = 0;
+/* synthesis translate_on */
 
 //=======================================================
 //  PORT declarations
@@ -220,8 +230,16 @@ output                       DRAM_WE_N;
 output                       FPGA_I2C_SCLK;
 inout                        FPGA_I2C_SDAT;
 
-// 40-pin headers
-inout                [35: 0] GPIO_0;
+// 40-pin headers                      // Schematic           // Parallel Port
+inout                 [7: 0] NAND_DQ;  // JP1_10:JP1_4,JP1_02 // D7:D1,D0
+output                       NAND_NWP; // JP1_13              // DQ8
+output                       NAND_NWE; // JP1_14              // DQ9
+output                       NAND_ALE; // JP1_15              // DQ10
+output                       NAND_CLE; // JP1_16              // DQ11
+output                       NAND_NCE; // JP1_17              // DQ12
+output                       NAND_NRE; // JP1_18              // DQ13
+input                        NAND_RNB; // JP1_20              // DQ14
+inout                [35:15] GPIO_0;
 inout                [35: 0] GPIO_1;
 
 // Seven Segment Displays
@@ -368,196 +386,256 @@ assign HEX5 = ~hex5_hex4[14: 8];
 //=======================================================
 //  Structural coding
 //=======================================================
+generate
+    // I am likely not going to bother trying to fix the
+    // Computer System enough to be able to export the
+    // bus functional models (bfm) for simulation. I think
+    // the VGA component doesn't have simulation models
+    // and you would need to remove it.
+    // Until then, the below allows you to drive the "Avalon"
+    // side and the testbench side during simulation
+    // to simulate the avalon nand_interface by setting the
+    // parameter SIM to 1 during simulation. Likely -gSIM 1
+    // is the command for Modelsim.
 
-Computer_System The_System (
-    ////////////////////////////////////
-    // FPGA Side
-    ////////////////////////////////////
+    // IDEA: If you can accurately model the nand flash in the
+    // testbench, you may be able to simulate these experiments.
+    // A matlab model of the physics of the NAND's transistor (floating gate?)
+    // would be where the research would be needed.
 
-    // Global signals
-    .system_pll_ref_clk_clk           (CLOCK_50),
-    .system_pll_ref_reset_reset       (1'b0),
-    .video_pll_ref_clk_clk            (CLOCK2_50),
-    .video_pll_ref_reset_reset        (1'b0),
+    /* synthesis translate_off */
+    if (SIM) begin
+        // Internal simulation signals
+        // Interface to avalon bus basically
+        wire rst, rd, wr;
+        wire [1:0] addr;
+        wire [31:0] rddata, wrdata;
 
-    // AV Config
-    .av_config_SCLK                   (FPGA_I2C_SCLK),
-    .av_config_SDAT                   (FPGA_I2C_SDAT),
+        nand_avalon nand_sim0 (
+            .clk       (CLOCK_50),
+            .resetn    (rst),
+            .readdata  (rddata),
+            .writedata (wrdata),
+            .pread     (rd),
+            .pwrite    (wr),
+            .address   (addr),
+            .nand_cle  ({{8{1'b0}},NAND_DQ}),
+            .nand_ale  (NAND_NWP),
+            .nand_nwe  (NAND_NWE),
+            .nand_nwp  (NAND_ALE),
+            .nand_nce  (NAND_CLE),
+            .nand_nre  (NAND_NCE),
+            .nand_rnb  (NAND_NRE),
+            .nand_data (NAND_RNB));
+    end
+    else
+    /* synthesis translate_on */
+    begin
+        wire [14:0] GPIO_DUMMY;
+        wire [7:0] NAND_DUMMY;
 
-    // Audio Subsystem
-    .audio_pll_ref_clk_clk            (CLOCK3_50),
-    .audio_pll_ref_reset_reset        (1'b0),
-    .audio_pll_clk_clk                (AUD_XCK),
-    .audio_ADCDAT                     (AUD_ADCDAT),
-    .audio_ADCLRCK                    (AUD_ADCLRCK),
-    .audio_BCLK                       (AUD_BCLK),
-    .audio_DACDAT                     (AUD_DACDAT),
-    .audio_DACLRCK                    (AUD_DACLRCK),
+        Computer_System The_System (
+        ////////////////////////////////////
+        // FPGA Side
+        ////////////////////////////////////
 
-    // Slider Switches
-    .slider_switches_export           (SW),
+        // Global signals
+        .system_pll_ref_clk_clk           (CLOCK_50),
+        .system_pll_ref_reset_reset       (1'b0),
+        .video_pll_ref_clk_clk            (CLOCK2_50),
+        .video_pll_ref_reset_reset        (1'b0),
 
-    // Pushbuttons
-    .pushbuttons_export               (~KEY[3:0]),
+        // AV Config
+        .av_config_SCLK                   (FPGA_I2C_SCLK),
+        .av_config_SDAT                   (FPGA_I2C_SDAT),
 
-    // Expansion JP1
-    .expansion_jp1_export             ({GPIO_0[35:19], GPIO_0[17], GPIO_0[15:3], GPIO_0[1]}),
+        // Audio Subsystem
+        .audio_pll_ref_clk_clk            (CLOCK3_50),
+        .audio_pll_ref_reset_reset        (1'b0),
+        .audio_pll_clk_clk                (AUD_XCK),
+        .audio_ADCDAT                     (AUD_ADCDAT),
+        .audio_ADCLRCK                    (AUD_ADCLRCK),
+        .audio_BCLK                       (AUD_BCLK),
+        .audio_DACDAT                     (AUD_DACDAT),
+        .audio_DACLRCK                    (AUD_DACLRCK),
 
-    // Expansion JP2
-    .expansion_jp2_export             ({GPIO_1[35:19], GPIO_1[17], GPIO_1[15:3], GPIO_1[1]}),
+        // Slider Switches
+        .slider_switches_export           (SW),
 
-    // LEDs
-    .leds_export                      (LEDR),
+        // Pushbuttons
+        .pushbuttons_export               (~KEY[3:0]),
 
-    // Seven Segs
-    .hex3_hex0_export                 (hex3_hex0),
-    .hex5_hex4_export                 (hex5_hex4),
+        // Expansion JP1
+        .expansion_jp1_export             ({GPIO_0[35:19], GPIO_DUMMY[14:0]}), // lower bits moved to NAND export
 
-    // PS2 Ports
-    .ps2_port_CLK                     (PS2_CLK),
-    .ps2_port_DAT                     (PS2_DAT),
-    .ps2_port_dual_CLK                (PS2_CLK2),
-    .ps2_port_dual_DAT                (PS2_DAT2),
+        // Expansion JP2
+        .expansion_jp2_export             ({GPIO_1[35:19], GPIO_1[17], GPIO_1[15:3], GPIO_1[1]}),
 
-    // IrDA
-    .irda_RXD                         (IRDA_RXD),
-    .irda_TXD                         (IRDA_TXD),
+        // LEDs
+        .leds_export                      (LEDR),
 
-    // VGA Subsystem
-    .vga_CLK                          (VGA_CLK),
-    .vga_BLANK                        (VGA_BLANK_N),
-    .vga_SYNC                         (VGA_SYNC_N),
-    .vga_HS                           (VGA_HS),
-    .vga_VS                           (VGA_VS),
-    .vga_R                            (VGA_R),
-    .vga_G                            (VGA_G),
-    .vga_B                            (VGA_B),
+        // Seven Segs
+        .hex3_hex0_export                 (hex3_hex0),
+        .hex5_hex4_export                 (hex5_hex4),
 
-    // Video In Subsystem
-    .video_in_TD_CLK27                (TD_CLK27),
-    .video_in_TD_DATA                 (TD_DATA),
-    .video_in_TD_HS                   (TD_HS),
-    .video_in_TD_VS                   (TD_VS),
-    .video_in_clk27_reset             (),
-    .video_in_TD_RESET                (TD_RESET_N),
-    .video_in_overflow_flag           (),
+        // PS2 Ports
+        .ps2_port_CLK                     (PS2_CLK),
+        .ps2_port_DAT                     (PS2_DAT),
+        .ps2_port_dual_CLK                (PS2_CLK2),
+        .ps2_port_dual_DAT                (PS2_DAT2),
 
-    // SDRAM
-    .sdram_clk_clk                    (DRAM_CLK),
-    .sdram_addr                       (DRAM_ADDR),
-    .sdram_ba                         (DRAM_BA),
-    .sdram_cas_n                      (DRAM_CAS_N),
-    .sdram_cke                        (DRAM_CKE),
-    .sdram_cs_n                       (DRAM_CS_N),
-    .sdram_dq                         (DRAM_DQ),
-    .sdram_dqm                        ({DRAM_UDQM,DRAM_LDQM}),
-    .sdram_ras_n                      (DRAM_RAS_N),
-    .sdram_we_n                       (DRAM_WE_N),
+        // IrDA
+        .irda_RXD                         (IRDA_RXD),
+        .irda_TXD                         (IRDA_TXD),
 
-    ////////////////////////////////////
-    // HPS Side
-    ////////////////////////////////////
-    // DDR3 SDRAM
-    .memory_mem_a                     (HPS_DDR3_ADDR),
-    .memory_mem_ba                    (HPS_DDR3_BA),
-    .memory_mem_ck                    (HPS_DDR3_CK_P),
-    .memory_mem_ck_n                  (HPS_DDR3_CK_N),
-    .memory_mem_cke                   (HPS_DDR3_CKE),
-    .memory_mem_cs_n                  (HPS_DDR3_CS_N),
-    .memory_mem_ras_n                 (HPS_DDR3_RAS_N),
-    .memory_mem_cas_n                 (HPS_DDR3_CAS_N),
-    .memory_mem_we_n                  (HPS_DDR3_WE_N),
-    .memory_mem_reset_n               (HPS_DDR3_RESET_N),
-    .memory_mem_dq                    (HPS_DDR3_DQ),
-    .memory_mem_dqs                   (HPS_DDR3_DQS_P),
-    .memory_mem_dqs_n                 (HPS_DDR3_DQS_N),
-    .memory_mem_odt                   (HPS_DDR3_ODT),
-    .memory_mem_dm                    (HPS_DDR3_DM),
-    .memory_oct_rzqin                 (HPS_DDR3_RZQ),
+        // VGA Subsystem
+        .vga_CLK                          (VGA_CLK),
+        .vga_BLANK                        (VGA_BLANK_N),
+        .vga_SYNC                         (VGA_SYNC_N),
+        .vga_HS                           (VGA_HS),
+        .vga_VS                           (VGA_VS),
+        .vga_R                            (VGA_R),
+        .vga_G                            (VGA_G),
+        .vga_B                            (VGA_B),
 
-    // Ethernet
-    .hps_io_hps_io_gpio_inst_GPIO35   (HPS_ENET_INT_N),
-    .hps_io_hps_io_emac1_inst_TX_CLK  (HPS_ENET_GTX_CLK),
-    .hps_io_hps_io_emac1_inst_TXD0    (HPS_ENET_TX_DATA[0]),
-    .hps_io_hps_io_emac1_inst_TXD1    (HPS_ENET_TX_DATA[1]),
-    .hps_io_hps_io_emac1_inst_TXD2    (HPS_ENET_TX_DATA[2]),
-    .hps_io_hps_io_emac1_inst_TXD3    (HPS_ENET_TX_DATA[3]),
-    .hps_io_hps_io_emac1_inst_RXD0    (HPS_ENET_RX_DATA[0]),
-    .hps_io_hps_io_emac1_inst_MDIO    (HPS_ENET_MDIO),
-    .hps_io_hps_io_emac1_inst_MDC     (HPS_ENET_MDC),
-    .hps_io_hps_io_emac1_inst_RX_CTL  (HPS_ENET_RX_DV),
-    .hps_io_hps_io_emac1_inst_TX_CTL  (HPS_ENET_TX_EN),
-    .hps_io_hps_io_emac1_inst_RX_CLK  (HPS_ENET_RX_CLK),
-    .hps_io_hps_io_emac1_inst_RXD1    (HPS_ENET_RX_DATA[1]),
-    .hps_io_hps_io_emac1_inst_RXD2    (HPS_ENET_RX_DATA[2]),
-    .hps_io_hps_io_emac1_inst_RXD3    (HPS_ENET_RX_DATA[3]),
+        // Video In Subsystem
+        .video_in_TD_CLK27                (TD_CLK27),
+        .video_in_TD_DATA                 (TD_DATA),
+        .video_in_TD_HS                   (TD_HS),
+        .video_in_TD_VS                   (TD_VS),
+        .video_in_clk27_reset             (),
+        .video_in_TD_RESET                (TD_RESET_N),
+        .video_in_overflow_flag           (),
 
-    // Flash
-    .hps_io_hps_io_qspi_inst_IO0      (HPS_FLASH_DATA[0]),
-    .hps_io_hps_io_qspi_inst_IO1      (HPS_FLASH_DATA[1]),
-    .hps_io_hps_io_qspi_inst_IO2      (HPS_FLASH_DATA[2]),
-    .hps_io_hps_io_qspi_inst_IO3      (HPS_FLASH_DATA[3]),
-    .hps_io_hps_io_qspi_inst_SS0      (HPS_FLASH_NCSO),
-    .hps_io_hps_io_qspi_inst_CLK      (HPS_FLASH_DCLK),
+        // SDRAM
+        .sdram_clk_clk                    (DRAM_CLK),
+        .sdram_addr                       (DRAM_ADDR),
+        .sdram_ba                         (DRAM_BA),
+        .sdram_cas_n                      (DRAM_CAS_N),
+        .sdram_cke                        (DRAM_CKE),
+        .sdram_cs_n                       (DRAM_CS_N),
+        .sdram_dq                         (DRAM_DQ),
+        .sdram_dqm                        ({DRAM_UDQM,DRAM_LDQM}),
+        .sdram_ras_n                      (DRAM_RAS_N),
+        .sdram_we_n                       (DRAM_WE_N),
 
-    // Accelerometer
-    .hps_io_hps_io_gpio_inst_GPIO61   (HPS_GSENSOR_INT),
+        // NAND Avalon Conduits
+        .nand_avalon_0_conduit_end_nand_data ({NAND_DUMMY[7:0],NAND_DQ[7:0]}),
+        .nand_avalon_0_conduit_end_nand_nwp  (NAND_NWP),
+        .nand_avalon_0_conduit_end_nand_nwe  (NAND_NWE),
+        .nand_avalon_0_conduit_end_nand_ale  (NAND_ALE),
+        .nand_avalon_0_conduit_end_nand_cle  (NAND_CLE),
+        .nand_avalon_0_conduit_end_nand_nce  (NAND_NCE),
+        .nand_avalon_0_conduit_end_nand_nre  (NAND_NRE),
+        .nand_avalon_0_conduit_end_nand_rnb  (NAND_RNB),
 
-    .adc_sclk                         (ADC_SCLK),
-    .adc_cs_n                         (ADC_CS_N),
-    .adc_dout                         (ADC_DOUT),
-    .adc_din                          (ADC_DIN),
+        ////////////////////////////////////
+        // HPS Side
+        ////////////////////////////////////
+        // DDR3 SDRAM
+        .memory_mem_a                     (HPS_DDR3_ADDR),
+        .memory_mem_ba                    (HPS_DDR3_BA),
+        .memory_mem_ck                    (HPS_DDR3_CK_P),
+        .memory_mem_ck_n                  (HPS_DDR3_CK_N),
+        .memory_mem_cke                   (HPS_DDR3_CKE),
+        .memory_mem_cs_n                  (HPS_DDR3_CS_N),
+        .memory_mem_ras_n                 (HPS_DDR3_RAS_N),
+        .memory_mem_cas_n                 (HPS_DDR3_CAS_N),
+        .memory_mem_we_n                  (HPS_DDR3_WE_N),
+        .memory_mem_reset_n               (HPS_DDR3_RESET_N),
+        .memory_mem_dq                    (HPS_DDR3_DQ),
+        .memory_mem_dqs                   (HPS_DDR3_DQS_P),
+        .memory_mem_dqs_n                 (HPS_DDR3_DQS_N),
+        .memory_mem_odt                   (HPS_DDR3_ODT),
+        .memory_mem_dm                    (HPS_DDR3_DM),
+        .memory_oct_rzqin                 (HPS_DDR3_RZQ),
 
-    // General Purpose I/O
-    .hps_io_hps_io_gpio_inst_GPIO40   (HPS_GPIO[0]),
-    .hps_io_hps_io_gpio_inst_GPIO41   (HPS_GPIO[1]),
 
-    // I2C
-    .hps_io_hps_io_gpio_inst_GPIO48   (HPS_I2C_CONTROL),
-    .hps_io_hps_io_i2c0_inst_SDA      (HPS_I2C1_SDAT),
-    .hps_io_hps_io_i2c0_inst_SCL      (HPS_I2C1_SCLK),
-    .hps_io_hps_io_i2c1_inst_SDA      (HPS_I2C2_SDAT),
-    .hps_io_hps_io_i2c1_inst_SCL      (HPS_I2C2_SCLK),
+        // Ethernet
+        .hps_io_hps_io_gpio_inst_GPIO35   (HPS_ENET_INT_N),
+        .hps_io_hps_io_emac1_inst_TX_CLK  (HPS_ENET_GTX_CLK),
+        .hps_io_hps_io_emac1_inst_TXD0    (HPS_ENET_TX_DATA[0]),
+        .hps_io_hps_io_emac1_inst_TXD1    (HPS_ENET_TX_DATA[1]),
+        .hps_io_hps_io_emac1_inst_TXD2    (HPS_ENET_TX_DATA[2]),
+        .hps_io_hps_io_emac1_inst_TXD3    (HPS_ENET_TX_DATA[3]),
+        .hps_io_hps_io_emac1_inst_RXD0    (HPS_ENET_RX_DATA[0]),
+        .hps_io_hps_io_emac1_inst_MDIO    (HPS_ENET_MDIO),
+        .hps_io_hps_io_emac1_inst_MDC     (HPS_ENET_MDC),
+        .hps_io_hps_io_emac1_inst_RX_CTL  (HPS_ENET_RX_DV),
+        .hps_io_hps_io_emac1_inst_TX_CTL  (HPS_ENET_TX_EN),
+        .hps_io_hps_io_emac1_inst_RX_CLK  (HPS_ENET_RX_CLK),
+        .hps_io_hps_io_emac1_inst_RXD1    (HPS_ENET_RX_DATA[1]),
+        .hps_io_hps_io_emac1_inst_RXD2    (HPS_ENET_RX_DATA[2]),
+        .hps_io_hps_io_emac1_inst_RXD3    (HPS_ENET_RX_DATA[3]),
 
-    // Pushbutton
-    .hps_io_hps_io_gpio_inst_GPIO54   (HPS_KEY),
+        // Flash
+        .hps_io_hps_io_qspi_inst_IO0      (HPS_FLASH_DATA[0]),
+        .hps_io_hps_io_qspi_inst_IO1      (HPS_FLASH_DATA[1]),
+        .hps_io_hps_io_qspi_inst_IO2      (HPS_FLASH_DATA[2]),
+        .hps_io_hps_io_qspi_inst_IO3      (HPS_FLASH_DATA[3]),
+        .hps_io_hps_io_qspi_inst_SS0      (HPS_FLASH_NCSO),
+        .hps_io_hps_io_qspi_inst_CLK      (HPS_FLASH_DCLK),
 
-    // LED
-    .hps_io_hps_io_gpio_inst_GPIO53   (HPS_LED),
+        // Accelerometer
+        .hps_io_hps_io_gpio_inst_GPIO61   (HPS_GSENSOR_INT),
 
-    // SD Card
-    .hps_io_hps_io_sdio_inst_CMD      (HPS_SD_CMD),
-    .hps_io_hps_io_sdio_inst_D0       (HPS_SD_DATA[0]),
-    .hps_io_hps_io_sdio_inst_D1       (HPS_SD_DATA[1]),
-    .hps_io_hps_io_sdio_inst_CLK      (HPS_SD_CLK),
-    .hps_io_hps_io_sdio_inst_D2       (HPS_SD_DATA[2]),
-    .hps_io_hps_io_sdio_inst_D3       (HPS_SD_DATA[3]),
+        .adc_sclk                         (ADC_SCLK),
+        .adc_cs_n                         (ADC_CS_N),
+        .adc_dout                         (ADC_DOUT),
+        .adc_din                          (ADC_DIN),
 
-    // SPI
-    .hps_io_hps_io_spim1_inst_CLK     (HPS_SPIM_CLK),
-    .hps_io_hps_io_spim1_inst_MOSI    (HPS_SPIM_MOSI),
-    .hps_io_hps_io_spim1_inst_MISO    (HPS_SPIM_MISO),
-    .hps_io_hps_io_spim1_inst_SS0     (HPS_SPIM_SS),
+        // General Purpose I/O
+        .hps_io_hps_io_gpio_inst_GPIO40   (HPS_GPIO[0]),
+        .hps_io_hps_io_gpio_inst_GPIO41   (HPS_GPIO[1]),
 
-    // UART
-    .hps_io_hps_io_uart0_inst_RX      (HPS_UART_RX),
-    .hps_io_hps_io_uart0_inst_TX      (HPS_UART_TX),
+        // I2C
+        .hps_io_hps_io_gpio_inst_GPIO48   (HPS_I2C_CONTROL),
+        .hps_io_hps_io_i2c0_inst_SDA      (HPS_I2C1_SDAT),
+        .hps_io_hps_io_i2c0_inst_SCL      (HPS_I2C1_SCLK),
+        .hps_io_hps_io_i2c1_inst_SDA      (HPS_I2C2_SDAT),
+        .hps_io_hps_io_i2c1_inst_SCL      (HPS_I2C2_SCLK),
 
-    // USB
-    .hps_io_hps_io_gpio_inst_GPIO09   (HPS_CONV_USB_N),
-    .hps_io_hps_io_usb1_inst_D0       (HPS_USB_DATA[0]),
-    .hps_io_hps_io_usb1_inst_D1       (HPS_USB_DATA[1]),
-    .hps_io_hps_io_usb1_inst_D2       (HPS_USB_DATA[2]),
-    .hps_io_hps_io_usb1_inst_D3       (HPS_USB_DATA[3]),
-    .hps_io_hps_io_usb1_inst_D4       (HPS_USB_DATA[4]),
-    .hps_io_hps_io_usb1_inst_D5       (HPS_USB_DATA[5]),
-    .hps_io_hps_io_usb1_inst_D6       (HPS_USB_DATA[6]),
-    .hps_io_hps_io_usb1_inst_D7       (HPS_USB_DATA[7]),
-    .hps_io_hps_io_usb1_inst_CLK      (HPS_USB_CLKOUT),
-    .hps_io_hps_io_usb1_inst_STP      (HPS_USB_STP),
-    .hps_io_hps_io_usb1_inst_DIR      (HPS_USB_DIR),
-    .hps_io_hps_io_usb1_inst_NXT      (HPS_USB_NXT)
-);
+        // Pushbutton
+        .hps_io_hps_io_gpio_inst_GPIO54   (HPS_KEY),
+
+        // LED
+        .hps_io_hps_io_gpio_inst_GPIO53   (HPS_LED),
+
+        // SD Card
+        .hps_io_hps_io_sdio_inst_CMD      (HPS_SD_CMD),
+        .hps_io_hps_io_sdio_inst_D0       (HPS_SD_DATA[0]),
+        .hps_io_hps_io_sdio_inst_D1       (HPS_SD_DATA[1]),
+        .hps_io_hps_io_sdio_inst_CLK      (HPS_SD_CLK),
+        .hps_io_hps_io_sdio_inst_D2       (HPS_SD_DATA[2]),
+        .hps_io_hps_io_sdio_inst_D3       (HPS_SD_DATA[3]),
+
+        // SPI
+        .hps_io_hps_io_spim1_inst_CLK     (HPS_SPIM_CLK),
+        .hps_io_hps_io_spim1_inst_MOSI    (HPS_SPIM_MOSI),
+        .hps_io_hps_io_spim1_inst_MISO    (HPS_SPIM_MISO),
+        .hps_io_hps_io_spim1_inst_SS0     (HPS_SPIM_SS),
+
+        // UART
+        .hps_io_hps_io_uart0_inst_RX      (HPS_UART_RX),
+        .hps_io_hps_io_uart0_inst_TX      (HPS_UART_TX),
+
+        // USB
+        .hps_io_hps_io_gpio_inst_GPIO09   (HPS_CONV_USB_N),
+        .hps_io_hps_io_usb1_inst_D0       (HPS_USB_DATA[0]),
+        .hps_io_hps_io_usb1_inst_D1       (HPS_USB_DATA[1]),
+        .hps_io_hps_io_usb1_inst_D2       (HPS_USB_DATA[2]),
+        .hps_io_hps_io_usb1_inst_D3       (HPS_USB_DATA[3]),
+        .hps_io_hps_io_usb1_inst_D4       (HPS_USB_DATA[4]),
+        .hps_io_hps_io_usb1_inst_D5       (HPS_USB_DATA[5]),
+        .hps_io_hps_io_usb1_inst_D6       (HPS_USB_DATA[6]),
+        .hps_io_hps_io_usb1_inst_D7       (HPS_USB_DATA[7]),
+        .hps_io_hps_io_usb1_inst_CLK      (HPS_USB_CLKOUT),
+        .hps_io_hps_io_usb1_inst_STP      (HPS_USB_STP),
+        .hps_io_hps_io_usb1_inst_DIR      (HPS_USB_DIR),
+        .hps_io_hps_io_usb1_inst_NXT      (HPS_USB_NXT)
+    );
+    end
+endgenerate
 
 
 endmodule
