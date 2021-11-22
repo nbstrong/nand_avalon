@@ -181,9 +181,6 @@ module DE1_SoC_Computer (
 //=======================================================
 //  PARAMETER declarations
 //=======================================================
-/* synthesis translate_off */
-parameter SIM = 0;
-/* synthesis translate_on */
 
 //=======================================================
 //  PORT declarations
@@ -386,6 +383,9 @@ assign HEX5 = ~hex5_hex4[14: 8];
 //=======================================================
 //  Structural coding
 //=======================================================
+wire [7:0] NAND_DUMMY;
+wire [14:0] GPIO_DUMMY;
+
 generate
     // I am likely not going to bother trying to fix the
     // Computer System enough to be able to export the
@@ -404,7 +404,7 @@ generate
     // would be where the research would be needed.
 
     /* synthesis translate_off */
-    if (SIM) begin
+    if (1'b1) begin : sim_gen
         // Internal simulation signals
         // Interface to avalon bus basically
         wire rst, rd, wr;
@@ -419,21 +419,18 @@ generate
             .pread     (rd),
             .pwrite    (wr),
             .address   (addr),
-            .nand_cle  ({{8{1'b0}},NAND_DQ}),
-            .nand_ale  (NAND_NWP),
+            .nand_data ({NAND_DUMMY[7:0],NAND_DQ[7:0]}),
+            .nand_nwp  (NAND_NWP),
             .nand_nwe  (NAND_NWE),
-            .nand_nwp  (NAND_ALE),
-            .nand_nce  (NAND_CLE),
-            .nand_nre  (NAND_NCE),
-            .nand_rnb  (NAND_NRE),
-            .nand_data (NAND_RNB));
+            .nand_ale  (NAND_ALE),
+            .nand_cle  (NAND_CLE),
+            .nand_nce  (NAND_NCE),
+            .nand_nre  (NAND_NRE),
+            .nand_rnb  (NAND_RNB));
     end
     else
     /* synthesis translate_on */
-    begin
-        wire [14:0] GPIO_DUMMY;
-        wire [7:0] NAND_DUMMY;
-
+    begin : cpu_gen
         Computer_System The_System (
         ////////////////////////////////////
         // FPGA Side

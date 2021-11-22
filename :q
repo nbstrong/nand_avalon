@@ -1,0 +1,63 @@
+[1mdiff --git i/DE1_SoC_Computer.v w/DE1_SoC_Computer.v[m
+[1mindex d7202f1..a9e327b 100644[m
+[1m--- i/DE1_SoC_Computer.v[m
+[1m+++ w/DE1_SoC_Computer.v[m
+[36m@@ -181,9 +181,6 @@[m [mmodule DE1_SoC_Computer ([m
+ //=======================================================[m
+ //  PARAMETER declarations[m
+ //=======================================================[m
+[31m-/* synthesis translate_off */[m
+[31m-parameter SIM = 0;[m
+[31m-/* synthesis translate_on */[m
+ [m
+ //=======================================================[m
+ //  PORT declarations[m
+[36m@@ -386,6 +383,9 @@[m [massign HEX5 = ~hex5_hex4[14: 8];[m
+ //=======================================================[m
+ //  Structural coding[m
+ //=======================================================[m
+[32m+[m[32mwire [7:0] NAND_DUMMY;[m
+[32m+[m[32mwire [14:0] GPIO_DUMMY;[m
+[32m+[m[32m[m
+ generate[m
+     // I am likely not going to bother trying to fix the[m
+     // Computer System enough to be able to export the[m
+[36m@@ -404,7 +404,7 @@[m [mgenerate[m
+     // would be where the research would be needed.[m
+ [m
+     /* synthesis translate_off */[m
+[31m-    if (SIM) begin[m
+[32m+[m[32m    if (1'b1) begin : sim_gen[m
+         // Internal simulation signals[m
+         // Interface to avalon bus basically[m
+         wire rst, rd, wr;[m
+[36m@@ -419,21 +419,18 @@[m [mgenerate[m
+             .pread     (rd),[m
+             .pwrite    (wr),[m
+             .address   (addr),[m
+[31m-            .nand_cle  ({{8{1'b0}},NAND_DQ}),[m
+[31m-            .nand_ale  (NAND_NWP),[m
+[32m+[m[32m            .nand_data ({NAND_DUMMY[7:0],NAND_DQ[7:0]}),[m
+[32m+[m[32m            .nand_nwp  (NAND_NWP),[m
+             .nand_nwe  (NAND_NWE),[m
+[31m-            .nand_nwp  (NAND_ALE),[m
+[31m-            .nand_nce  (NAND_CLE),[m
+[31m-            .nand_nre  (NAND_NCE),[m
+[31m-            .nand_rnb  (NAND_NRE),[m
+[31m-            .nand_data (NAND_RNB));[m
+[32m+[m[32m            .nand_ale  (NAND_ALE),[m
+[32m+[m[32m            .nand_cle  (NAND_CLE),[m
+[32m+[m[32m            .nand_nce  (NAND_NCE),[m
+[32m+[m[32m            .nand_nre  (NAND_NRE),[m
+[32m+[m[32m            .nand_rnb  (NAND_RNB));[m
+     end[m
+     else[m
+     /* synthesis translate_on */[m
+[31m-    begin[m
+[31m-        wire [14:0] GPIO_DUMMY;[m
+[31m-        wire [7:0] NAND_DUMMY;[m
+[31m-[m
+[32m+[m[32m    begin : cpu_gen[m
+         Computer_System The_System ([m
+         ////////////////////////////////////[m
+         // FPGA Side[m

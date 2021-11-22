@@ -3,8 +3,8 @@
  <debug showDebugMenu="0" />
  <systemtable filter="All Interfaces">
   <columns>
-   <connections preferredWidth="575" />
-   <irq preferredWidth="79" />
+   <connections preferredWidth="47" />
+   <irq preferredWidth="34" />
    <name preferredWidth="211" />
    <inputclock preferredWidth="141" />
    <autoexport visible="1" />
