@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?><intel_fpga_monitor_program_project version="1.0">
     <architecture>ARM Cortex-A9</architecture>
     <system>
-        <system_info filepath="true">../Computer_System.sopcinfo</system_info>
-        <system_sof filepath="true">../DE1_SoC_Computer_time_limited.sof</system_sof>
+        <system_info filepath="true">../../Computer_System.sopcinfo</system_info>
+        <system_sof filepath="true">../../DE1_SoC_Computer_time_limited.sof</system_sof>
         <board>DE1-SoC</board>
         <cable>DE-SoC [USB-1]</cable>
         <processor>ARM_A9_HPS_arm_a9_0</processor>
@@ -14,9 +14,8 @@
         <source_files>
             <source_file filepath="true">main.c</source_file>
             <header_file filepath="true">address_map_arm.h</header_file>
-            <source_file filepath="true">defines.h</source_file>
-            <source_file filepath="true">exceptions.c</source_file>
-            <source_file filepath="true">interrupt_ID.h</source_file>
+            <source_file filepath="true">nand.c</source_file>
+            <source_file filepath="true">nand.h</header_file>
         </source_files>
         <options>
             <compiler_flags>-g -O1</compiler_flags>
