@@ -132,26 +132,27 @@ wire         HPS_USB_STP;
   DE1_SoC_Computer dut (.*);
 
   // Instantiate MLC memory model
-//   nand_model MLC_nand {
-//     .Io       (),
-//     .Cle      (NAND_CLE),
-//     .Ale      (NAND_ALE),
-//     .Ce_n_i   (NAND_NCE),
-//     .Clk_We_n (NAND_NWE),
-//     .Wr_Re_n  (NAND_NRE),
-//     .Re_c     (),
-//     .Wp_n     (NAND_NWP),
-//     .Rb_n     (NAND_RNB),
-//     .Pre      (),
-//     .Lock     (),
-//     .Dqs      (),
-//     .Dqs_c    (),
-//     .ML_rdy   (),
-//     .Rb_lun_n (),
-//     .PID      (),
-//     .ENi      (),
-//     .ENo      ()}
-//NAND_DQ;
+  wire NAND_ENO;
+  nand_model MLC_nand (
+    .Dq_Io    (NAND_DQ),
+    .Cle      (NAND_CLE),
+    .Ale      (NAND_ALE),
+    .Ce_n     (NAND_NCE),
+    .Clk_We_n (NAND_NWE),
+    .Wr_Re_n  (NAND_NRE),
+    //.Re_c     (),
+    .Wp_n     (NAND_NWP),
+    .Rb_n     (NAND_RNB)
+    //.Pre      (),
+    //.Lock     (),
+    //.Dqs      (),
+    //.Dqs_c    (),
+    //.ML_rdy   (),
+    //.Rb_lun_n (),
+    //.PID      (),
+    //.ENi      (1'b0),    // NC
+    //.ENo      (NAND_ENO) // NC
+  );
 
   // https://www.micron.com/products/nand-flash/slc-nand/part-catalog/mt29f8g08abacawp-it
   // SLC Memory model is under NDA. Get it here if you'd like to go through the NDA process:

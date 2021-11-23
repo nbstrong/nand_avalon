@@ -1,4 +1,3 @@
-onerror {resume}
 quietly WaveActivateNextPane {} 0
 add wave -noupdate -divider nand_avalon
 add wave -noupdate -expand -group ports_nand_avalon -radix hexadecimal /tb/dut/sim_gen/nand_sim0/clk
