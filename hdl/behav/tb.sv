@@ -1,4 +1,8 @@
 // Testbench
+`timescale 1ns/1ps
+`define x8
+`define SHORT_RESET
+`define CLASSB
 module tb;
 
 wire         CLOCK_50;
@@ -127,8 +131,34 @@ wire         HPS_USB_STP;
   // Instantiate design under test
   DE1_SoC_Computer dut (.*);
 
+  // Instantiate MLC memory model
+//   nand_model MLC_nand {
+//     .Io       (),
+//     .Cle      (NAND_CLE),
+//     .Ale      (NAND_ALE),
+//     .Ce_n_i   (NAND_NCE),
+//     .Clk_We_n (NAND_NWE),
+//     .Wr_Re_n  (NAND_NRE),
+//     .Re_c     (),
+//     .Wp_n     (NAND_NWP),
+//     .Rb_n     (NAND_RNB),
+//     .Pre      (),
+//     .Lock     (),
+//     .Dqs      (),
+//     .Dqs_c    (),
+//     .ML_rdy   (),
+//     .Rb_lun_n (),
+//     .PID      (),
+//     .ENi      (),
+//     .ENo      ()}
+//NAND_DQ;
+
+  // https://www.micron.com/products/nand-flash/slc-nand/part-catalog/mt29f8g08abacawp-it
+  // SLC Memory model is under NDA. Get it here if you'd like to go through the NDA process:
+
   assign CLOCK_50 = clk;
   assign tb.dut.sim_gen.rst = rst;
+  assign rdData = tb.dut.sim_gen.rddata;
 
   initial begin
     clk = 0;
@@ -137,47 +167,121 @@ wire         HPS_USB_STP;
   end
 
   initial begin
-  	rst = 1;
-
-    repeat (2) @(posedge clk);
-    $display("Release reset.");
-    rst = 0;
-  end
-
-  initial begin
     // Dump waves
     $dumpfile("dump.vcd");
     $dumpvars();
 
     // Initialize
-
-    // Take out of reset
-    @(negedge rst);
-    repeat (3) @(posedge clk);
+    force tb.dut.sim_gen.addr = 2'h0;
+    force tb.dut.sim_gen.wr   = 1'b0;
+    force tb.dut.sim_gen.rd   = 1'b0;
+    force tb.dut.sim_gen.wrdata = 31'h0;
+    release_signals();
+    reset_system(1'b0);
 
     // Test
 
-    // $display("i:%0h", i);
-    // addr = 0;
-    // wrData = test_vec[i][0];
-    // wr = 1;
-    // @(posedge clk);
-    // addr = 1;
-    // wrData = test_vec[i][1];
-    // @(posedge clk);
-    // addr = 3;
-    // wr = 0;
-    // rd = 1;
-    // @(posedge rdData[0]);
-    // repeat (2)@(posedge clk);
-    // rd = 0;
-    // @(posedge clk);
-    // rd = 1;
-    // addr = 2;
-    // @(posedge clk);
+    // For nand_avalon
+    // Activate signal requires
+    //                 __    __    __
+    // clk          __|  |__|  |__|
+    //                |     |     |
+    // addr         --< 01 >< XX >---
+    //                |     |     |
+    // pwrite       XX______XXXXXXXXX
+    //                |     |     |
+    // prev_addr    --< XX >< 01 >---
+    //                |     |     |
+    // prev_pwrite  XXXXXXXX______XXX
+    //                       _____
+    // nactivet     ________|     |__
+    //
+    // X - Dont Care
+    // prev_addr and prev_pwrite are
+    // just registered versions of
+    // their parents
+    //
+    // This means to activate the system and "lock in" a command
+    // you must read from register 01 and then write to ANY register
+    // Yes, this seems super weird.
 
-    repeat (3) @(posedge clk);
+    write_command(8'h2);
+    //$display("i:%0h", clk);
+
+    repeat (20) @(posedge clk);
     $finish;
   end
+
+task reset_system;
+    input active_high;
+    begin
+        rst = active_high;
+        repeat (2) @(posedge clk);
+        $display("Release reset.");
+        rst = ~active_high;
+        repeat (1) @(posedge clk);
+    end
+endtask
+
+task write_command;
+    input [7:0] wrdata;
+    begin
+    force tb.dut.sim_gen.addr = 2'h1;
+    force tb.dut.sim_gen.wr   = 1'b1;
+    force tb.dut.sim_gen.rd   = 1'b0;
+    force tb.dut.sim_gen.wrdata = {{24{1'b0}},wrdata};
+    @(posedge clk);
+    force tb.dut.sim_gen.wr   = 1'b0;
+    release_signals();
+    end
+endtask
+
+task read_command;
+    begin
+    tb.dut.sim_gen.addr = 2'h1;
+    tb.dut.sim_gen.wr   = 1'b0;
+    tb.dut.sim_gen.rd   = 1'b1;
+    @(posedge clk);
+    end
+endtask
+
+task write_data;
+    input [31:0] wrdata;
+    begin
+    tb.dut.sim_gen.addr = 2'h0;
+    tb.dut.sim_gen.wr   = 1'b1;
+    tb.dut.sim_gen.rd   = 1'b0;
+    tb.dut.sim_gen.wrdata = wrdata;
+    @(posedge clk);
+    end
+endtask
+
+task read_data;
+    begin
+    tb.dut.sim_gen.addr = 2'h0;
+    tb.dut.sim_gen.wr   = 1'b0;
+    tb.dut.sim_gen.rd   = 1'b1;
+    @(posedge clk);
+    end
+endtask
+
+task read_status;
+    begin
+    tb.dut.sim_gen.addr = 2'h2;
+    tb.dut.sim_gen.wr   = 1'b0;
+    tb.dut.sim_gen.rd   = 1'b1;
+    @(posedge clk);
+    end
+endtask
+
+task release_signals;
+    begin
+    #1
+    release tb.dut.sim_gen.addr;
+    release tb.dut.sim_gen.wr;
+    release tb.dut.sim_gen.rd;
+    release tb.dut.sim_gen.wrdata;
+    end
+endtask
 
 endmodule

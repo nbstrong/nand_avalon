@@ -407,9 +407,10 @@ generate
     if (1'b1) begin : sim_gen
         // Internal simulation signals
         // Interface to avalon bus basically
-        wire rst, rd, wr;
-        wire [1:0] addr;
-        wire [31:0] rddata, wrdata;
+        reg rst, rd, wr;
+        reg [1:0] addr;
+        reg [31:0] wrdata;
+        wire [31:0] rddata;
 
         nand_avalon nand_sim0 (
             .clk       (CLOCK_50),

@@ -1,32 +1,35 @@
 onerror {resume}
 quietly WaveActivateNextPane {} 0
-add wave -noupdate -divider TB
-add wave -noupdate -radix unsigned /tb/clk
-add wave -noupdate -radix unsigned /tb/rst
-add wave -noupdate -radix unsigned /tb/rd
-add wave -noupdate -radix unsigned /tb/wr
-add wave -noupdate -radix unsigned /tb/cs
-add wave -noupdate /tb/doneInt
-add wave -noupdate -radix unsigned /tb/addr
-add wave -noupdate -radix unsigned /tb/be
-add wave -noupdate -radix unsigned /tb/wrData
-add wave -noupdate -radix unsigned /tb/rdData
-add wave -noupdate -divider DUT
-add wave -noupdate -radix unsigned -childformat {{{/tb/DUT/from_reg[0]} -radix unsigned} {{/tb/DUT/from_reg[1]} -radix unsigned} {{/tb/DUT/from_reg[2]} -radix unsigned} {{/tb/DUT/from_reg[3]} -radix unsigned}} -expand -subitemconfig {{/tb/DUT/from_reg[0]} {-height 15 -radix unsigned} {/tb/DUT/from_reg[1]} {-height 15 -radix unsigned} {/tb/DUT/from_reg[2]} {-height 15 -radix unsigned} {/tb/DUT/from_reg[3]} {-height 15 -radix unsigned}} /tb/DUT/from_reg
-add wave -noupdate -divider GCD
-add wave -noupdate -radix unsigned /tb/DUT/GCD/clk
-add wave -noupdate -radix unsigned /tb/DUT/GCD/clk_en
-add wave -noupdate -radix unsigned /tb/DUT/GCD/reset
-add wave -noupdate -radix unsigned /tb/DUT/GCD/start
-add wave -noupdate -radix unsigned /tb/DUT/GCD/dataa
-add wave -noupdate -radix unsigned /tb/DUT/GCD/datab
-add wave -noupdate -radix unsigned /tb/DUT/GCD/a
-add wave -noupdate -radix unsigned /tb/DUT/GCD/b
-add wave -noupdate -radix unsigned /tb/DUT/GCD/result
-add wave -noupdate -radix unsigned /tb/DUT/GCD/done_internal
-add wave -noupdate -radix unsigned /tb/DUT/GCD/done
+add wave -noupdate -divider nand_avalon
+add wave -noupdate -expand -group ports_nand_avalon -radix hexadecimal /tb/dut/sim_gen/nand_sim0/clk
+add wave -noupdate -expand -group ports_nand_avalon -radix hexadecimal /tb/dut/sim_gen/nand_sim0/resetn
+add wave -noupdate -expand -group ports_nand_avalon -radix hexadecimal /tb/dut/sim_gen/nand_sim0/readdata
+add wave -noupdate -expand -group ports_nand_avalon -radix hexadecimal /tb/dut/sim_gen/nand_sim0/writedata
+add wave -noupdate -expand -group ports_nand_avalon -radix hexadecimal /tb/dut/sim_gen/nand_sim0/pread
+add wave -noupdate -expand -group ports_nand_avalon -radix hexadecimal /tb/dut/sim_gen/nand_sim0/pwrite
+add wave -noupdate -expand -group ports_nand_avalon -radix hexadecimal /tb/dut/sim_gen/nand_sim0/address
+add wave -noupdate -expand -group ports_nand_avalon -radix hexadecimal /tb/dut/sim_gen/nand_sim0/nand_cle
+add wave -noupdate -expand -group ports_nand_avalon -radix hexadecimal /tb/dut/sim_gen/nand_sim0/nand_ale
+add wave -noupdate -expand -group ports_nand_avalon -radix hexadecimal /tb/dut/sim_gen/nand_sim0/nand_nwe
+add wave -noupdate -expand -group ports_nand_avalon -radix hexadecimal /tb/dut/sim_gen/nand_sim0/nand_nwp
+add wave -noupdate -expand -group ports_nand_avalon -radix hexadecimal /tb/dut/sim_gen/nand_sim0/nand_nce
+add wave -noupdate -expand -group ports_nand_avalon -radix hexadecimal /tb/dut/sim_gen/nand_sim0/nand_nre
+add wave -noupdate -expand -group ports_nand_avalon -radix hexadecimal /tb/dut/sim_gen/nand_sim0/nand_rnb
+add wave -noupdate -expand -group ports_nand_avalon -radix hexadecimal /tb/dut/sim_gen/nand_sim0/nand_data
+add wave -noupdate -expand -group signals_nand_avalon -radix hexadecimal /tb/dut/sim_gen/nand_sim0/prev_address
+add wave -noupdate -expand -group signals_nand_avalon -radix hexadecimal /tb/dut/sim_gen/nand_sim0/prev_pwrite
+add wave -noupdate -expand -group signals_nand_avalon -radix hexadecimal /tb/dut/sim_gen/nand_sim0/n_busy
+add wave -noupdate -divider nand_master
+add wave -noupdate -expand -group ports_nand_master -radix hexadecimal /tb/dut/sim_gen/nand_sim0/NANDA/clk
+add wave -noupdate -expand -group ports_nand_master -radix hexadecimal /tb/dut/sim_gen/nand_sim0/NANDA/enable
+add wave -noupdate -expand -group ports_nand_master -radix hexadecimal /tb/dut/sim_gen/nand_sim0/NANDA/nreset
+add wave -noupdate -expand -group ports_nand_master -radix hexadecimal /tb/dut/sim_gen/nand_sim0/NANDA/data_out
+add wave -noupdate -expand -group ports_nand_master -radix hexadecimal /tb/dut/sim_gen/nand_sim0/NANDA/data_in
+add wave -noupdate -expand -group ports_nand_master -radix hexadecimal /tb/dut/sim_gen/nand_sim0/NANDA/busy
+add wave -noupdate -expand -group ports_nand_master -radix hexadecimal /tb/dut/sim_gen/nand_sim0/NANDA/activate
+add wave -noupdate -expand -group ports_nand_master -radix hexadecimal /tb/dut/sim_gen/nand_sim0/NANDA/cmd_in
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {0 ps} 0}
+WaveRestoreCursors {{Cursor 1} {0 ns} 0}
 quietly wave cursor active 1
 configure wave -namecolwidth 150
 configure wave -valuecolwidth 100
@@ -40,6 +43,6 @@ configure wave -gridoffset 0
 configure wave -gridperiod 1
 configure wave -griddelta 40
 configure wave -timeline 0
-configure wave -timelineunits ps
+configure wave -timelineunits ns
 update
-WaveRestoreZoom {5192 ps} {5611 ps}
+WaveRestoreZoom {0 ns} {273 ns}
