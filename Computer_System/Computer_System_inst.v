@@ -92,6 +92,14 @@
 		.memory_mem_odt                      (<connected-to-memory_mem_odt>),                      //                          .mem_odt
 		.memory_mem_dm                       (<connected-to-memory_mem_dm>),                       //                          .mem_dm
 		.memory_oct_rzqin                    (<connected-to-memory_oct_rzqin>),                    //                          .oct_rzqin
+		.nand_avalon_0_conduit_end_nand_ale  (<connected-to-nand_avalon_0_conduit_end_nand_ale>),  // nand_avalon_0_conduit_end.nand_ale
+		.nand_avalon_0_conduit_end_nand_cle  (<connected-to-nand_avalon_0_conduit_end_nand_cle>),  //                          .nand_cle
+		.nand_avalon_0_conduit_end_nand_data (<connected-to-nand_avalon_0_conduit_end_nand_data>), //                          .nand_data
+		.nand_avalon_0_conduit_end_nand_nce  (<connected-to-nand_avalon_0_conduit_end_nand_nce>),  //                          .nand_nce
+		.nand_avalon_0_conduit_end_nand_nre  (<connected-to-nand_avalon_0_conduit_end_nand_nre>),  //                          .nand_nre
+		.nand_avalon_0_conduit_end_nand_nwe  (<connected-to-nand_avalon_0_conduit_end_nand_nwe>),  //                          .nand_nwe
+		.nand_avalon_0_conduit_end_nand_nwp  (<connected-to-nand_avalon_0_conduit_end_nand_nwp>),  //                          .nand_nwp
+		.nand_avalon_0_conduit_end_nand_rnb  (<connected-to-nand_avalon_0_conduit_end_nand_rnb>),  //                          .nand_rnb
 		.ps2_port_CLK                        (<connected-to-ps2_port_CLK>),                        //                  ps2_port.CLK
 		.ps2_port_DAT                        (<connected-to-ps2_port_DAT>),                        //                          .DAT
 		.ps2_port_dual_CLK                   (<connected-to-ps2_port_dual_CLK>),                   //             ps2_port_dual.CLK
@@ -126,14 +134,6 @@
 		.video_in_TD_RESET                   (<connected-to-video_in_TD_RESET>),                   //                          .TD_RESET
 		.video_in_overflow_flag              (<connected-to-video_in_overflow_flag>),              //                          .overflow_flag
 		.video_pll_ref_clk_clk               (<connected-to-video_pll_ref_clk_clk>),               //         video_pll_ref_clk.clk
-		.video_pll_ref_reset_reset           (<connected-to-video_pll_ref_reset_reset>),           //       video_pll_ref_reset.reset
-		.nand_avalon_0_conduit_end_nand_ale  (<connected-to-nand_avalon_0_conduit_end_nand_ale>),  // nand_avalon_0_conduit_end.nand_ale
-		.nand_avalon_0_conduit_end_nand_cle  (<connected-to-nand_avalon_0_conduit_end_nand_cle>),  //                          .nand_cle
-		.nand_avalon_0_conduit_end_nand_data (<connected-to-nand_avalon_0_conduit_end_nand_data>), //                          .nand_data
-		.nand_avalon_0_conduit_end_nand_nce  (<connected-to-nand_avalon_0_conduit_end_nand_nce>),  //                          .nand_nce
-		.nand_avalon_0_conduit_end_nand_nre  (<connected-to-nand_avalon_0_conduit_end_nand_nre>),  //                          .nand_nre
-		.nand_avalon_0_conduit_end_nand_nwe  (<connected-to-nand_avalon_0_conduit_end_nand_nwe>),  //                          .nand_nwe
-		.nand_avalon_0_conduit_end_nand_nwp  (<connected-to-nand_avalon_0_conduit_end_nand_nwp>),  //                          .nand_nwp
-		.nand_avalon_0_conduit_end_nand_rnb  (<connected-to-nand_avalon_0_conduit_end_nand_rnb>)   //                          .nand_rnb
+		.video_pll_ref_reset_reset           (<connected-to-video_pll_ref_reset_reset>)            //       video_pll_ref_reset.reset
 	);
 

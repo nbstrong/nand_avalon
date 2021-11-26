@@ -394,14 +394,12 @@ generate
     // and you would need to remove it.
     // Until then, the below allows you to drive the "Avalon"
     // side and the testbench side during simulation
-    // to simulate the avalon nand_interface by setting the
-    // parameter SIM to 1 during simulation. Likely -gSIM 1
-    // is the command for Modelsim.
+    // to simulate the avalon nand_interface.
 
-    // IDEA: If you can accurately model the nand flash in the
-    // testbench, you may be able to simulate these experiments.
-    // A matlab model of the physics of the NAND's transistor (floating gate?)
-    // would be where the research would be needed.
+    // IDEA: There is a nand flash memory model in the testbench.
+    // I don't think it accurately models (floating?) gate physics.
+    // Could it be edited to add a transistor physics model?
+    // Could these experiments be simulated?
 
     /* synthesis translate_off */
     if (1'b1) begin : sim_gen

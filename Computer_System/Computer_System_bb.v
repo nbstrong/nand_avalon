@@ -93,6 +93,14 @@ module Computer_System (
 	memory_mem_odt,
 	memory_mem_dm,
 	memory_oct_rzqin,
+	nand_avalon_0_conduit_end_nand_ale,
+	nand_avalon_0_conduit_end_nand_cle,
+	nand_avalon_0_conduit_end_nand_data,
+	nand_avalon_0_conduit_end_nand_nce,
+	nand_avalon_0_conduit_end_nand_nre,
+	nand_avalon_0_conduit_end_nand_nwe,
+	nand_avalon_0_conduit_end_nand_nwp,
+	nand_avalon_0_conduit_end_nand_rnb,
 	ps2_port_CLK,
 	ps2_port_DAT,
 	ps2_port_dual_CLK,
@@ -127,15 +135,7 @@ module Computer_System (
 	video_in_TD_RESET,
 	video_in_overflow_flag,
 	video_pll_ref_clk_clk,
-	video_pll_ref_reset_reset,
-	nand_avalon_0_conduit_end_nand_ale,
-	nand_avalon_0_conduit_end_nand_cle,
-	nand_avalon_0_conduit_end_nand_data,
-	nand_avalon_0_conduit_end_nand_nce,
-	nand_avalon_0_conduit_end_nand_nre,
-	nand_avalon_0_conduit_end_nand_nwe,
-	nand_avalon_0_conduit_end_nand_nwp,
-	nand_avalon_0_conduit_end_nand_rnb);	
+	video_pll_ref_reset_reset);	
 
 	output		adc_sclk;
 	output		adc_cs_n;
@@ -230,6 +230,14 @@ module Computer_System (
 	output		memory_mem_odt;
 	output	[3:0]	memory_mem_dm;
 	input		memory_oct_rzqin;
+	output		nand_avalon_0_conduit_end_nand_ale;
+	output		nand_avalon_0_conduit_end_nand_cle;
+	inout	[15:0]	nand_avalon_0_conduit_end_nand_data;
+	output		nand_avalon_0_conduit_end_nand_nce;
+	output		nand_avalon_0_conduit_end_nand_nre;
+	output		nand_avalon_0_conduit_end_nand_nwe;
+	output		nand_avalon_0_conduit_end_nand_nwp;
+	input		nand_avalon_0_conduit_end_nand_rnb;
 	inout		ps2_port_CLK;
 	inout		ps2_port_DAT;
 	inout		ps2_port_dual_CLK;
@@ -265,12 +273,4 @@ module Computer_System (
 	output		video_in_overflow_flag;
 	input		video_pll_ref_clk_clk;
 	input		video_pll_ref_reset_reset;
-	output		nand_avalon_0_conduit_end_nand_ale;
-	output		nand_avalon_0_conduit_end_nand_cle;
-	inout	[15:0]	nand_avalon_0_conduit_end_nand_data;
-	output		nand_avalon_0_conduit_end_nand_nce;
-	output		nand_avalon_0_conduit_end_nand_nre;
-	output		nand_avalon_0_conduit_end_nand_nwe;
-	output		nand_avalon_0_conduit_end_nand_nwp;
-	input		nand_avalon_0_conduit_end_nand_rnb;
 endmodule

@@ -7872,7 +7872,7 @@ module Computer_System_mm_interconnect_0 (
 		.CHIPSELECT_THROUGH_READLATENCY (0),
 		.AV_READ_WAIT_CYCLES            (0),
 		.AV_WRITE_WAIT_CYCLES           (0),
-		.AV_SETUP_WAIT_CYCLES           (0),
+		.AV_SETUP_WAIT_CYCLES           (1),
 		.AV_DATA_HOLD_CYCLES            (0)
 	) nand_avalon_0_avalon_slave_0_translator (
 		.clk                    (System_PLL_sys_clk_clk),                                          //                      clk.clk

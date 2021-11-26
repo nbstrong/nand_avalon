@@ -3,8 +3,8 @@
  <debug showDebugMenu="0" />
  <systemtable filter="All Interfaces">
   <columns>
-   <connections preferredWidth="47" />
-   <irq preferredWidth="34" />
+   <connections preferredWidth="575" />
+   <irq preferredWidth="79" />
    <name preferredWidth="211" />
    <inputclock preferredWidth="141" />
    <autoexport visible="1" />
@@ -12,8 +12,8 @@
    <defaultSlave visible="1" />
   </columns>
  </systemtable>
- <library expandedCategories="Library,Project" />
- <window width="1920" height="1050" x="0" y="0" />
+ <library expandedCategories="Project,Library" />
+ <window width="2762" height="1790" x="-13" y="-13" />
  <generation simulation="NONE" />
  <hdlexample language="VERILOG" />
 </preferences>
