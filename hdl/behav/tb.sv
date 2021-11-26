@@ -1,9 +1,40 @@
 // Testbench
-`timescale 1ns/1ps
+`timescale 1ns / 1ps
+
+// Memory Model Specific Macros
 `define x8
-`define SHORT_RESET
+`define V33
+//`define SHORT_RESET
 `define CLASSB
+
+// Nand Avalon Address Macros
+`define DATA_REG 2'h0
+`define CMD_REG  2'h1
+`define STATUS_REG 2'h2
+
+// Nand Avalon Command Macros
+`define INTERNAL_RESET_CMD                8'h00
+`define NAND_RESET_CMD                    8'h01
+`define NAND_READ_PARAMETER_PAGE_CMD      8'h02
+`define NAND_READ_ID_CMD                  8'h03
+`define NAND_BLOCK_ERASE_CMD              8'h04
+`define NAND_READ_STATUS_CMD              8'h05
+`define NAND_READ_PAGE_CMD                8'h06
+`define NAND_PAGE_PROGRAM_CMD             8'h07
+`define CTRL_GET_STATUS_CMD               8'h08
+`define CTRL_CHIP_ENABLE_CMD              8'h09
+`define CTRL_CHIP_DISABLE_CMD             8'h10
+`define CTRL_WRITE_PROTECT_CMD            8'h11
+`define CTRL_WRITE_ENABLE_CMD             8'h12
+`define CTRL_RESET_INDEX_CMD              8'h13
+`define CTRL_GET_ID_BYTE_CMD              8'h14
+`define CTRL_GET_PARAMETER_PAGE_BYTE_CMD  8'h15
+`define CTRL_GET_DATA_PAGE_BYTE_CMD       8'h16
+`define CTRL_SET_DATA_PAGE_BYTE_CMD       8'h17
+`define CTRL_GET_CURRENT_ADDRESS_BYTE_CMD 8'h18
+`define CTRL_SET_CURRENT_ADDRESS_BYTE_CMD 8'h19
 module tb;
+
 
 wire         CLOCK_50;
 wire         CLOCK2_50;
@@ -127,12 +158,13 @@ wire         HPS_USB_STP;
   logic [1:0] addr;
   logic [3:0] be;
   logic [31:0] wrData, rdData;
+  reg  [8*256:1]           msg;
 
   // Instantiate design under test
   DE1_SoC_Computer dut (.*);
 
   // Instantiate MLC memory model
-  wire NAND_ENO;
+  wire NAND_DQS_NO_CONNECT;
   nand_model MLC_nand (
     .Dq_Io    (NAND_DQ),
     .Cle      (NAND_CLE),
@@ -140,26 +172,16 @@ wire         HPS_USB_STP;
     .Ce_n     (NAND_NCE),
     .Clk_We_n (NAND_NWE),
     .Wr_Re_n  (NAND_NRE),
-    //.Re_c     (),
     .Wp_n     (NAND_NWP),
-    .Rb_n     (NAND_RNB)
-    //.Pre      (),
-    //.Lock     (),
-    //.Dqs      (),
-    //.Dqs_c    (),
-    //.ML_rdy   (),
-    //.Rb_lun_n (),
-    //.PID      (),
-    //.ENi      (1'b0),    // NC
-    //.ENo      (NAND_ENO) // NC
+    .Rb_n     (NAND_RNB),
+    .Dqs      (NAND_DQS_NO_CONNECT) // Should only be testing asynchronous mode
   );
 
+  // SLC Memory model is by request only. Get it here if you'd like to go through the NDA process:
   // https://www.micron.com/products/nand-flash/slc-nand/part-catalog/mt29f8g08abacawp-it
-  // SLC Memory model is under NDA. Get it here if you'd like to go through the NDA process:
 
   assign CLOCK_50 = clk;
   assign tb.dut.sim_gen.rst = rst;
-  assign rdData = tb.dut.sim_gen.rddata;
 
   initial begin
     clk = 0;
@@ -169,30 +191,25 @@ wire         HPS_USB_STP;
 
   initial begin
     // Dump waves
+    $timeformat (-9, 3, " ns", 1);
     $dumpfile("dump.vcd");
     $dumpvars();
-
-    // Initialize
-    force tb.dut.sim_gen.addr = 2'h0;
-    force tb.dut.sim_gen.wr   = 1'b0;
-    force tb.dut.sim_gen.rd   = 1'b0;
-    force tb.dut.sim_gen.wrdata = 31'h0;
-    release_signals();
-    reset_system(1'b0);
-
+    /******************************************************/
     // Test
-
+    /******************************************************/
     // For nand_avalon
     // Activate signal requires
     //                 __    __    __
     // clk          __|  |__|  |__|
-    //                |     |     |
+    //
     // addr         --< 01 >< XX >---
-    //                |     |     |
-    // pwrite       XX______XXXXXXXXX
-    //                |     |     |
+    //                       _____
+    // pwrite       XX______|     |XX
+    //
+    // n_busy       XXXXXXXX______XXX
+    //
     // prev_addr    --< XX >< 01 >---
-    //                |     |     |
+    //
     // prev_pwrite  XXXXXXXX______XXX
     //                       _____
     // nactivet     ________|     |__
@@ -203,86 +220,187 @@ wire         HPS_USB_STP;
     // their parents
     //
     // This means to activate the system and "lock in" a command
-    // you must read from register 01 and then write to ANY register
+    // you must read from command register and then write to ANY register
     // Yes, this seems super weird.
+    //
+    // Not so weird. This seems to indicate the avalon interface must
+    // have a SETUP time of 1
 
-    write_command(8'h2);
+
+    // Initialize
+    init_signals();
+    reset_system(1'b0); // Assert our reset
+
+    enable_chip();
+    wait_nand_powerup();
+
+    nand_reset();
+    poll_busy();
+
+    read_id();
+    poll_busy();
+    read_data();
+    read_data();
+    read_data();
+    read_data();
+    read_data();
+    poll_busy();
+
+    read_parameter_page();
+    poll_busy();
+
     //$display("i:%0h", clk);
-
-    repeat (20) @(posedge clk);
+    repeat (1000) @(posedge clk);
     $finish;
   end
+
+task INFO;
+   input [256*8:1] msg;
+begin
+  $display("%m at time %t: %0s", $time, msg);
+end
+endtask
 
 task reset_system;
     input active_high;
     begin
         rst = active_high;
         repeat (2) @(posedge clk);
-        $display("Release reset.");
         rst = ~active_high;
+        $sformat(msg, "Released device reset");
+        INFO(msg);
         repeat (1) @(posedge clk);
+    end
+endtask
+
+task init_signals;
+    begin
+    tb.dut.sim_gen.addr = 2'h0;
+    tb.dut.sim_gen.wr   = 1'b0;
+    tb.dut.sim_gen.rd   = 1'b0;
+    tb.dut.sim_gen.wrdata = 31'h0;
+    end
+endtask
+
+task poll_busy;
+    begin
+        read_status();
+        while(rdData[0] == 1 || rdData[1] == 0) read_status();
+    end
+endtask
+
+task wait_nand_powerup;
+    begin
+    // Let nand chip get powered up
+    read_status();
+    while(rdData[1] == 1) read_status();
+    // Let nand chip get ready
+    read_status();
+    while(rdData[1] == 0) read_status();
+    end
+endtask
+
+// Represents basic avalon interface
+// operations
+// SETUP = 1
+task avalon_write;
+    input [1:0] addr;
+    input [7:0] wrdata;
+    begin
+    tb.dut.sim_gen.addr = addr;
+    tb.dut.sim_gen.wr   = 1'b0;
+    tb.dut.sim_gen.rd   = 1'b0;
+    tb.dut.sim_gen.wrdata = wrdata;
+    @(posedge clk)
+    tb.dut.sim_gen.wr   = 1'b1;
+    @(posedge clk)
+    init_signals();
+    end
+endtask
+
+// Represents basic avalon interface
+// operations
+// SETUP = 1
+task avalon_read;
+    input [1:0] addr;
+    begin
+    tb.dut.sim_gen.addr = addr;
+    tb.dut.sim_gen.wr   = 1'b0;
+    tb.dut.sim_gen.rd   = 1'b0;
+    @(posedge clk)
+    tb.dut.sim_gen.rd   = 1'b1;
+    rdData = tb.dut.sim_gen.rddata;
+    @(posedge clk)
+    init_signals();
     end
 endtask
 
 task write_command;
     input [7:0] wrdata;
     begin
-    force tb.dut.sim_gen.addr = 2'h1;
-    force tb.dut.sim_gen.wr   = 1'b1;
-    force tb.dut.sim_gen.rd   = 1'b0;
-    force tb.dut.sim_gen.wrdata = {{24{1'b0}},wrdata};
-    @(posedge clk);
-    force tb.dut.sim_gen.wr   = 1'b0;
-    release_signals();
+    avalon_write(`CMD_REG, wrdata);
     end
 endtask
 
 task read_command;
     begin
-    tb.dut.sim_gen.addr = 2'h1;
-    tb.dut.sim_gen.wr   = 1'b0;
-    tb.dut.sim_gen.rd   = 1'b1;
-    @(posedge clk);
+    avalon_read(`CMD_REG);
     end
 endtask
 
 task write_data;
     input [31:0] wrdata;
     begin
-    tb.dut.sim_gen.addr = 2'h0;
-    tb.dut.sim_gen.wr   = 1'b1;
-    tb.dut.sim_gen.rd   = 1'b0;
-    tb.dut.sim_gen.wrdata = wrdata;
-    @(posedge clk);
+    avalon_write(`DATA_REG, wrdata);
     end
 endtask
 
 task read_data;
     begin
-    tb.dut.sim_gen.addr = 2'h0;
-    tb.dut.sim_gen.wr   = 1'b0;
-    tb.dut.sim_gen.rd   = 1'b1;
-    @(posedge clk);
+    avalon_read(`DATA_REG);
     end
 endtask
 
 task read_status;
     begin
-    tb.dut.sim_gen.addr = 2'h2;
-    tb.dut.sim_gen.wr   = 1'b0;
-    tb.dut.sim_gen.rd   = 1'b1;
-    @(posedge clk);
+    avalon_read(`STATUS_REG);
     end
 endtask
 
-task release_signals;
+task nand_reset;
     begin
-    #1
-    release tb.dut.sim_gen.addr;
-    release tb.dut.sim_gen.wr;
-    release tb.dut.sim_gen.rd;
-    release tb.dut.sim_gen.wrdata;
+        $sformat(msg, "NAND_RESET_CMD");
+        INFO(msg);
+        write_command(`NAND_RESET_CMD);
     end
 endtask
+
+task read_parameter_page;
+    begin
+        $sformat(msg, "NAND_READ_PARAMETER_PAGE_CMD");
+        INFO(msg);
+        write_command(`NAND_READ_PARAMETER_PAGE_CMD);
+    end
+endtask
+
+task read_id;
+    begin
+        $sformat(msg, "NAND_READ_ID_CMD");
+        INFO(msg);
+        write_command(`NAND_READ_ID_CMD);
+    end
+endtask
+
+task enable_chip;
+    begin
+        $sformat(msg, "CTRL_CHIP_ENABLE_CMD");
+        INFO(msg);
+        write_command(`CTRL_CHIP_ENABLE_CMD);
+    end
+endtask
+
+
+
+
 
 endmodule

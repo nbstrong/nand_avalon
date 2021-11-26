@@ -23,7 +23,7 @@ entity io_unit is
 		clk					:	in	std_logic;
 		activate				:	in	std_logic;
 		data_in				:	in	std_logic_vector(15 downto 0);
-		
+
 		io_ctrl				:	out std_logic := '1';
 		data_out				:	out std_logic_vector(15 downto 0);
 		busy					:	out std_logic
@@ -42,11 +42,11 @@ begin
 
 	busy <= 	'1' when state /= IO_IDLE else
 				'0';
-	
+
 	data_out	<=	data_reg when	(io_type = IO_WRITE and state /= IO_IDLE) or
 										io_type = IO_READ else
 										x"0000";
-										
+
 	io_ctrl	<=	'0' when state = IO_DELAY and n_state = IO_HOLD else
 					'1';
 
@@ -62,12 +62,12 @@ begin
 						if(io_type = IO_WRITE)then
 							delay			<= t_wp;
 						else
-							delay			<= t_rea;
+							delay			<= t_rp; --t_rea;
 						end if;
 						n_state 			<= IO_HOLD;
 						state 			<= IO_DELAY;
 					end if;
-				
+
 				when IO_HOLD =>
 					if(io_type = IO_WRITE)then
 						delay				<= t_wh;
@@ -76,11 +76,11 @@ begin
 					end if;
 					n_state				<= IO_IDLE;
 					state					<= IO_DELAY;
-					
+
 				when IO_DELAY =>
 					if(delay > 1)then
 						delay 			<= delay - 1;
-						if(delay = 2 and io_type = IO_READ)then
+						if(delay = 2 and io_type = IO_READ and n_state = IO_HOLD)then -- NS : Needed data_reg to stop being driven by xxx values
 							data_reg 	<= data_in;
 						end if;
 					else
@@ -89,7 +89,7 @@ begin
 --						end if;
 						state 			<= n_state;
 					end if;
-				
+
 				when others =>
 					state 				<= IO_IDLE;
 			end case;

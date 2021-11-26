@@ -12,7 +12,7 @@ entity nand_avalon is
 		pread					: in	std_logic := '1';
 		pwrite				: in	std_logic := '1';
 		address				: in	std_logic_vector(1 downto 0);
-		
+
 		-- NAND chip control hardware interface. These signals should be bound to physical pins.
 		nand_cle				: out	std_logic := '0';
 		nand_ale				: out	std_logic := '0';
@@ -23,7 +23,7 @@ entity nand_avalon is
 		nand_rnb				: in	std_logic;
 		-- NAND chip data hardware interface. These signals should be boiund to physical pins.
 		nand_data			: inout	std_logic_vector(15 downto 0)
-		
+
 	);
 end nand_avalon;
 
@@ -46,6 +46,7 @@ architecture action of nand_avalon is
 	signal n_cmd_in		: std_logic_vector(7 downto 0);
 	signal prev_pwrite	: std_logic;
 	signal prev_address	: std_logic_vector(1 downto 0);
+    signal rnb          : std_logic;
 begin
 	NANDA: nand_master
 	port map
@@ -55,19 +56,21 @@ begin
 		nand_rnb => nand_rnb, nand_data => nand_data,
 		nreset => resetn, data_out => n_data_out, data_in => n_data_in, busy => n_busy, activate => n_activate, cmd_in => n_cmd_in
 	);
-	
+
 	-- Registers:
 	-- 0x00:		Data IO
 	-- 0x04:		Command input
 	-- 0x08:		Status output
-	
+
 	readdata(7 downto 0)	<= n_data_out when address = "00" else
-									"0000000"&n_busy when address = "10" else
+									"000000"&rnb&n_busy when address = "10" else
 									"00000000";
-									
+
 	n_activate	<= '1' when (prev_address = "01" and prev_pwrite = '0' and pwrite = '1' and n_busy = '0') else
 						'0';
-						
+
+    rnb <= '0' when nand_rnb = '0' else '1';
+
 	CONTROL_INPUTS:process(clk, address, pwrite, writedata)
 	begin
 		if(rising_edge(clk))then
@@ -78,7 +81,7 @@ begin
 			end if;
 		end if;
 	end process;
-	
+
 	TRACK_ADDRESS:process(clk, address, pwrite)
 	begin
 		if(rising_edge(clk))then
