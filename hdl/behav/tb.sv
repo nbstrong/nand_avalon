@@ -232,80 +232,80 @@ module tb;
     reset_system(1'b0); // Assert our reset
 
     // Wait for NAND to power up
-    wait_nand_powerup();
+    _wait_nand_powerup();
 
     // Enable NAND chip
-    command_write(CTRL_CHIP_ENABLE_CMD);
+    _command_write(CTRL_CHIP_ENABLE_CMD);
 
     // Reset NAND chip
-    command_write(NAND_RESET_CMD);
+    _command_write(NAND_RESET_CMD);
 
     // Read ID
-    command_write(NAND_READ_ID_CMD);
+    _command_write(NAND_READ_ID_CMD);
     for (i = 0; i < 6; i = i + 1) begin
-        command_read(CTRL_GET_ID_BYTE_CMD, rdData);
-        assert_byte(rdData, chipID[i]);
+        _command_read(CTRL_GET_ID_BYTE_CMD, rdData);
+        compare_byte(rdData, chipID[i]);
     end
 
     // Read Parameter Page
-    command_write(NAND_READ_PARAMETER_PAGE_CMD);
+    _command_write(NAND_READ_PARAMETER_PAGE_CMD);
     for(i = 0; i < 4; i = i + 1) begin
-        command_read(CTRL_GET_PARAMETER_PAGE_BYTE_CMD, rdData);
-        assert_byte(rdData, tb.MLC_nand.uut_0.onfi_params_array[i]);
+        _command_read(CTRL_GET_PARAMETER_PAGE_BYTE_CMD, rdData);
+        compare_byte(rdData, tb.MLC_nand.uut_0.onfi_params_array[i]);
     end
 
     // Get controller status
-    command_read(CTRL_GET_STATUS_CMD, rdData);
-    assert_bit(rdData[0], 1);
+    _command_read(CTRL_GET_STATUS_CMD, rdData);
+    compare_bit(rdData[0], 1);
 
     // Write Enable
-    command_write(CTRL_WRITE_ENABLE_CMD);
+    _command_write(CTRL_WRITE_ENABLE_CMD);
 
     // Just doing first 100 addresses
     // Verify NAND's Initial State
-    command_write(NAND_READ_PAGE_CMD);
-    command_write(CTRL_RESET_INDEX_CMD);
+    _command_write(NAND_READ_PAGE_CMD);
+    _command_write(CTRL_RESET_INDEX_CMD);
     for(i = 0; i < N; i = i + 1) begin
-        command_read(CTRL_GET_DATA_PAGE_BYTE_CMD, rdData);
-        assert_byte(rdData, 8'hFF);
+        _command_read(CTRL_GET_DATA_PAGE_BYTE_CMD, rdData);
+        compare_byte(rdData, 8'hFF);
     end
 
     // Write controller pages with known sequence
-    command_write(CTRL_RESET_INDEX_CMD);
+    _command_write(CTRL_RESET_INDEX_CMD);
     for(i = 0; i < N; i = i + 1) begin
-        command_write_data(CTRL_SET_DATA_PAGE_BYTE_CMD, i);
+        _command_write_data(CTRL_SET_DATA_PAGE_BYTE_CMD, i);
     end
     // Write controller pages to NAND
-    command_write(NAND_PAGE_PROGRAM_CMD);
+    _command_write(NAND_PAGE_PROGRAM_CMD);
 
     // Write controller pages with known different sequence
-    command_write(CTRL_RESET_INDEX_CMD);
+    _command_write(CTRL_RESET_INDEX_CMD);
     for(i = 0; i < N; i = i + 1) begin
-        command_write_data(CTRL_SET_DATA_PAGE_BYTE_CMD, 1'b1);
+        _command_write_data(CTRL_SET_DATA_PAGE_BYTE_CMD, 1'b1);
     end
     // Verify controller page is different from nand
-    command_write(CTRL_RESET_INDEX_CMD);
+    _command_write(CTRL_RESET_INDEX_CMD);
     for(i = 0; i < N; i = i + 1) begin
-        command_read(CTRL_GET_DATA_PAGE_BYTE_CMD, rdData);
-        assert_byte(rdData, 1'b1);
+        _command_read(CTRL_GET_DATA_PAGE_BYTE_CMD, rdData);
+        compare_byte(rdData, 1'b1);
     end
 
     // Read previously written page from NAND
-    command_write(NAND_READ_PAGE_CMD);
-    command_write(CTRL_RESET_INDEX_CMD);
+    _command_write(NAND_READ_PAGE_CMD);
+    _command_write(CTRL_RESET_INDEX_CMD);
     for(i = 0; i < N; i = i + 1) begin
-        command_read(CTRL_GET_DATA_PAGE_BYTE_CMD, rdData);
-        assert_byte(rdData, i);
+        _command_read(CTRL_GET_DATA_PAGE_BYTE_CMD, rdData);
+        compare_byte(rdData, i);
     end
 
     // Erase chip
-    command_write(NAND_BLOCK_ERASE_CMD);
+    _command_write(NAND_BLOCK_ERASE_CMD);
     // Verify chip is erased
-    command_write(NAND_READ_PAGE_CMD);
-    command_write(CTRL_RESET_INDEX_CMD);
+    _command_write(NAND_READ_PAGE_CMD);
+    _command_write(CTRL_RESET_INDEX_CMD);
     for(i = 0; i < N; i = i + 1) begin
-        command_read(CTRL_GET_DATA_PAGE_BYTE_CMD, rdData);
-        assert_byte(rdData, 8'hFF);
+        _command_read(CTRL_GET_DATA_PAGE_BYTE_CMD, rdData);
+        compare_byte(rdData, 8'hFF);
     end
 
     repeat (1000) @(posedge clk);
@@ -337,7 +337,7 @@ task poll_busy;
     end
 endtask
 
-task wait_nand_powerup;
+task _wait_nand_powerup;
     logic [7:0] rddata;
     begin
     // Let nand chip get powered up
@@ -349,7 +349,7 @@ task wait_nand_powerup;
     end
 endtask
 
-task command_write;
+task _command_write;
     input e_cmd cmd;
     begin
         if(`PRINT_CMDS) print_command(cmd);
@@ -358,7 +358,7 @@ task command_write;
     end
 endtask
 
-task command_write_data;
+task _command_write_data;
     input e_cmd cmd;
     input [7:0] data;
     begin
@@ -369,7 +369,7 @@ task command_write_data;
     end
 endtask
 
-task command_read;
+task _command_read;
     input e_cmd cmd;
     output [7:0] rddata;
     begin
@@ -483,7 +483,7 @@ task init_signals;
     end
 endtask
 
-task assert_bit;
+task compare_bit;
     input a;
     input b;
     begin
@@ -502,7 +502,7 @@ task assert_bit;
     end
 endtask
 
-task assert_byte;
+task compare_byte;
     input [7:0] a;
     input [7:0] b;
     begin

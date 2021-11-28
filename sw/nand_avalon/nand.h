@@ -7,16 +7,16 @@
 #define NAND_CMD_8    ((volatile int*) AVALON_NAND_BASE+1)
 #define NAND_STATUS_8 ((volatile int*) AVALON_NAND_BASE+2)
 
-#define INTERNAL_RESET_CMD                00
-#define NAND_RESET_CMD                    01
-#define NAND_READ_PARAMETER_PAGE_CMD      02
-#define NAND_READ_ID_CMD                  03
-#define NAND_BLOCK_ERASE_CMD              04
-#define NAND_READ_STATUS_CMD              05
-#define NAND_READ_PAGE_CMD                06
-#define NAND_PAGE_PROGRAM_CMD             07
-#define CTRL_GET_STATUS_CMD               08
-#define CTRL_CHIP_ENABLE_CMD              09
+#define INTERNAL_RESET_CMD                 0
+#define NAND_RESET_CMD                     1
+#define NAND_READ_PARAMETER_PAGE_CMD       2
+#define NAND_READ_ID_CMD                   3
+#define NAND_BLOCK_ERASE_CMD               4
+#define NAND_READ_STATUS_CMD               5
+#define NAND_READ_PAGE_CMD                 6
+#define NAND_PAGE_PROGRAM_CMD              7
+#define CTRL_GET_STATUS_CMD                8
+#define CTRL_CHIP_ENABLE_CMD               9
 #define CTRL_CHIP_DISABLE_CMD             10
 #define CTRL_WRITE_PROTECT_CMD            11
 #define CTRL_WRITE_ENABLE_CMD             12
@@ -27,18 +27,21 @@
 #define CTRL_SET_DATA_PAGE_BYTE_CMD       17
 #define CTRL_GET_CURRENT_ADDRESS_BYTE_CMD 18
 #define CTRL_SET_CURRENT_ADDRESS_BYTE_CMD 19
+#define NAND_BYPASS_ADDRESS               20
+#define NAND_BYPASS_COMMAND               21
+#define NAND_BYPASS_DATA_WR               22
+#define NAND_BYPASS_DATA_RD               23
 
-// Basic functions
-void write_data_reg(int data);
-void write_command_reg(int data);
-int read_status_reg();
-
-int nand_read_id();
-int nand_read_paramater_page();
-// void nand_read(unsigned int ddr, unsigned int nand, unsigned int length);
-// void nand_write(unsigned int ddr, unsigned int nand, unsigned int length);
-// void nand_erase(unsigned int nand, unsigned int length);
-
-//void nand_init(void);
+int init_nand();
+void _poll_busy();
+void _wait_nand_powerup();
+void _command_write(int cmd);
+void _command_write_data(int cmd, int data);
+int _command_read(int cmd);
+void _write_data_reg(int data);
+void _write_command_reg(int data);
+int _read_data_reg();
+int _read_command_reg();
+int _read_status_reg();
 
 #endif	/* _NAND_H_ */
