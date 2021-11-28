@@ -12,6 +12,9 @@
 `define CMD_REG  2'h1
 `define STATUS_REG 2'h2
 
+`define PRINT_CMDS 0
+`define PRINT_PASSES 0
+
 // Nand Avalon Command Macros
 // Consider making this an enum
 typedef enum {
@@ -167,6 +170,8 @@ module tb;
   reg  [8*256:1]           msg;
   integer i;
   integer fails = 0;
+  integer compares = 0;
+  parameter N = 100;
 
   logic [7:0] chipID [0:tb.MLC_nand.uut_0.NUM_ID_BYTES-1] = {
     tb.MLC_nand.uut_0.READ_ID_BYTE0,   // Micron Manufacturer ID
@@ -186,6 +191,7 @@ module tb;
   DE1_SoC_Computer dut (.*);
 
   // Instantiate MLC memory model
+  // Supports MT29F256G08CBCBB family
   wire NAND_DQS_NO_CONNECT;
   nand_model MLC_nand (
     .Dq_Io    (NAND_DQ),
@@ -199,7 +205,8 @@ module tb;
     .Dqs      (NAND_DQS_NO_CONNECT) // Should only be testing asynchronous mode
   );
 
-  // SLC Memory model is by request only. Get it here if you'd like to go through the NDA process:
+  // Model for MT29F8G08ABACA family is available by request only.
+  // Get it here if you'd like to go through the NDA process:
   // https://www.micron.com/products/nand-flash/slc-nand/part-catalog/mt29f8g08abacawp-it
 
   /****************************************************************************/
@@ -223,35 +230,86 @@ module tb;
     // Initialize
     init_signals();
     reset_system(1'b0); // Assert our reset
+
+    // Wait for NAND to power up
     wait_nand_powerup();
 
+    // Enable NAND chip
     command_write(CTRL_CHIP_ENABLE_CMD);
 
+    // Reset NAND chip
     command_write(NAND_RESET_CMD);
 
+    // Read ID
     command_write(NAND_READ_ID_CMD);
     for (i = 0; i < 6; i = i + 1) begin
         command_read(CTRL_GET_ID_BYTE_CMD, rdData);
         assert_byte(rdData, chipID[i]);
     end
 
+    // Read Parameter Page
     command_write(NAND_READ_PARAMETER_PAGE_CMD);
     for(i = 0; i < 4; i = i + 1) begin
         command_read(CTRL_GET_PARAMETER_PAGE_BYTE_CMD, rdData);
         assert_byte(rdData, tb.MLC_nand.uut_0.onfi_params_array[i]);
     end
 
+    // Get controller status
     command_read(CTRL_GET_STATUS_CMD, rdData);
     assert_bit(rdData[0], 1);
 
+    // Write Enable
     command_write(CTRL_WRITE_ENABLE_CMD);
 
+    // Just doing first 100 addresses
+    // Verify NAND's Initial State
     command_write(NAND_READ_PAGE_CMD);
+    command_write(CTRL_RESET_INDEX_CMD);
+    for(i = 0; i < N; i = i + 1) begin
+        command_read(CTRL_GET_DATA_PAGE_BYTE_CMD, rdData);
+        assert_byte(rdData, 8'hFF);
+    end
 
+    // Write controller pages with known sequence
+    command_write(CTRL_RESET_INDEX_CMD);
+    for(i = 0; i < N; i = i + 1) begin
+        command_write_data(CTRL_SET_DATA_PAGE_BYTE_CMD, i);
+    end
+    // Write controller pages to NAND
+    command_write(NAND_PAGE_PROGRAM_CMD);
 
+    // Write controller pages with known different sequence
+    command_write(CTRL_RESET_INDEX_CMD);
+    for(i = 0; i < N; i = i + 1) begin
+        command_write_data(CTRL_SET_DATA_PAGE_BYTE_CMD, 1'b1);
+    end
+    // Verify controller page is different from nand
+    command_write(CTRL_RESET_INDEX_CMD);
+    for(i = 0; i < N; i = i + 1) begin
+        command_read(CTRL_GET_DATA_PAGE_BYTE_CMD, rdData);
+        assert_byte(rdData, 1'b1);
+    end
+
+    // Read previously written page from NAND
+    command_write(NAND_READ_PAGE_CMD);
+    command_write(CTRL_RESET_INDEX_CMD);
+    for(i = 0; i < N; i = i + 1) begin
+        command_read(CTRL_GET_DATA_PAGE_BYTE_CMD, rdData);
+        assert_byte(rdData, i);
+    end
+
+    // Erase chip
+    command_write(NAND_BLOCK_ERASE_CMD);
+    // Verify chip is erased
+    command_write(NAND_READ_PAGE_CMD);
+    command_write(CTRL_RESET_INDEX_CMD);
+    for(i = 0; i < N; i = i + 1) begin
+        command_read(CTRL_GET_DATA_PAGE_BYTE_CMD, rdData);
+        assert_byte(rdData, 8'hFF);
+    end
 
     repeat (1000) @(posedge clk);
-    $display("Test Failures: %0d", fails);
+    $display("Test Compares:Failures: %0d:%0d", compares, fails);
     $stop;
   end
 
@@ -294,8 +352,18 @@ endtask
 task command_write;
     input e_cmd cmd;
     begin
-        $sformat(msg, "%s", cmd.name());
-        INFO(msg);
+        if(`PRINT_CMDS) print_command(cmd);
+        _write_command_reg(cmd);
+        poll_busy();
+    end
+endtask
+
+task command_write_data;
+    input e_cmd cmd;
+    input [7:0] data;
+    begin
+        if(`PRINT_CMDS) print_command(cmd);
+        _write_data_reg(data);
         _write_command_reg(cmd);
         poll_busy();
     end
@@ -305,8 +373,7 @@ task command_read;
     input e_cmd cmd;
     output [7:0] rddata;
     begin
-        $sformat(msg, "%s", cmd.name());
-        INFO(msg);
+        if(`PRINT_CMDS) print_command(cmd);
         _write_command_reg(cmd);
         poll_busy();
         _read_data_reg(rddata);
@@ -420,9 +487,12 @@ task assert_bit;
     input a;
     input b;
     begin
+        compares = compares + 1;
         assert(a == b) begin
-            $sformat(msg, "[PASS] : %0h == %0h", a, b);
-            INFO(msg);
+            if(`PRINT_PASSES) begin
+                $sformat(msg, "[PASS] : %0h == %0h", a, b);
+                INFO(msg);
+            end
         end
         else begin
             $sformat(msg, "[FAIL] : %0h != %0h", a, b);
@@ -436,15 +506,26 @@ task assert_byte;
     input [7:0] a;
     input [7:0] b;
     begin
+        compares = compares + 1;
         assert(a == b) begin
-            $sformat(msg, "[PASS] : %0h == %0h", a, b);
-            INFO(msg);
+            if(`PRINT_PASSES) begin
+                $sformat(msg, "[PASS] : %0h == %0h", a, b);
+                INFO(msg);
+            end
         end
         else begin
             $sformat(msg, "[FAIL] : %0h != %0h", a, b);
             INFO(msg);
             fails = fails + 1;
         end
+    end
+endtask
+
+task print_command;
+    input e_cmd cmd;
+    begin
+        $sformat(msg, "%s", cmd.name());
+        INFO(msg);
     end
 endtask
 

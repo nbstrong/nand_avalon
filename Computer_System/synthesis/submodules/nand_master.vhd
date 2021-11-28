@@ -344,14 +344,18 @@ begin
 				when MI_WRITE_PROTECT =>
 					nand_nwp				<= '0';
 					status(3)			<= '1';
-					state					<= M_IDLE;
+					state					<= M_WAIT;
+                    n_state                 <= M_IDLE;
+                    delay                   <= t_ww;
 
 				-- Set WP# to '1' (disable write protection)
 				-- By default, this controller has WP# set to 0 on reset
 				when MI_WRITE_ENABLE =>
 					nand_nwp				<= '1';
 					status(3)			<= '0';
-					state					<= M_IDLE;
+					state					<= M_WAIT;
+                    n_state                 <= M_IDLE;
+                    delay                   <= t_ww;
 
 				-- Reset the index register.
 				-- Index register holds offsets into JEDEC ID, Parameter Page buffer or Data Page buffer depending on
@@ -560,7 +564,7 @@ begin
 						n_state			<= M_NAND_READ;
 
 					elsif(substate = MS_DELAY)then
-						delay				<= t_wb;
+						delay				<= t_wb + t_r + t_rr;
 						substate			<= MS_READ_DATA0;
 						state				<= M_WAIT; --M_DELAY;
 						n_state			<= M_NAND_READ;
