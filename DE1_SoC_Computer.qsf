@@ -175,6 +175,7 @@ set_location_assignment PIN_AE16 -to NAND_CLE
 set_location_assignment PIN_AF16 -to NAND_NCE
 set_location_assignment PIN_AG17 -to NAND_NRE
 set_location_assignment PIN_AA19 -to NAND_RNB
+set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to NAND_RNB
 set_location_assignment PIN_AC18 -to GPIO_0[15]
 set_location_assignment PIN_AD17 -to GPIO_0[16]
 set_location_assignment PIN_AA18 -to GPIO_0[17]
@@ -211,7 +212,6 @@ set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to NAND_CLE
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to NAND_NCE
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to NAND_NRE
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to NAND_RNB
-set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to NAND_RNB
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPIO_0[15]
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPIO_0[16]
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to GPIO_0[17]
