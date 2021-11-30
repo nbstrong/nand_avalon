@@ -7,8 +7,9 @@
 // Returns 0 if chip doesn't support ONFI.
 // Likely to stall if unsuccessful.
 int init_nand() {
-    _wait_nand_powerup();
+    _command_write(INTERNAL_RESET_CMD);
     _command_write(CTRL_CHIP_ENABLE_CMD);
+    _wait_nand_powerup();
     _command_write(NAND_RESET_CMD);
     _command_write(NAND_READ_ID_CMD);
     _command_write(NAND_READ_PARAMETER_PAGE_CMD);

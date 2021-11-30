@@ -62,7 +62,7 @@ int main(void) {
         compare(rdData, 0xFF);
     }
 
-    printf("\n[Compares:Fails] %u:%u", compares, fails);
+    printf("\n[Compares:Fails] %i:%i", compares, fails);
     printf("\nFin.");
     return 0;
 }
@@ -71,11 +71,11 @@ void compare(int a, int b) {
     compares++;
     if(a == b) {
         if(PRINT_PASSES) {
-            printf("\n[PASS] : %u == %u", a, b);
+            printf("\n[PASS] : %x == %x", a, b);
         }
     }
     else {
-        printf("\n[FAIL] : %u != %u", a, b);
+        printf("\n[FAIL] : %x != %x", a, b);
         fails++;
     }
 }
