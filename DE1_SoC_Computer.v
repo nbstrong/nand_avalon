@@ -386,7 +386,6 @@ assign HEX5 = ~hex5_hex4[14: 8];
 wire [7:0] NAND_DUMMY;
 wire [14:0] GPIO_DUMMY;
 
-generate
     // I am likely not going to bother trying to fix the
     // Computer System enough to be able to export the
     // bus functional models (bfm) for simulation. I think
@@ -401,6 +400,7 @@ generate
     // Could it be edited to add a transistor physics model?
     // Could these experiments be simulated?
 
+generate
     /* synthesis translate_off */
     if (1'b1) begin : sim_gen
         // Internal simulation signals
