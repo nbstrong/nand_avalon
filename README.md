@@ -15,4 +15,4 @@ Modelsim files
   * simulation/modelsim/*
 
 Software drivers and tests
-  * sw/nand_avalon/*
+  * sw/*
