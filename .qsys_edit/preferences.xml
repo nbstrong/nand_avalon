@@ -12,8 +12,8 @@
    <defaultSlave visible="1" />
   </columns>
  </systemtable>
- <library expandedCategories="Library,Project" />
- <window width="1920" height="1050" x="0" y="0" />
+ <library expandedCategories="Library,Project,Library/OpenCores" />
+ <window width="2762" height="1790" x="-13" y="-13" />
  <generation simulation="NONE" />
  <hdlexample language="VERILOG" />
 </preferences>

@@ -5,7 +5,7 @@
    displayName="$${FILENAME}"
    version="1.0"
    description=""
-   tags=""
+   tags="INTERNAL_COMPONENT=false"
    categories="System" />
  <parameter name="bonusData"><![CDATA[bonusData 
 {
@@ -87,6 +87,14 @@
       {
          value = "1";
          type = "boolean";
+      }
+   }
+   element Computer_System
+   {
+      datum _originalDeviceFamily
+      {
+         value = "Cyclone V";
+         type = "String";
       }
    }
    element Computer_System
@@ -731,6 +739,27 @@
          type = "String";
       }
    }
+   element nand_avalon_0
+   {
+      datum _sortIndex
+      {
+         value = "42";
+         type = "int";
+      }
+   }
+   element nand_avalon_0.avalon_slave_0
+   {
+      datum _lockedAddress
+      {
+         value = "1";
+         type = "boolean";
+      }
+      datum baseAddress
+      {
+         value = "128";
+         type = "String";
+      }
+   }
 }
 ]]></parameter>
  <parameter name="clockCrossingAdapter" value="HANDSHAKE" />
@@ -810,6 +839,11 @@
    type="conduit"
    dir="end" />
  <interface name="memory" internal="ARM_A9_HPS.memory" type="conduit" dir="end" />
+ <interface
+   name="nand_avalon_0_conduit_end"
+   internal="nand_avalon_0.conduit_end"
+   type="conduit"
+   dir="end" />
  <interface
    name="ps2_port"
    internal="PS2_Port.external_interface"
@@ -2319,6 +2353,7 @@
   <parameter name="video_in_clk_en" value="false" />
  </module>
  <module name="gcd_avalon_0" kind="gcd_avalon" version="1.2" enabled="1" />
+ <module name="nand_avalon_0" kind="nand_avalon" version="1.4" enabled="1" />
  <connection
    kind="avalon"
    version="18.1"
@@ -2957,6 +2992,15 @@
    end="PS2_Port_Dual.avalon_ps2_slave">
   <parameter name="arbitrationPriority" value="1" />
   <parameter name="baseAddress" value="0x0108" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="18.1"
+   start="ARM_A9_HPS.h2f_lw_axi_master"
+   end="nand_avalon_0.avalon_slave_0">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x0080" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -3643,6 +3687,11 @@
    kind="clock"
    version="18.1"
    start="System_PLL.sys_clk"
+   end="nand_avalon_0.clock" />
+ <connection
+   kind="clock"
+   version="18.1"
+   start="System_PLL.sys_clk"
    end="ARM_A9_HPS.f2h_axi_clock" />
  <connection
    kind="clock"
@@ -3897,14 +3946,14 @@
  <connection
    kind="interrupt"
    version="18.1"
-   start="Nios2_2nd_Core.irq"
+   start="Nios2.irq"
    end="gcd_avalon_0.irq0">
   <parameter name="irqNumber" value="3" />
  </connection>
  <connection
    kind="interrupt"
    version="18.1"
-   start="Nios2.irq"
+   start="Nios2_2nd_Core.irq"
    end="gcd_avalon_0.irq0">
   <parameter name="irqNumber" value="3" />
  </connection>
@@ -4110,6 +4159,11 @@
    kind="reset"
    version="18.1"
    start="ARM_A9_HPS.h2f_reset"
+   end="nand_avalon_0.reset_sink" />
+ <connection
+   kind="reset"
+   version="18.1"
+   start="ARM_A9_HPS.h2f_reset"
    end="VGA_Subsystem.sys_reset" />
  <connection
    kind="reset"
@@ -4291,6 +4345,11 @@
    version="18.1"
    start="System_PLL.reset_source"
    end="Onchip_SRAM.reset1" />
+ <connection
+   kind="reset"
+   version="18.1"
+   start="System_PLL.reset_source"
+   end="nand_avalon_0.reset_sink" />
  <connection
    kind="reset"
    version="18.1"
