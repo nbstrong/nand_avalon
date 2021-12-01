@@ -5,7 +5,6 @@
 // Returns 1 if initialization was successful and
 // chip supports ONFI.
 // Returns 0 if chip doesn't support ONFI.
-// Likely to stall if unsuccessful.
 int init_nand() {
     _command_write(INTERNAL_RESET_CMD);
     _command_write(CTRL_CHIP_ENABLE_CMD);
@@ -14,17 +13,20 @@ int init_nand() {
     _command_write(NAND_READ_ID_CMD);
     _command_write(NAND_READ_PARAMETER_PAGE_CMD);
     _command_write(CTRL_RESET_INDEX_CMD);
+    _command_write(CTRL_WRITE_ENABLE_CMD);
     return (_command_read(CTRL_GET_STATUS_CMD) & 1);
 }
 
 void _poll_busy(){
-    int status;
+    int status = 0;
     status = _read_status_reg();
-    while((status & (1 << 0)) == 1 && (status & (1 << 1)) == 0) {status = _read_status_reg();}
+    while(((status >> 0) & 1) == 1 || ((status >> 1) & 1) == 0) {status = _read_status_reg();}
 }
 
+// A timer would make this more accurate but
+// less system agnostic.
 void _wait_nand_powerup(){
-    for(int i=0;i<5000;i++);	//100 us max
+    for(volatile int i=0;i<10000;i++); {}
 }
 
 // The below _command functions should eventually be
