@@ -2,10 +2,12 @@
 #include "address_map_arm.h"
 #include "nand.h"
 
-#define PRINT_PASSES 0
-#define N 100 // How many addresses to test
+#define PRINT_PASSES 0 // Whether to print passing compare results
+#define N 100          // How many addresses to test
 
 void compare(int a, int b);
+void print_chip_id();
+void print_status();
 
 int fails, compares = 0;
 
@@ -14,7 +16,8 @@ int main(void) {
 
     init_nand();
 
-    _command_write(CTRL_WRITE_ENABLE_CMD);
+    print_chip_id();
+    print_status();
 
     // Verify NAND's Initial State
     _command_write(NAND_READ_PAGE_CMD);
@@ -62,8 +65,9 @@ int main(void) {
         compare(rdData, 0xFF);
     }
 
-    printf("\n[Compares:Fails] %i:%i", compares, fails);
+    printf("\n\n[Compares:Fails] %i:%i", compares, fails);
     printf("\nFin.");
+    while(1) {}
     return 0;
 }
 
@@ -71,11 +75,30 @@ void compare(int a, int b) {
     compares++;
     if(a == b) {
         if(PRINT_PASSES) {
-            printf("\n[PASS] : %x == %x", a, b);
+            printf("[PASS] : %x == %x", a, b);
         }
     }
     else {
-        printf("\n[FAIL] : %x != %x", a, b);
+        printf("[FAIL] : %x != %x", a, b);
         fails++;
     }
+}
+
+void print_chip_id() {
+    _command_write(CTRL_RESET_INDEX_CMD);
+    for(int i = 0; i < 5; i++) {
+        int id = 0;
+        id = _command_read(CTRL_GET_ID_BYTE_CMD);
+        printf("\nID Byte %i : %x", i, id);
+    }
+}
+
+void print_status() {
+    int status = 0;
+    status = _command_read(CTRL_GET_STATUS_CMD);
+    printf("\n\n%x : is ONFI compliant          ", ((status >> 0) & 1));
+    printf("\n%x : bus width (0 - x8 / 1 - x16) ", ((status >> 1) & 1));
+    printf("\n%x : is chip enabled              ", ((status >> 2) & 1));
+    printf("\n%x : is chip write protected      ", ((status >> 3) & 1));
+    printf("\n%x : array pointer out of bounds  ", ((status >> 4) & 1));
 }
