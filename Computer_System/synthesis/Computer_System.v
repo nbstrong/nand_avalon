@@ -1714,8 +1714,8 @@ module Computer_System (
 	nand_avalon nand_avalon_0 (
 		.readdata  (mm_interconnect_0_nand_avalon_0_avalon_slave_0_readdata),  // avalon_slave_0.readdata
 		.writedata (mm_interconnect_0_nand_avalon_0_avalon_slave_0_writedata), //               .writedata
-		.pread     (mm_interconnect_0_nand_avalon_0_avalon_slave_0_read),      //               .read
-		.pwrite    (mm_interconnect_0_nand_avalon_0_avalon_slave_0_write),     //               .write
+		.pread     (~mm_interconnect_0_nand_avalon_0_avalon_slave_0_read),     //               .read_n
+		.pwrite    (~mm_interconnect_0_nand_avalon_0_avalon_slave_0_write),    //               .write_n
 		.address   (mm_interconnect_0_nand_avalon_0_avalon_slave_0_address),   //               .address
 		.resetn    (~rst_controller_reset_out_reset),                          //     reset_sink.reset_n
 		.nand_ale  (nand_avalon_0_conduit_end_nand_ale),                       //    conduit_end.nand_ale

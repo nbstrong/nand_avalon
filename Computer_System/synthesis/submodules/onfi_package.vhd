@@ -66,7 +66,7 @@ package onfi is
  constant t_prog : integer := integer(950000.0   / clock_cycle); -- < 950000.0       -- < 600000.0   -- PROGRAM PAGE Operation Time --
  constant t_adl  : integer := integer(150.0      / clock_cycle); -- > 150.0          -- > 70.0       -- ALE to Data Start           --
  constant t_r    : integer := integer(78000.0    / clock_cycle); -- < 78000.0        -- < 25000.0    -- READ PAGE Operation Time    -- * For read parameter, at least
- constant t_ww   : integer := integer(100.0      / clock_cycle); -- > 100.0
+ constant t_ww   : integer := integer(100.0      / clock_cycle); -- > 100.0          -- Look this up --
 
 	type latch_t is (LATCH_CMD, LATCH_ADDR);
 	type io_t is (IO_READ, IO_WRITE);

@@ -343,9 +343,7 @@ task _wait_nand_powerup;
     // Let nand chip get powered up
     _read_status_reg(rddata);
     while(rddata[1] == 1) _read_status_reg(rddata);
-    // Let nand chip get ready
-    _read_status_reg(rddata);
-    while(rddata[1] == 0) _read_status_reg(rddata);
+    poll_busy();
     end
 endtask
 
@@ -420,7 +418,7 @@ endtask
 
 /******************************************************************************/
 // PRIMITIVE AVALON OPERATIONS
-// SETUP = 1
+// HOLD = 1
 /******************************************************************************/
 task _avalon_write;
     input [1:0] addr;
@@ -428,7 +426,7 @@ task _avalon_write;
     begin
     tb.dut.sim_gen.addr = addr;
     tb.dut.sim_gen.wr   = 1'b0;
-    tb.dut.sim_gen.rd   = 1'b0;
+    tb.dut.sim_gen.rd   = 1'b1;
     tb.dut.sim_gen.wrdata = wrdata;
     @(posedge clk)
     tb.dut.sim_gen.wr   = 1'b1;
@@ -442,13 +440,20 @@ task _avalon_read;
     output [7:0] rddata;
     begin
     tb.dut.sim_gen.addr = addr;
-    tb.dut.sim_gen.wr   = 1'b0;
+    tb.dut.sim_gen.wr   = 1'b1;
     tb.dut.sim_gen.rd   = 1'b0;
-    @(posedge clk)
-    tb.dut.sim_gen.rd   = 1'b1;
     @(posedge clk)
     rddata = tb.dut.sim_gen.rddata[7:0];
     init_signals();
+    end
+endtask
+
+task init_signals;
+    begin
+    tb.dut.sim_gen.addr = 2'hX;
+    tb.dut.sim_gen.wr   = 1'b1;
+    tb.dut.sim_gen.rd   = 1'b1;
+    tb.dut.sim_gen.wrdata = 31'h0;
     end
 endtask
 
@@ -471,15 +476,6 @@ task reset_system;
         $sformat(msg, "Released device reset");
         INFO(msg);
         repeat (1) @(posedge clk);
-    end
-endtask
-
-task init_signals;
-    begin
-    tb.dut.sim_gen.addr = 2'h0;
-    tb.dut.sim_gen.wr   = 1'b0;
-    tb.dut.sim_gen.rd   = 1'b0;
-    tb.dut.sim_gen.wrdata = 31'h0;
     end
 endtask
 
