@@ -152,6 +152,7 @@ local.properties
 *.jpg
 *.html
 *.bsf
+*.vcd
 
 # ignore simulation output of ModelSim
 wlf*
