@@ -1,6 +1,6 @@
 # NAND Controller (ONFI compliant)
 
-This is work done to improved the nand_controller listed at:
+This is work done to improve the nand_controller listed at:
 https://opencores.org/projects/nand_controller
 
 # Quartus II 18.2 Platform Builder Component Editor
