@@ -1,18 +1,2 @@
-# DE1_SoC_Computer
-
-Synthesis HDL
-  * hdl/rtl/*
-  * DE1_SoC_Computer.v
-
-Constraints
-  * DE1_SoC_Computer.qsf
-  * DE1_SoC_Computer.sdc
-
-Testbench HDL
-  * hdl/behav/*
-
-Modelsim files
-  * simulation/modelsim/*
-
-Software drivers and tests
-  * sw/*
+This is work done to improved the nand_controller listed at:
+https://opencores.org/projects/nand_controller
