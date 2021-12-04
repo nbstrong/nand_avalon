@@ -3,6 +3,7 @@
 -- Title   : ONFI compliant NAND interface
 -- File    : io_unit.vhd
 -- Author  : Alexey Lyashko <pradd@opencores.org>
+-- Author  : Nicholas Strong <nicholasbstrong@gmail.com>
 -- License : LGPL
 -------------------------------------------------------------------------------------------------
 -- Description:

@@ -1,3 +1,17 @@
+-------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------
+-- Title   : ONFI compliant NAND interface
+-- File    : nand_avalon.vhd
+-- Author  : Alexey Lyashko <pradd@opencores.org>
+-- Author  : Nicholas Strong <nicholasbstrong@gmail.com>
+-- License : LGPL
+-------------------------------------------------------------------------------------------------
+-- Description:
+-- The nand_avalon is an Avalon protocol compliant wrapper around the nand_master controller.
+-- Active low rd/wr, SETUP = 1
+-------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------
+
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
