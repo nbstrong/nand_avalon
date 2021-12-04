@@ -3,5 +3,9 @@
 This is work done to improve the nand_controller listed at:
 https://opencores.org/projects/nand_controller
 
+# System Project
+For hardware and simulation testing, this controller has been integrated into the current project here:  
+https://github.com/nbstrong/DE1_SoC_Computer
+
 # Quartus II 18.2 Platform Builder Component Editor
 ![image](https://user-images.githubusercontent.com/13934837/144723870-f4b7d36e-4f36-4077-a9e0-a76d7d994393.png)
