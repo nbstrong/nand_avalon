@@ -4,8 +4,8 @@ This is work done to improve the nand_controller listed at:
 https://opencores.org/projects/nand_controller
 
 ## To run simulation tests with Modelsim:
-Run:
-vsim -do sim/modelsim/sim.do
+From sim/modelsim/ run:  
+`vsim -do sim.do`  
 
 ## System Project
 For hardware testing, this controller has been integrated into the current project here:  
