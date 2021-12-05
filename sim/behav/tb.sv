@@ -12,8 +12,8 @@
 `define CMD_REG  2'h1
 `define STATUS_REG 2'h2
 
-`define PRINT_CMDS 0
-`define PRINT_PASSES 0
+`define PRINT_CMDS 1
+`define PRINT_PASSES 1
 
 `define RESET_ACTIVE_HIGH 0
 
@@ -47,36 +47,35 @@ typedef enum {
 } e_cmd;
 
 module tb;
-    reg     [8*256:1] msg;
-    integer i, fails, compares;
-    integer N = 100;
+    reg [8*256:1]   msg;
+    integer         i = 0, fails = 0, compares = 0, N = 100;
 
-    logic clk;
-    logic rst;
-    logic resetn;
-    logic readdata;
-    logic writedata;
-    logic pread;
-    logic pwrite;
-    logic address;
-    logic nand_cle;
-    logic nand_ale;
-    logic nand_nwe;
-    logic nand_nwp;
-    logic nand_nce;
-    logic nand_nre;
-    logic nand_rnb;
-    logic nand_data;
+    logic           clk;
+    logic           rst;
+    logic           resetn;
+    logic [31: 0]   readdata;
+    logic [31: 0]   writedata;
+    logic           pread;
+    logic           pwrite;
+    logic [ 1: 0]   address;
+    logic           nand_cle;
+    logic           nand_ale;
+    logic           nand_nwe;
+    logic           nand_nwp;
+    logic           nand_nce;
+    logic           nand_nre;
+    logic           nand_rnb;
+    wire  [15: 0]   nand_data;
 
-    logic [7:0] chipID [0:tb.MLC_nand.uut_0.NUM_ID_BYTES-1] = {
-        tb.nand_0.uut_0.READ_ID_BYTE0,   // Micron Manufacturer ID
-        tb.nand_0.uut_0.READ_ID_BYTE1,
-        tb.nand_0.uut_0.READ_ID_BYTE2,
-        tb.nand_0.uut_0.READ_ID_BYTE3,
-        tb.nand_0.uut_0.READ_ID_BYTE4,
-        tb.nand_0.uut_0.READ_ID_BYTE5,
-        tb.nand_0.uut_0.READ_ID_BYTE6,
-        tb.nand_0.uut_0.READ_ID_BYTE7
+    logic [7:0] chipID [0:nand_0.uut_0.NUM_ID_BYTES-1] = {
+        nand_0.uut_0.READ_ID_BYTE0, // Micron Manufacturer ID
+        nand_0.uut_0.READ_ID_BYTE1,
+        nand_0.uut_0.READ_ID_BYTE2,
+        nand_0.uut_0.READ_ID_BYTE3,
+        nand_0.uut_0.READ_ID_BYTE4,
+        nand_0.uut_0.READ_ID_BYTE5,
+        nand_0.uut_0.READ_ID_BYTE6,
+        nand_0.uut_0.READ_ID_BYTE7
     };
 
     logic [7:0] rdData;
@@ -104,9 +103,9 @@ module tb;
 
     // Instantiate MLC memory model
     // Supports MT29F256G08CBCBB family
-    logic NAND_DQS_NO_CONNECT;
+    wire NAND_DQS_NO_CONNECT;
     nand_model nand_0 (
-        .Dq_Io    (nand_data),
+        .Dq_Io    (nand_data[7:0]),
         .Cle      (nand_cle ),
         .Ale      (nand_ale ),
         .Ce_n     (nand_nce ),
@@ -125,8 +124,8 @@ module tb;
     /****************************************************************************/
     initial begin
         clk = 0;
-        #5
-        forever #5 clk = ~clk;
+        #5ns
+        forever #5ns clk = ~clk;
     end
 
     // Assign reset
@@ -160,7 +159,7 @@ module tb;
         _command_write(NAND_READ_PARAMETER_PAGE_CMD);
         for(i = 0; i < 4; i = i + 1) begin
             _command_read(CTRL_GET_PARAMETER_PAGE_BYTE_CMD, rdData);
-            compare_byte(rdData, tb.MLC_nand.uut_0.onfi_params_array[i]);
+            compare_byte(rdData, nand_0.uut_0.onfi_params_array[i]);
         end
 
         // Get controller status
@@ -219,7 +218,7 @@ module tb;
 
         repeat (1000) @(posedge clk);
         $display("Test Compares:Failures: %0d:%0d", compares, fails);
-        $stop;
+        $finish;
     end
 
     /****************************************************************************/
@@ -349,7 +348,7 @@ module tb;
         pwrite   = 1'b1;
         pread    = 1'b0;
         @(posedge clk)
-        readdata = tb.dut.sim_gen.rddata[7:0];
+        rddata = readdata[7:0];
         init_signals();
         end
     endtask
@@ -369,7 +368,7 @@ module tb;
     task INFO;
         input [256*8:1] msg;
     begin
-    $display("%m at time %t: %0s", $time, msg);
+        $display("%m at time %t: %0s", $time, msg);
     end
     endtask
 
