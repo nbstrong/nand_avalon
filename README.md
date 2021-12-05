@@ -5,7 +5,17 @@ https://opencores.org/projects/nand_controller
 
 ## To run simulation tests with Modelsim:
 `cd sim/modelsim/`  
+
+GUI:  
 `vsim -do sim.do`  
+
+CLI:  
+`vsim -c`  
+`do sim.do`  
+
+BATCH:  
+`vsim -batch -do sim.do`  
+* Batch is current broken. See issue #5
 
 ## System Project
 For hardware testing, this controller has been integrated into the current project here:  
