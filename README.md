@@ -26,4 +26,4 @@ https://github.com/nbstrong/DE1_SoC_Computer
 
 ## Compatability
 This design has been tested on hardware successfully with the following NAND chips:  
-MT29F256G08CBCBB  
+* MT29F256G08CBCBB  
