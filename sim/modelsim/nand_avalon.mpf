@@ -2,9 +2,9 @@
 ;
 ; All Rights Reserved.
 ;
-; THIS WORK CONTAINS TRADE SECRET AND PROPRIETARY INFORMATION WHICH IS THE PROPERTY OF 
+; THIS WORK CONTAINS TRADE SECRET AND PROPRIETARY INFORMATION WHICH IS THE PROPERTY OF
 ; MENTOR GRAPHICS CORPORATION OR ITS LICENSORS AND IS SUBJECT TO LICENSE TERMS.
-;   
+;
 
 [Library]
 std = $MODEL_TECH/../std
@@ -98,7 +98,7 @@ cyclone10lp_ver = $MODEL_TECH/../altera/verilog/cyclone10lp
 
 work = work
 [vcom]
-; VHDL93 variable selects language version as the default. 
+; VHDL93 variable selects language version as the default.
 ; Default is VHDL-2002.
 ; Value of 0 or 1987 for VHDL-1987.
 ; Value of 1 or 1993 for VHDL-1993.
@@ -241,7 +241,7 @@ IterationLimit = 5000
 BreakOnAssertion = 3
 
 ; Assertion Message Format
-; %S - Severity Level 
+; %S - Severity Level
 ; %R - Report Message
 ; %T - Time of assertion
 ; %D - Delta
@@ -392,10 +392,10 @@ ConcurrentFileLimit = 40
 ; description of a message.
 
 ; Control transcripting of elaboration/runtime messages.
-; The default is to have messages appear in the transcript and 
+; The default is to have messages appear in the transcript and
 ; recorded in the wlf file (messages that are recorded in the
 ; wlf file can be viewed in the MsgViewer).  The other settings
-; are to send messages only to the transcript or only to the 
+; are to send messages only to the transcript or only to the
 ; wlf file.  The valid values are
 ;    both  {default}
 ;    tran  {transcript only}
@@ -423,9 +423,9 @@ Project_File_4 = Z:/git_wa/vhdl/nand_avalon/hdl/nand_master.vhd
 Project_File_P_4 = cover_exttoggle 0 vhdl_noload 0 vlog_nodebug 0 last_compile 1638658391 vhdl_showsource 0 compile_to work file_type vhdl cover_cond 0 cover_fsm 0 folder {Top Level} vlog_noload 0 vhdl_disableopt 0 cover_excludedefault 0 cover_optlevel 3 vlog_showsource 0 vlog_hazard 0 vhdl_options {} compile_order 4 cover_nosub 0 vlog_protect 0 cover_toggle 0 vhdl_nodebug 0 vhdl_synth 0 vlog_disableopt 0 vhdl_warn1 1 vhdl_warn2 1 vhdl_0InOptions {} vhdl_warn3 1 vhdl_warn4 1 voptflow 1 vhdl_warn5 1 ood 0 vlog_upper 0 vhdl_use93 2002 vhdl_novitalcheck 0 cover_nofec 0 group_id 0 vhdl_1164 1 vlog_1995compat 0 vhdl_enable0In 0 cover_branch 0 vlog_enable0In 0 vhdl_vital 0 vhdl_explicit 1 cover_covercells 0 toggle - vlog_0InOptions {} cover_noshort 0 vlog_options {} cover_expr 0 dont_compile 0 cover_stmt 0
 Project_File_5 = Z:/git_wa/vhdl/nand_avalon/hdl/nand_avalon.vhd
 Project_File_P_5 = cover_exttoggle 0 vhdl_noload 0 vlog_nodebug 0 last_compile 1638660842 vhdl_showsource 0 compile_to work file_type vhdl cover_cond 0 cover_fsm 0 folder {Top Level} vlog_noload 0 vhdl_disableopt 0 cover_excludedefault 0 cover_optlevel 3 vlog_showsource 0 vlog_hazard 0 vhdl_options {} compile_order 3 cover_nosub 0 vlog_protect 0 cover_toggle 0 vhdl_nodebug 0 vhdl_synth 0 vlog_disableopt 0 vhdl_warn1 1 vhdl_warn2 1 vhdl_0InOptions {} vhdl_warn3 1 vhdl_warn4 1 voptflow 1 vhdl_warn5 1 ood 0 vlog_upper 0 vhdl_use93 2002 vhdl_novitalcheck 0 cover_nofec 0 group_id 0 vhdl_1164 1 vlog_1995compat 0 vhdl_enable0In 0 cover_branch 0 vlog_enable0In 0 vhdl_vital 0 vhdl_explicit 1 cover_covercells 0 toggle - vlog_0InOptions {} cover_noshort 0 vlog_options {} cover_expr 0 dont_compile 0 cover_stmt 0
-Project_File_6 = Z:/git_wa/vhdl/nand_avalon/sim/behav/memory_models/MLC_nand_model/nand_model.v
+Project_File_6 = Z:/git_wa/vhdl/nand_avalon/sim/behav/memory_models/l72a_nand_model/nand_model.v
 Project_File_P_6 = cover_toggle 0 vlog_protect 0 file_type verilog group_id 0 cover_exttoggle 0 cover_nofec 0 cover_cond 0 vlog_1995compat 0 vlog_nodebug 0 cover_fsm 0 last_compile 1638667056 vlog_noload 0 cover_branch 0 folder {Top Level} vlog_enable0In 0 cover_excludedefault 0 vlog_disableopt 0 cover_covercells 0 vlog_hazard 0 vlog_showsource 0 cover_optlevel 3 voptflow 1 ood 0 vlog_0InOptions {} toggle - vlog_options {} compile_to work vlog_upper 0 cover_noshort 0 compile_order 1 dont_compile 0 cover_expr 0 cover_stmt 0
-Project_File_7 = Z:/git_wa/vhdl/nand_avalon/sim/behav/memory_models/MLC_nand_model/nand_die_model.v
+Project_File_7 = Z:/git_wa/vhdl/nand_avalon/sim/behav/memory_models/l72a_nand_model/nand_die_model.v
 Project_File_P_7 = cover_toggle 0 vlog_protect 0 file_type verilog group_id 0 cover_exttoggle 0 cover_nofec 0 cover_cond 0 vlog_1995compat 0 vlog_nodebug 0 cover_fsm 0 last_compile 1638667056 vlog_noload 0 cover_branch 0 folder {Top Level} vlog_enable0In 0 cover_excludedefault 0 vlog_disableopt 0 cover_covercells 0 vlog_hazard 0 vlog_showsource 0 cover_optlevel 3 voptflow 1 ood 0 vlog_0InOptions {} toggle - vlog_options {} compile_to work vlog_upper 0 cover_noshort 0 compile_order 2 dont_compile 0 cover_expr 0 cover_stmt 0
 Project_Sim_Count = 0
 Project_Folder_Count = 0
@@ -435,44 +435,44 @@ Project_Opt_Count = 0
 ForceSoftPaths = 0
 ProjectStatusDelay = 5000
 VERILOG_DoubleClick = Edit
-VERILOG_CustomDoubleClick = 
+VERILOG_CustomDoubleClick =
 SYSTEMVERILOG_DoubleClick = Edit
-SYSTEMVERILOG_CustomDoubleClick = 
+SYSTEMVERILOG_CustomDoubleClick =
 VHDL_DoubleClick = Edit
-VHDL_CustomDoubleClick = 
+VHDL_CustomDoubleClick =
 PSL_DoubleClick = Edit
-PSL_CustomDoubleClick = 
+PSL_CustomDoubleClick =
 TEXT_DoubleClick = Edit
-TEXT_CustomDoubleClick = 
+TEXT_CustomDoubleClick =
 SYSTEMC_DoubleClick = Edit
-SYSTEMC_CustomDoubleClick = 
+SYSTEMC_CustomDoubleClick =
 TCL_DoubleClick = Edit
-TCL_CustomDoubleClick = 
+TCL_CustomDoubleClick =
 MACRO_DoubleClick = Edit
-MACRO_CustomDoubleClick = 
+MACRO_CustomDoubleClick =
 VCD_DoubleClick = Edit
-VCD_CustomDoubleClick = 
+VCD_CustomDoubleClick =
 SDF_DoubleClick = Edit
-SDF_CustomDoubleClick = 
+SDF_CustomDoubleClick =
 XML_DoubleClick = Edit
-XML_CustomDoubleClick = 
+XML_CustomDoubleClick =
 LOGFILE_DoubleClick = Edit
-LOGFILE_CustomDoubleClick = 
+LOGFILE_CustomDoubleClick =
 UCDB_DoubleClick = Edit
-UCDB_CustomDoubleClick = 
+UCDB_CustomDoubleClick =
 TDB_DoubleClick = Edit
-TDB_CustomDoubleClick = 
+TDB_CustomDoubleClick =
 UPF_DoubleClick = Edit
-UPF_CustomDoubleClick = 
+UPF_CustomDoubleClick =
 PCF_DoubleClick = Edit
-PCF_CustomDoubleClick = 
+PCF_CustomDoubleClick =
 PROJECT_DoubleClick = Edit
-PROJECT_CustomDoubleClick = 
+PROJECT_CustomDoubleClick =
 VRM_DoubleClick = Edit
-VRM_CustomDoubleClick = 
+VRM_CustomDoubleClick =
 DEBUGDATABASE_DoubleClick = Edit
-DEBUGDATABASE_CustomDoubleClick = 
+DEBUGDATABASE_CustomDoubleClick =
 DEBUGARCHIVE_DoubleClick = Edit
-DEBUGARCHIVE_CustomDoubleClick = 
+DEBUGARCHIVE_CustomDoubleClick =
 Project_Major_Version = 10
 Project_Minor_Version = 5
