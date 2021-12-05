@@ -15,6 +15,8 @@
 `define PRINT_CMDS 0
 `define PRINT_PASSES 0
 
+`define RESET_ACTIVE_HIGH 0
+
 // Nand Avalon Command Macros
 // Consider making this an enum
 typedef enum {
@@ -45,484 +47,388 @@ typedef enum {
 } e_cmd;
 
 module tb;
-  wire         CLOCK_50;
-  wire         CLOCK2_50;
-  wire         CLOCK3_50;
-  wire         CLOCK4_50;
-  wire         ADC_CS_N;
-  wire         ADC_DIN;
-  wire         ADC_DOUT;
-  wire         ADC_SCLK;
-  wire         AUD_ADCDAT;
-  wire         AUD_ADCLRCK;
-  wire         AUD_BCLK;
-  wire         AUD_DACDAT;
-  wire         AUD_DACLRCK;
-  wire         AUD_XCK;
-  wire [12: 0] DRAM_ADDR;
-  wire [ 1: 0] DRAM_BA;
-  wire         DRAM_CAS_N;
-  wire         DRAM_CKE;
-  wire         DRAM_CLK;
-  wire         DRAM_CS_N;
-  wire [15: 0] DRAM_DQ;
-  wire         DRAM_LDQM;
-  wire         DRAM_RAS_N;
-  wire         DRAM_UDQM;
-  wire         DRAM_WE_N;
-  wire         FPGA_I2C_SCLK;
-  wire         FPGA_I2C_SDAT;
-  wire  [7: 0] NAND_DQ;
-  wire         NAND_NWP;
-  wire         NAND_NWE;
-  wire         NAND_ALE;
-  wire         NAND_CLE;
-  wire         NAND_NCE;
-  wire         NAND_NRE;
-  wire         NAND_RNB;
-  wire [35:15] GPIO_0;
-  wire [35: 0] GPIO_1;
-  wire [ 6: 0] HEX0;
-  wire [ 6: 0] HEX1;
-  wire [ 6: 0] HEX2;
-  wire [ 6: 0] HEX3;
-  wire [ 6: 0] HEX4;
-  wire [ 6: 0] HEX5;
-  wire         IRDA_RXD;
-  wire         IRDA_TXD;
-  wire [ 3: 0] KEY;
-  wire [ 9: 0] LEDR;
-  wire         PS2_CLK;
-  wire         PS2_DAT;
-  wire         PS2_CLK2;
-  wire         PS2_DAT2;
-  wire [ 9: 0] SW;
-  wire         TD_CLK27;
-  wire [ 7: 0] TD_DATA;
-  wire         TD_HS;
-  wire         TD_RESET_N;
-  wire         TD_VS;
-  wire [ 7: 0] VGA_B;
-  wire         VGA_BLANK_N;
-  wire         VGA_CLK;
-  wire [ 7: 0] VGA_G;
-  wire         VGA_HS;
-  wire [ 7: 0] VGA_R;
-  wire         VGA_SYNC_N;
-  wire         VGA_VS;
-  wire [14: 0] HPS_DDR3_ADDR;
-  wire [ 2: 0] HPS_DDR3_BA;
-  wire         HPS_DDR3_CAS_N;
-  wire         HPS_DDR3_CKE;
-  wire         HPS_DDR3_CK_N;
-  wire         HPS_DDR3_CK_P;
-  wire         HPS_DDR3_CS_N;
-  wire [ 3: 0] HPS_DDR3_DM;
-  wire [31: 0] HPS_DDR3_DQ;
-  wire [ 3: 0] HPS_DDR3_DQS_N;
-  wire [ 3: 0] HPS_DDR3_DQS_P;
-  wire         HPS_DDR3_ODT;
-  wire         HPS_DDR3_RAS_N;
-  wire         HPS_DDR3_RESET_N;
-  wire         HPS_DDR3_RZQ;
-  wire         HPS_DDR3_WE_N;
-  wire         HPS_ENET_GTX_CLK;
-  wire         HPS_ENET_INT_N;
-  wire         HPS_ENET_MDC;
-  wire         HPS_ENET_MDIO;
-  wire         HPS_ENET_RX_CLK;
-  wire [ 3: 0] HPS_ENET_RX_DATA;
-  wire         HPS_ENET_RX_DV;
-  wire [ 3: 0] HPS_ENET_TX_DATA;
-  wire         HPS_ENET_TX_EN;
-  wire[ 3: 0]  HPS_FLASH_DATA;
-  wire         HPS_FLASH_DCLK;
-  wire         HPS_FLASH_NCSO;
-  wire         HPS_GSENSOR_INT;
-  wire [ 1: 0] HPS_GPIO;
-  wire         HPS_I2C_CONTROL;
-  wire         HPS_I2C1_SCLK;
-  wire         HPS_I2C1_SDAT;
-  wire         HPS_I2C2_SCLK;
-  wire         HPS_I2C2_SDAT;
-  wire         HPS_KEY;
-  wire         HPS_LED;
-  wire         HPS_SD_CLK;
-  wire         HPS_SD_CMD;
-  wire [ 3: 0] HPS_SD_DATA;
-  wire         HPS_SPIM_CLK;
-  wire         HPS_SPIM_MISO;
-  wire         HPS_SPIM_MOSI;
-  wire         HPS_SPIM_SS;
-  wire         HPS_UART_RX;
-  wire         HPS_UART_TX;
-  wire         HPS_CONV_USB_N;
-  wire         HPS_USB_CLKOUT;
-  wire [ 7: 0] HPS_USB_DATA;
-  wire         HPS_USB_DIR;
-  wire         HPS_USB_NXT;
-  wire         HPS_USB_STP;
+    reg     [8*256:1] msg;
+    integer i, fails, compares;
+    integer N = 100;
 
-  logic clk, rst, rd, wr, cs, doneInt;
-  logic [1:0] addr;
-  logic [3:0] be;
-  logic [31:0] wrData, rdData;
-  reg  [8*256:1]           msg;
-  integer i;
-  integer fails = 0;
-  integer compares = 0;
-  parameter N = 100;
+    logic clk;
+    logic rst;
+    logic resetn;
+    logic readdata;
+    logic writedata;
+    logic pread;
+    logic pwrite;
+    logic address;
+    logic nand_cle;
+    logic nand_ale;
+    logic nand_nwe;
+    logic nand_nwp;
+    logic nand_nce;
+    logic nand_nre;
+    logic nand_rnb;
+    logic nand_data;
 
-  logic [7:0] chipID [0:tb.MLC_nand.uut_0.NUM_ID_BYTES-1] = {
-    tb.MLC_nand.uut_0.READ_ID_BYTE0,   // Micron Manufacturer ID
-    tb.MLC_nand.uut_0.READ_ID_BYTE1,
-    tb.MLC_nand.uut_0.READ_ID_BYTE2,
-    tb.MLC_nand.uut_0.READ_ID_BYTE3,
-    tb.MLC_nand.uut_0.READ_ID_BYTE4,
-    tb.MLC_nand.uut_0.READ_ID_BYTE5,
-    tb.MLC_nand.uut_0.READ_ID_BYTE6,
-    tb.MLC_nand.uut_0.READ_ID_BYTE7
-  };
+    logic [7:0] chipID [0:tb.MLC_nand.uut_0.NUM_ID_BYTES-1] = {
+        tb.nand_0.uut_0.READ_ID_BYTE0,   // Micron Manufacturer ID
+        tb.nand_0.uut_0.READ_ID_BYTE1,
+        tb.nand_0.uut_0.READ_ID_BYTE2,
+        tb.nand_0.uut_0.READ_ID_BYTE3,
+        tb.nand_0.uut_0.READ_ID_BYTE4,
+        tb.nand_0.uut_0.READ_ID_BYTE5,
+        tb.nand_0.uut_0.READ_ID_BYTE6,
+        tb.nand_0.uut_0.READ_ID_BYTE7
+    };
 
-  /****************************************************************************/
-  // INSTANTIATE DEVICES
-  /****************************************************************************/
-  // Instantiate design under test
-  DE1_SoC_Computer dut (.*);
+    logic [7:0] rdData;
 
-  // Instantiate MLC memory model
-  // Supports MT29F256G08CBCBB family
-  wire NAND_DQS_NO_CONNECT;
-  nand_model MLC_nand (
-    .Dq_Io    (NAND_DQ),
-    .Cle      (NAND_CLE),
-    .Ale      (NAND_ALE),
-    .Ce_n     (NAND_NCE),
-    .Clk_We_n (NAND_NWE),
-    .Wr_Re_n  (NAND_NRE),
-    .Wp_n     (NAND_NWP),
-    .Rb_n     (NAND_RNB),
-    .Dqs      (NAND_DQS_NO_CONNECT) // Should only be testing asynchronous mode
-  );
+    /****************************************************************************/
+    // INSTANTIATE DEVICES
+    /****************************************************************************/
+    // Instantiate design under test
+    nand_avalon dut (
+        .clk      (clk      ),
+        .resetn   (resetn   ),
+        .readdata (readdata ),
+        .writedata(writedata),
+        .pread    (pread    ),
+        .pwrite   (pwrite   ),
+        .address  (address  ),
+        .nand_cle (nand_cle ),
+        .nand_ale (nand_ale ),
+        .nand_nwe (nand_nwe ),
+        .nand_nwp (nand_nwp ),
+        .nand_nce (nand_nce ),
+        .nand_nre (nand_nre ),
+        .nand_rnb (nand_rnb ),
+        .nand_data(nand_data));
 
-  // Model for MT29F8G08ABACA family is available by request only.
-  // Get it here if you'd like to go through the NDA process:
-  // https://www.micron.com/products/nand-flash/slc-nand/part-catalog/mt29f8g08abacawp-it
+    // Instantiate MLC memory model
+    // Supports MT29F256G08CBCBB family
+    logic NAND_DQS_NO_CONNECT;
+    nand_model nand_0 (
+        .Dq_Io    (nand_data),
+        .Cle      (nand_cle ),
+        .Ale      (nand_ale ),
+        .Ce_n     (nand_nce ),
+        .Clk_We_n (nand_nwe ),
+        .Wr_Re_n  (nand_nre ),
+        .Wp_n     (nand_nwp ),
+        .Rb_n     (nand_rnb ),
+        .Dqs      (NAND_DQS_NO_CONNECT)); // Should only be testing asynchronous mode
 
-  /****************************************************************************/
-  // GENERATE CLOCK
-  /****************************************************************************/
-  initial begin
-    clk = 0;
-    #5
-    forever #5 clk = ~clk;
-  end
+    // Model for MT29F8G08ABACA family is available by request only.
+    // Get it here if you'd like to go through the NDA process:
+    // https://www.micron.com/products/nand-flash/slc-nand/part-catalog/mt29f8g08abacawp-it
 
-  // Assign clock
-  assign CLOCK_50 = clk;
-  // Assign reset
-  assign tb.dut.sim_gen.rst = rst;
-
-  /****************************************************************************/
-  // TEST
-  /****************************************************************************/
-  initial begin
-    // Initialize
-    init_signals();
-    reset_system(1'b0); // Assert our reset
-
-    // Wait for NAND to power up
-    _wait_nand_powerup();
-
-    // Enable NAND chip
-    _command_write(CTRL_CHIP_ENABLE_CMD);
-
-    // Reset NAND chip
-    _command_write(NAND_RESET_CMD);
-
-    // Read ID
-    _command_write(NAND_READ_ID_CMD);
-    for (i = 0; i < 6; i = i + 1) begin
-        _command_read(CTRL_GET_ID_BYTE_CMD, rdData);
-        compare_byte(rdData, chipID[i]);
+    /****************************************************************************/
+    // GENERATE CLOCK
+    /****************************************************************************/
+    initial begin
+        clk = 0;
+        #5
+        forever #5 clk = ~clk;
     end
 
-    // Read Parameter Page
-    _command_write(NAND_READ_PARAMETER_PAGE_CMD);
-    for(i = 0; i < 4; i = i + 1) begin
-        _command_read(CTRL_GET_PARAMETER_PAGE_BYTE_CMD, rdData);
-        compare_byte(rdData, tb.MLC_nand.uut_0.onfi_params_array[i]);
+    // Assign reset
+    assign resetn = rst;
+
+    /****************************************************************************/
+    // TEST
+    /****************************************************************************/
+    initial begin
+        // Initialize
+        init_signals();
+        reset_system(`RESET_ACTIVE_HIGH); // Assert our reset
+
+        // Wait for NAND to power up
+        _wait_nand_powerup();
+
+        // Enable NAND chip
+        _command_write(CTRL_CHIP_ENABLE_CMD);
+
+        // Reset NAND chip
+        _command_write(NAND_RESET_CMD);
+
+        // Read ID
+        _command_write(NAND_READ_ID_CMD);
+        for (i = 0; i < 6; i = i + 1) begin
+            _command_read(CTRL_GET_ID_BYTE_CMD, rdData);
+            compare_byte(rdData, chipID[i]);
+        end
+
+        // Read Parameter Page
+        _command_write(NAND_READ_PARAMETER_PAGE_CMD);
+        for(i = 0; i < 4; i = i + 1) begin
+            _command_read(CTRL_GET_PARAMETER_PAGE_BYTE_CMD, rdData);
+            compare_byte(rdData, tb.MLC_nand.uut_0.onfi_params_array[i]);
+        end
+
+        // Get controller status
+        _command_read(CTRL_GET_STATUS_CMD, rdData);
+        compare_bit(rdData[0], 1);
+
+        // Write Enable
+        _command_write(CTRL_WRITE_ENABLE_CMD);
+
+        // Just doing first 100 addresses
+        // Verify NAND's Initial State
+        _command_write(NAND_READ_PAGE_CMD);
+        _command_write(CTRL_RESET_INDEX_CMD);
+        for(i = 0; i < N; i = i + 1) begin
+            _command_read(CTRL_GET_DATA_PAGE_BYTE_CMD, rdData);
+            compare_byte(rdData, 8'hFF);
+        end
+
+        // Write controller pages with known sequence
+        _command_write(CTRL_RESET_INDEX_CMD);
+        for(i = 0; i < N; i = i + 1) begin
+            _command_write_data(CTRL_SET_DATA_PAGE_BYTE_CMD, i);
+        end
+        // Write controller pages to NAND
+        _command_write(NAND_PAGE_PROGRAM_CMD);
+
+        // Write controller pages with known different sequence
+        _command_write(CTRL_RESET_INDEX_CMD);
+        for(i = 0; i < N; i = i + 1) begin
+            _command_write_data(CTRL_SET_DATA_PAGE_BYTE_CMD, 1'b1);
+        end
+        // Verify controller page is different from nand
+        _command_write(CTRL_RESET_INDEX_CMD);
+        for(i = 0; i < N; i = i + 1) begin
+            _command_read(CTRL_GET_DATA_PAGE_BYTE_CMD, rdData);
+            compare_byte(rdData, 1'b1);
+        end
+
+        // Read previously written page from NAND
+        _command_write(NAND_READ_PAGE_CMD);
+        _command_write(CTRL_RESET_INDEX_CMD);
+        for(i = 0; i < N; i = i + 1) begin
+            _command_read(CTRL_GET_DATA_PAGE_BYTE_CMD, rdData);
+            compare_byte(rdData, i);
+        end
+
+        // Erase chip
+        _command_write(NAND_BLOCK_ERASE_CMD);
+        // Verify chip is erased
+        _command_write(NAND_READ_PAGE_CMD);
+        _command_write(CTRL_RESET_INDEX_CMD);
+        for(i = 0; i < N; i = i + 1) begin
+            _command_read(CTRL_GET_DATA_PAGE_BYTE_CMD, rdData);
+            compare_byte(rdData, 8'hFF);
+        end
+
+        repeat (1000) @(posedge clk);
+        $display("Test Compares:Failures: %0d:%0d", compares, fails);
+        $stop;
     end
 
-    // Get controller status
-    _command_read(CTRL_GET_STATUS_CMD, rdData);
-    compare_bit(rdData[0], 1);
-
-    // Write Enable
-    _command_write(CTRL_WRITE_ENABLE_CMD);
-
-    // Just doing first 100 addresses
-    // Verify NAND's Initial State
-    _command_write(NAND_READ_PAGE_CMD);
-    _command_write(CTRL_RESET_INDEX_CMD);
-    for(i = 0; i < N; i = i + 1) begin
-        _command_read(CTRL_GET_DATA_PAGE_BYTE_CMD, rdData);
-        compare_byte(rdData, 8'hFF);
+    /****************************************************************************/
+    // TESTBENCH MISC
+    /****************************************************************************/
+    initial begin
+        $timeformat (-9, 3, " ns", 1);
     end
 
-    // Write controller pages with known sequence
-    _command_write(CTRL_RESET_INDEX_CMD);
-    for(i = 0; i < N; i = i + 1) begin
-        _command_write_data(CTRL_SET_DATA_PAGE_BYTE_CMD, i);
-    end
-    // Write controller pages to NAND
-    _command_write(NAND_PAGE_PROGRAM_CMD);
+    /******************************************************************************/
+    // TASKS
+    /******************************************************************************/
+    /******************************************************************************/
+    // CONTROLLER OPERATIONS
+    /******************************************************************************/
+    task poll_busy;
+        logic [7:0] rddata;
+        begin
+            _read_status_reg(rddata);
+            while(rddata[0] == 1 || rddata[1] == 0) _read_status_reg(rddata);
+        end
+    endtask
 
-    // Write controller pages with known different sequence
-    _command_write(CTRL_RESET_INDEX_CMD);
-    for(i = 0; i < N; i = i + 1) begin
-        _command_write_data(CTRL_SET_DATA_PAGE_BYTE_CMD, 1'b1);
-    end
-    // Verify controller page is different from nand
-    _command_write(CTRL_RESET_INDEX_CMD);
-    for(i = 0; i < N; i = i + 1) begin
-        _command_read(CTRL_GET_DATA_PAGE_BYTE_CMD, rdData);
-        compare_byte(rdData, 1'b1);
-    end
-
-    // Read previously written page from NAND
-    _command_write(NAND_READ_PAGE_CMD);
-    _command_write(CTRL_RESET_INDEX_CMD);
-    for(i = 0; i < N; i = i + 1) begin
-        _command_read(CTRL_GET_DATA_PAGE_BYTE_CMD, rdData);
-        compare_byte(rdData, i);
-    end
-
-    // Erase chip
-    _command_write(NAND_BLOCK_ERASE_CMD);
-    // Verify chip is erased
-    _command_write(NAND_READ_PAGE_CMD);
-    _command_write(CTRL_RESET_INDEX_CMD);
-    for(i = 0; i < N; i = i + 1) begin
-        _command_read(CTRL_GET_DATA_PAGE_BYTE_CMD, rdData);
-        compare_byte(rdData, 8'hFF);
-    end
-
-    repeat (1000) @(posedge clk);
-    $display("Test Compares:Failures: %0d:%0d", compares, fails);
-    $stop;
-  end
-
-  /****************************************************************************/
-  // TESTBENCH MISC
-  /****************************************************************************/
-  initial begin
-    // Dump waves
-    $timeformat (-9, 3, " ns", 1);
-    $dumpfile("dump.vcd");
-    $dumpvars();
-  end
-
-/******************************************************************************/
-// TASKS
-/******************************************************************************/
-/******************************************************************************/
-// CONTROLLER OPERATIONS
-/******************************************************************************/
-task poll_busy;
-    logic [7:0] rddata;
-    begin
+    task _wait_nand_powerup;
+        logic [7:0] rddata;
+        begin
+        // Let nand chip get powered up
         _read_status_reg(rddata);
-        while(rddata[0] == 1 || rddata[1] == 0) _read_status_reg(rddata);
-    end
-endtask
-
-task _wait_nand_powerup;
-    logic [7:0] rddata;
-    begin
-    // Let nand chip get powered up
-    _read_status_reg(rddata);
-    while(rddata[1] == 1) _read_status_reg(rddata);
-    poll_busy();
-    end
-endtask
-
-task _command_write;
-    input e_cmd cmd;
-    begin
-        if(`PRINT_CMDS) print_command(cmd);
-        _write_command_reg(cmd);
+        while(rddata[1] == 1) _read_status_reg(rddata);
         poll_busy();
-    end
-endtask
+        end
+    endtask
 
-task _command_write_data;
-    input e_cmd cmd;
-    input [7:0] data;
+    task _command_write;
+        input e_cmd cmd;
+        begin
+            if(`PRINT_CMDS) print_command(cmd);
+            _write_command_reg(cmd);
+            poll_busy();
+        end
+    endtask
+
+    task _command_write_data;
+        input e_cmd cmd;
+        input [7:0] data;
+        begin
+            if(`PRINT_CMDS) print_command(cmd);
+            _write_data_reg(data);
+            _write_command_reg(cmd);
+            poll_busy();
+        end
+    endtask
+
+    task _command_read;
+        input e_cmd cmd;
+        output [7:0] rddata;
+        begin
+            if(`PRINT_CMDS) print_command(cmd);
+            _write_command_reg(cmd);
+            poll_busy();
+            _read_data_reg(rddata);
+        end
+    endtask
+
+    /******************************************************************************/
+    // REGISTER ABSTRACTIONS
+    /******************************************************************************/
+    task _write_command_reg;
+        input [7:0] wrdata;
+        begin
+        _avalon_write(`CMD_REG, wrdata);
+        end
+    endtask
+
+    task _read_command_reg;
+        output [7:0] rddata;
+        begin
+        _avalon_read(`CMD_REG, rddata);
+        end
+    endtask
+
+    task _write_data_reg;
+        input [31:0] wrdata;
+        begin
+        _avalon_write(`DATA_REG, wrdata);
+        end
+    endtask
+
+    task _read_data_reg;
+        output [7:0] rddata;
+        begin
+        _avalon_read(`DATA_REG, rddata);
+        end
+    endtask
+
+    task _read_status_reg;
+        output [7:0] rddata;
+        begin
+        _avalon_read(`STATUS_REG, rddata);
+        end
+    endtask
+
+    /******************************************************************************/
+    // PRIMITIVE AVALON OPERATIONS
+    // HOLD = 1
+    /******************************************************************************/
+    task _avalon_write;
+        input [1:0] addr;
+        input [7:0] wrdata;
+        begin
+        address   = addr;
+        pwrite    = 1'b0;
+        pread     = 1'b1;
+        writedata = wrdata;
+        @(posedge clk)
+        pwrite    = 1'b1;
+        @(posedge clk)
+        init_signals();
+        end
+    endtask
+
+    task _avalon_read;
+        input [1:0] addr;
+        output [7:0] rddata;
+        begin
+        address  = addr;
+        pwrite   = 1'b1;
+        pread    = 1'b0;
+        @(posedge clk)
+        readdata = tb.dut.sim_gen.rddata[7:0];
+        init_signals();
+        end
+    endtask
+
+    task init_signals;
+        begin
+        address   = 2'hX;
+        pwrite    = 1'bX;
+        pread     = 1'bX;
+        writedata = 31'hX;
+        end
+    endtask
+
+    /******************************************************************************/
+    // TESTBENCH MISC
+    /******************************************************************************/
+    task INFO;
+        input [256*8:1] msg;
     begin
-        if(`PRINT_CMDS) print_command(cmd);
-        _write_data_reg(data);
-        _write_command_reg(cmd);
-        poll_busy();
+    $display("%m at time %t: %0s", $time, msg);
     end
-endtask
+    endtask
 
-task _command_read;
-    input e_cmd cmd;
-    output [7:0] rddata;
-    begin
-        if(`PRINT_CMDS) print_command(cmd);
-        _write_command_reg(cmd);
-        poll_busy();
-        _read_data_reg(rddata);
-    end
-endtask
+    task reset_system;
+        input active_high;
+        begin
+            rst = active_high;
+            repeat (2) @(posedge clk);
+            rst = ~active_high;
+            $sformat(msg, "Released device reset");
+            INFO(msg);
+            repeat (1) @(posedge clk);
+        end
+    endtask
 
-/******************************************************************************/
-// REGISTER ABSTRACTIONS
-/******************************************************************************/
-task _write_command_reg;
-    input [7:0] wrdata;
-    begin
-    _avalon_write(`CMD_REG, wrdata);
-    end
-endtask
-
-task _read_command_reg;
-    output [7:0] rddata;
-    begin
-    _avalon_read(`CMD_REG, rddata);
-    end
-endtask
-
-task _write_data_reg;
-    input [31:0] wrdata;
-    begin
-    _avalon_write(`DATA_REG, wrdata);
-    end
-endtask
-
-task _read_data_reg;
-    output [7:0] rddata;
-    begin
-    _avalon_read(`DATA_REG, rddata);
-    end
-endtask
-
-task _read_status_reg;
-    output [7:0] rddata;
-    begin
-    _avalon_read(`STATUS_REG, rddata);
-    end
-endtask
-
-/******************************************************************************/
-// PRIMITIVE AVALON OPERATIONS
-// HOLD = 1
-/******************************************************************************/
-task _avalon_write;
-    input [1:0] addr;
-    input [7:0] wrdata;
-    begin
-    tb.dut.sim_gen.addr = addr;
-    tb.dut.sim_gen.wr   = 1'b0;
-    tb.dut.sim_gen.rd   = 1'b1;
-    tb.dut.sim_gen.wrdata = wrdata;
-    @(posedge clk)
-    tb.dut.sim_gen.wr   = 1'b1;
-    @(posedge clk)
-    init_signals();
-    end
-endtask
-
-task _avalon_read;
-    input [1:0] addr;
-    output [7:0] rddata;
-    begin
-    tb.dut.sim_gen.addr = addr;
-    tb.dut.sim_gen.wr   = 1'b1;
-    tb.dut.sim_gen.rd   = 1'b0;
-    @(posedge clk)
-    rddata = tb.dut.sim_gen.rddata[7:0];
-    init_signals();
-    end
-endtask
-
-task init_signals;
-    begin
-    tb.dut.sim_gen.addr = 2'hX;
-    tb.dut.sim_gen.wr   = 1'b1;
-    tb.dut.sim_gen.rd   = 1'b1;
-    tb.dut.sim_gen.wrdata = 31'h0;
-    end
-endtask
-
-/******************************************************************************/
-// TESTBENCH MISC
-/******************************************************************************/
-task INFO;
-   input [256*8:1] msg;
-begin
-  $display("%m at time %t: %0s", $time, msg);
-end
-endtask
-
-task reset_system;
-    input active_high;
-    begin
-        rst = active_high;
-        repeat (2) @(posedge clk);
-        rst = ~active_high;
-        $sformat(msg, "Released device reset");
-        INFO(msg);
-        repeat (1) @(posedge clk);
-    end
-endtask
-
-task compare_bit;
-    input a;
-    input b;
-    begin
-        compares = compares + 1;
-        assert(a == b) begin
-            if(`PRINT_PASSES) begin
-                $sformat(msg, "[PASS] : %0h == %0h", a, b);
+    task compare_bit;
+        input a;
+        input b;
+        begin
+            compares = compares + 1;
+            assert(a == b) begin
+                if(`PRINT_PASSES) begin
+                    $sformat(msg, "[PASS] : %0h == %0h", a, b);
+                    INFO(msg);
+                end
+            end
+            else begin
+                $sformat(msg, "[FAIL] : %0h != %0h", a, b);
                 INFO(msg);
+                fails = fails + 1;
             end
         end
-        else begin
-            $sformat(msg, "[FAIL] : %0h != %0h", a, b);
-            INFO(msg);
-            fails = fails + 1;
-        end
-    end
-endtask
+    endtask
 
-task compare_byte;
-    input [7:0] a;
-    input [7:0] b;
-    begin
-        compares = compares + 1;
-        assert(a == b) begin
-            if(`PRINT_PASSES) begin
-                $sformat(msg, "[PASS] : %0h == %0h", a, b);
+    task compare_byte;
+        input [7:0] a;
+        input [7:0] b;
+        begin
+            compares = compares + 1;
+            assert(a == b) begin
+                if(`PRINT_PASSES) begin
+                    $sformat(msg, "[PASS] : %0h == %0h", a, b);
+                    INFO(msg);
+                end
+            end
+            else begin
+                $sformat(msg, "[FAIL] : %0h != %0h", a, b);
                 INFO(msg);
+                fails = fails + 1;
             end
         end
-        else begin
-            $sformat(msg, "[FAIL] : %0h != %0h", a, b);
-            INFO(msg);
-            fails = fails + 1;
-        end
-    end
-endtask
+    endtask
 
-task print_command;
-    input e_cmd cmd;
-    begin
-        $sformat(msg, "%s", cmd.name());
-        INFO(msg);
-    end
-endtask
+    task print_command;
+        input e_cmd cmd;
+        begin
+            $sformat(msg, "%s", cmd.name());
+            INFO(msg);
+        end
+    endtask
 
 endmodule
