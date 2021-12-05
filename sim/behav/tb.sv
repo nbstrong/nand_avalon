@@ -12,8 +12,8 @@
 `define CMD_REG  2'h1
 `define STATUS_REG 2'h2
 
-`define PRINT_CMDS 1
-`define PRINT_PASSES 1
+`define PRINT_CMDS 0
+`define PRINT_PASSES 0
 
 `define RESET_ACTIVE_HIGH 0
 
