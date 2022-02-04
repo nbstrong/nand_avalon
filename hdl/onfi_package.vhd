@@ -104,7 +104,7 @@ package onfi is
         MS_END
     );
 
-    type page_t         is array (0 to 8628) of std_logic_vector(7 downto 0);
+    type page_t         is array (0 to 18591) of std_logic_vector(7 downto 0); -- *NS Edited because our page size is larger
     type param_page_t   is array (0 to  255) of std_logic_vector(7 downto 0);
     type nand_id_t      is array (0 to    4) of std_logic_vector(7 downto 0);
     type nand_address_t is array (0 to    4) of std_logic_vector(7 downto 0);
