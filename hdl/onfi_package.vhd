@@ -1,3 +1,4 @@
+-- altera vhdl_input_version vhdl_2008
 -------------------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------------------
 -- Title   : ONFI compliant NAND interface
@@ -22,6 +23,7 @@ package onfi is
     constant clock_cycle    : real := 10.0;
 
     -- NAND interface delays.
+    -- These are all based on the DC characteristics at the back of the datasheet
     -- Delays of 7.5ns may need to be fixed to 7.0.
     -- Nicholas Strong : editing these for the micron part          -- MT29F256G08CBCBB -- MT29F8G08ABACA
     constant t_cls  : integer := integer(50.0       / clock_cycle); -- > 50.0           -- > 10.0          -- CLE Setup Time              --
@@ -37,6 +39,7 @@ package onfi is
     constant t_rea  : integer := integer(40.0       / clock_cycle); -- < 40.0           -- < 16.0          -- RE# Access Time             --
     constant t_rp   : integer := integer(70.0       / clock_cycle); -- > 50.0           -- > 10.0          -- RE# Pulse Width             -- * Inrease rp so that rp+reh=rc
     constant t_reh  : integer := integer(30.0       / clock_cycle); -- > 30.0           -- > 7.0           -- RE# High Hold Time          --
+    constant t_rhw  : integer := integer(200.0      / clock_cycle); -- > 200.0                             -- RE# High to WE# Low
     constant t_wb   : integer := integer(200.0      / clock_cycle); -- < 200.0          -- < 100.0         -- WE# High to R/B# Low        --
     constant t_rst  : integer := integer(500000.0   / clock_cycle); -- < 500000.0       -- < 5000.0        -- Device Reset Time           --
     constant t_bers : integer := integer(30000000.0 / clock_cycle); -- < 30000000.0     -- < 10000000.0    -- ERASE BLOCK Operation Time  --

@@ -1,3 +1,4 @@
+-- altera vhdl_input_version vhdl_2008
 -------------------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------------------
 -- Title   : ONFI compliant NAND interface
@@ -22,6 +23,7 @@ entity latch_unit is
     port
     (
         clk                 : in  std_logic;
+        nreset              : in  std_logic;
         activate            : in  std_logic;
         data_in             : in  std_logic_vector(15 downto 0);
 
@@ -54,48 +56,52 @@ begin
     data_out     <= data_in when (state /= LATCH_IDLE and state /= LATCH_WAIT and n_state /= LATCH_IDLE) else
                     "LLLLLLLLLLLLLLLL";
 
-    LATCH:process(clk, activate)
+    LATCH:process(clk, nreset)
     begin
-        if(rising_edge(clk))then
-            case state is
-                when LATCH_IDLE =>
-                    if(activate = '1')then
-                        n_state            <= LATCH_HOLD;
-                        state              <= LATCH_DELAY;
-                        delay              <= t_wp;
-                    end if;
+        if(nreset /= '1') then
+            state <= LATCH_IDLE;
+        else
+            if(rising_edge(clk))then
+                case state is
+                    when LATCH_IDLE =>
+                        if(activate = '1')then
+                            n_state            <= LATCH_HOLD;
+                            state              <= LATCH_DELAY;
+                            delay              <= t_wp;
+                        end if;
 
-                when LATCH_HOLD =>
-                    if(latch_type = LATCH_CMD)then
-                        delay              <= t_clh;
-                    else
-                        delay              <= t_wh;
-                    end if;
-                    n_state                <= LATCH_WAIT;
-                    state                  <= LATCH_DELAY;
+                    when LATCH_HOLD =>
+                        if(latch_type = LATCH_CMD)then
+                            delay              <= t_clh;
+                        else
+                            delay              <= t_wh;
+                        end if;
+                        n_state                <= LATCH_WAIT;
+                        state                  <= LATCH_DELAY;
 
-                when LATCH_WAIT =>
-                    if(latch_type = LATCH_CMD)then
-                        -- Delay has been commented out. It is component's responsibility to
-                        --    execute proper delay on command submission.
-                        -- state             <= LATCH_DELAY;
-                        state              <= LATCH_IDLE;
-                        n_state            <= LATCH_IDLE;
-                        -- delay             <= t_wb;
-                    else
-                        state              <= LATCH_IDLE;
-                    end if;
+                    when LATCH_WAIT =>
+                        if(latch_type = LATCH_CMD)then
+                            -- Delay has been commented out. It is component's responsibility to
+                            --    execute proper delay on command submission.
+                            -- state             <= LATCH_DELAY;
+                            state              <= LATCH_IDLE;
+                            n_state            <= LATCH_IDLE;
+                            -- delay             <= t_wb;
+                        else
+                            state              <= LATCH_IDLE;
+                        end if;
 
-                when LATCH_DELAY =>
-                    if(delay > 1)then
-                        delay              <= delay - 1;
-                    else
-                        state              <= n_state;
-                    end if;
+                    when LATCH_DELAY =>
+                        if(delay > 1)then
+                            delay              <= delay - 1;
+                        else
+                            state              <= n_state;
+                        end if;
 
-                when others =>
-                    state                  <= LATCH_IDLE;
-            end case;
+                    when others =>
+                        state                  <= LATCH_IDLE;
+                end case;
+            end if;
         end if;
     end process;
 end action;

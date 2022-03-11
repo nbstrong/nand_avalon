@@ -1,3 +1,4 @@
+-- altera vhdl_input_version vhdl_2008
 -------------------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------------------
 -- Title   : ONFI compliant NAND interface
@@ -43,11 +44,18 @@ architecture action of nand_avalon is
     component nand_master
         port
         (
-            nand_cle, nand_ale, nand_nwe, nand_nwp, nand_nce, nand_nre, busy : out std_logic;
+            nand_cle, nand_ale, nand_nwe, nand_nwp, nand_nce, nand_nre, busy: out std_logic;
             clk, enable, nand_rnb, nreset, activate : in std_logic;
             data_out : out std_logic_vector(7 downto 0);
             data_in, cmd_in : in std_logic_vector(7 downto 0);
-            nand_data : inout std_logic_vector(15 downto 0)
+            nand_data : inout std_logic_vector(15 downto 0);
+            delay_slv    : out std_logic_vector(15 downto 0);
+            state_slv    : out std_logic_vector(5 downto 0);
+            substate_slv : out std_logic_vector(3 downto 0);
+            cle_busy     : out std_logic;
+            ale_busy     : out std_logic;
+            io_rd_busy   : out std_logic;
+            io_wr_busy   : out std_logic
         );
     end component;
 
@@ -60,6 +68,15 @@ architecture action of nand_avalon is
     signal prev_pwrite  : std_logic;
     signal prev_address : std_logic_vector(1 downto 0);
     signal rnb          : std_logic;
+    signal delay_slv    : std_logic_vector(15 downto 0);
+    signal state_slv    : std_logic_vector(5 downto 0);
+    signal substate_slv : std_logic_vector(3 downto 0);
+    signal cle_busy     : std_logic;
+    signal ale_busy     : std_logic;
+    signal io_rd_busy   : std_logic;
+    signal io_wr_busy   : std_logic;
+    signal nand_rnb_r   : std_logic;
+    signal nand_rnb_rr  : std_logic;
 begin
     NANDA: nand_master
     port map
@@ -79,39 +96,69 @@ begin
         nand_nwp  => nand_nwp,
         nand_nce  => nand_nce,
         nand_nre  => nand_nre,
-        nand_rnb  => nand_rnb
+        nand_rnb  => nand_rnb_rr,
+        delay_slv    => delay_slv,
+        state_slv    => state_slv,
+        substate_slv => substate_slv,
+        cle_busy     => cle_busy,
+        ale_busy     => ale_busy,
+        io_rd_busy   => io_rd_busy,
+        io_wr_busy   => io_wr_busy
     );
 
     -- Registers:
     -- 0x00:        Data IO
     -- 0x04:        Command input
     -- 0x08:        Status output
-    readdata(7 downto 0) <= n_data_out          when address = "00" else
-                            "000000"&rnb&n_busy when address = "10" else
-                            "00000000";
+    readdata <= X"000000"&n_data_out          when address = "00" else
+      delay_slv&state_slv&substate_slv&cle_busy&ale_busy&io_rd_busy&io_wr_busy&rnb&n_busy when address = "10" else
+                            X"00000000";
 
     n_activate <= '1' when (prev_address = "01" and prev_pwrite = '0' and pwrite = '1' and n_busy = '0') else
                   '0';
 
     rnb <= '0' when nand_rnb = '0' else '1';
 
-    CONTROL_INPUTS:process(clk, address, pwrite, writedata)
+    -- Metastability Flop
+    FF_Proc: process(clk, resetn)
     begin
-        if(rising_edge(clk))then
-            if(pwrite = '0' and address = "00")then
-                n_data_in <= writedata(7 downto 0);
-            elsif(pwrite = '0' and address = "01")Then
-                n_cmd_in  <= writedata(7 downto 0);
+      if(resetn /= '1') then
+        nand_rnb_r  <= '0';
+        nand_rnb_rr <= '0';
+      else
+        if(rising_edge(clk)) then
+          nand_rnb_r  <= nand_rnb;
+          nand_rnb_rr <= nand_rnb_r;
+        end if;
+      end if;
+    end process;
+
+    CONTROL_INPUTS:process(clk, resetn)
+    begin
+        if(resetn /= '1') then
+            n_data_in <= "00000000";
+            n_cmd_in  <= "00000000";
+        else
+            if(rising_edge(clk))then
+                if(pwrite = '0' and address = "00")then
+                    n_data_in <= writedata(7 downto 0);
+                elsif(pwrite = '0' and address = "01")Then
+                    n_cmd_in  <= writedata(7 downto 0);
+                end if;
             end if;
         end if;
     end process;
 
-    TRACK_ADDRESS:process(clk, address, pwrite)
+    TRACK_ADDRESS:process(clk, resetn)
     begin
-        if(rising_edge(clk))then
-            prev_address <= address;
-            prev_pwrite  <= pwrite;
-        end if;
+      if(resetn /= '1') then
+          prev_address <= "00";
+          prev_pwrite  <=  '0';
+      else
+          if(rising_edge(clk))then
+              prev_address <= address;
+              prev_pwrite  <= pwrite;
+          end if;
+      end if;
     end process;
-
 end action;

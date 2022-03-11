@@ -1,11 +1,19 @@
 #ifndef _NAND_H_
 #define _NAND_H_
 
+#include <stdint.h>
+
+#define DEBUG 0
+
 // https://opencores.org/usercontent/doc/1466674234
-//#define AVALON_NAND_BASE 0xFF200080
+#define AVALON_NAND_BASE 0xFF200080
 #define NAND_DATA_32  ((volatile int*) AVALON_NAND_BASE+0)
 #define NAND_CMD_8    ((volatile int*) AVALON_NAND_BASE+1)
 #define NAND_STATUS_8 ((volatile int*) AVALON_NAND_BASE+2)
+
+#define PAGELEN 18592 // Number of bytes per page
+#define BLOCKLEN 1024 // Number of pages per block
+#define DEVLEN 2192   // Number of blocks per device
 
 #define INTERNAL_RESET_CMD                 0
 #define NAND_RESET_CMD                     1
@@ -33,6 +41,15 @@
 #define NAND_BYPASS_DATA_RD               23
 
 int init_nand();
+uint64_t gen_address(uint16_t block_idx, uint16_t page_idx, uint16_t col_idx);
+void _set_address(int addr);
+int _get_address();
+void write_page(uint8_t *page_buf, uint64_t address);
+void _write_page(uint8_t *page_buf);
+void read_page(uint8_t *page_buf, uint64_t address);
+void _read_page(uint8_t *page_buf);
+void print_status();
+void print_page_buffer(uint8_t *page_buf, uint8_t num_cols);
 void _poll_busy();
 void _wait_nand_powerup();
 void _command_write(int cmd);

@@ -17,6 +17,12 @@
 
 `define RESET_ACTIVE_HIGH 0
 
+`define PAGELEN 4320 // Number of bytes per page
+// `define BLOCKLEN 1024 // Number of pages per block
+// `define DEVLEN 2192   // Number of blocks per device
+
+`define NUM_COLS 10
+
 // Nand Avalon Command Macros
 // Consider making this an enum
 typedef enum {
@@ -48,7 +54,10 @@ typedef enum {
 
 module tb;
     reg [8*256:1]   msg;
-    integer         i = 0, fails = 0, compares = 0, N = 100;
+    integer         i = 0, j = 0, fails = 0, compares = 0;
+
+    typedef logic [7:0] page [0:18591];
+    page            page_buf;
 
     logic           clk;
     logic           rst;
@@ -139,82 +148,104 @@ module tb;
         init_signals();
         reset_system(`RESET_ACTIVE_HIGH); // Assert our reset
 
-        // Wait for NAND to power up
-        _wait_nand_powerup();
+        init_nand();
 
-        // Enable NAND chip
-        _command_write(CTRL_CHIP_ENABLE_CMD);
+        page_buf = memset(page_buf, 0, `PAGELEN);
 
-        // Reset NAND chip
-        _command_write(NAND_RESET_CMD);
+        // for (j = 0; j < 1; j = j + 1) begin
+        //   for (i = 0; i < 1; i = i + 1) begin
+        //     page_buf = memset(page_buf, i, `NUM_COLS);
+        //     simple_page_test(page_buf, gen_address(j, i, 0), `NUM_COLS);
+        //   end
+        // end
 
-        // Read ID
-        _command_write(NAND_READ_ID_CMD);
-        for (i = 0; i < 6; i = i + 1) begin
-            _command_read(CTRL_GET_ID_BYTE_CMD, rdData);
-            compare_byte(rdData, chipID[i]);
+        for (j = 0; j < 10; j = j + 1) begin
+          for (i = 0; i < 10; i = i + 1) begin
+            read_page(page_buf, gen_address(j, i, 0));
+          end
         end
 
-        // Read Parameter Page
-        _command_write(NAND_READ_PARAMETER_PAGE_CMD);
-        for(i = 0; i < 4; i = i + 1) begin
-            _command_read(CTRL_GET_PARAMETER_PAGE_BYTE_CMD, rdData);
-            compare_byte(rdData, nand_0.uut_0.onfi_params_array[i]);
-        end
+        // page_buf = memset(page_buf, 4, `NUM_COLS);
+        // simple_page_test(page_buf, gen_address(0, 0, 0), `NUM_COLS);
 
-        // Get controller status
-        _command_read(CTRL_GET_STATUS_CMD, rdData);
-        compare_bit(rdData[0], 1);
 
-        // Write Enable
-        _command_write(CTRL_WRITE_ENABLE_CMD);
+
+        // // Wait for NAND to power up
+        // _wait_nand_powerup();
+
+        // // Enable NAND chip
+        // _command_write(CTRL_CHIP_ENABLE_CMD);
+
+        // // Reset NAND chip
+        // _command_write(NAND_RESET_CMD);
+
+        // // Read ID
+        // _command_write(NAND_READ_ID_CMD);
+        // for (i = 0; i < 6; i = i + 1) begin
+        //     _command_read(CTRL_GET_ID_BYTE_CMD, rdData);
+        //     compare_byte(rdData, chipID[i]);
+        // end
+
+        // // Read Parameter Page
+        // _command_write(NAND_READ_PARAMETER_PAGE_CMD);
+        // for(i = 0; i < 4; i = i + 1) begin
+        //     _command_read(CTRL_GET_PARAMETER_PAGE_BYTE_CMD, rdData);
+        //     compare_byte(rdData, nand_0.uut_0.onfi_params_array[i]);
+        // end
+
+        // // Get controller status
+        // _command_read(CTRL_GET_STATUS_CMD, rdData);
+        // compare_bit(rdData[0], 1);
+
+        // // Write Enable
+        // _command_write(CTRL_WRITE_ENABLE_CMD);
 
         // Just doing first 100 addresses
         // Verify NAND's Initial State
-        _command_write(NAND_READ_PAGE_CMD);
-        _command_write(CTRL_RESET_INDEX_CMD);
-        for(i = 0; i < N; i = i + 1) begin
-            _command_read(CTRL_GET_DATA_PAGE_BYTE_CMD, rdData);
-            compare_byte(rdData, 8'hFF);
-        end
+        // _command_write(NAND_READ_PAGE_CMD);
+        // _command_write(CTRL_RESET_INDEX_CMD);
+        // for(i = 0; i < N; i = i + 1) begin
+        //     _command_read(CTRL_GET_DATA_PAGE_BYTE_CMD, rdData);
+        //     compare_byte(rdData, 8'hFF);
+        // end
 
-        // Write controller pages with known sequence
-        _command_write(CTRL_RESET_INDEX_CMD);
-        for(i = 0; i < N; i = i + 1) begin
-            _command_write_data(CTRL_SET_DATA_PAGE_BYTE_CMD, i);
-        end
-        // Write controller pages to NAND
-        _command_write(NAND_PAGE_PROGRAM_CMD);
+        // // Write controller pages with known sequence
+        // _command_write(CTRL_RESET_INDEX_CMD);
+        // for(i = 0; i < N; i = i + 1) begin
+        //     _command_write_data(CTRL_SET_DATA_PAGE_BYTE_CMD, i);
+        // end
+        // // Write controller pages to NAND
+        // _command_write(NAND_PAGE_PROGRAM_CMD);
 
-        // Write controller pages with known different sequence
-        _command_write(CTRL_RESET_INDEX_CMD);
-        for(i = 0; i < N; i = i + 1) begin
-            _command_write_data(CTRL_SET_DATA_PAGE_BYTE_CMD, 1'b1);
-        end
-        // Verify controller page is different from nand
-        _command_write(CTRL_RESET_INDEX_CMD);
-        for(i = 0; i < N; i = i + 1) begin
-            _command_read(CTRL_GET_DATA_PAGE_BYTE_CMD, rdData);
-            compare_byte(rdData, 1'b1);
-        end
+        // // Write controller pages with known different sequence
+        // _command_write(CTRL_RESET_INDEX_CMD);
+        // for(i = 0; i < N; i = i + 1) begin
+        //     _command_write_data(CTRL_SET_DATA_PAGE_BYTE_CMD, 1'b1);
+        // end
+        // // Verify controller page is different from nand
+        // _command_write(CTRL_RESET_INDEX_CMD);
+        // for(i = 0; i < N; i = i + 1) begin
+        //     _command_read(CTRL_GET_DATA_PAGE_BYTE_CMD, rdData);
+        //     compare_byte(rdData, 1'b1);
+        // end
 
-        // Read previously written page from NAND
-        _command_write(NAND_READ_PAGE_CMD);
-        _command_write(CTRL_RESET_INDEX_CMD);
-        for(i = 0; i < N; i = i + 1) begin
-            _command_read(CTRL_GET_DATA_PAGE_BYTE_CMD, rdData);
-            compare_byte(rdData, i);
-        end
+        // // Read previously written page from NAND
+        // _command_write(NAND_READ_PAGE_CMD);
+        // _command_write(CTRL_RESET_INDEX_CMD);
+        // for(i = 0; i < N; i = i + 1) begin
+        //     _command_read(CTRL_GET_DATA_PAGE_BYTE_CMD, rdData);
+        //     compare_byte(rdData, i);
+        // end
 
-        // Erase chip
-        _command_write(NAND_BLOCK_ERASE_CMD);
-        // Verify chip is erased
-        _command_write(NAND_READ_PAGE_CMD);
-        _command_write(CTRL_RESET_INDEX_CMD);
-        for(i = 0; i < N; i = i + 1) begin
-            _command_read(CTRL_GET_DATA_PAGE_BYTE_CMD, rdData);
-            compare_byte(rdData, 8'hFF);
-        end
+        // // Erase chip
+        // _command_write(NAND_BLOCK_ERASE_CMD);
+        // // Verify chip is erased
+        // _command_write(NAND_READ_PAGE_CMD);
+        // _command_write(CTRL_RESET_INDEX_CMD);
+        // for(i = 0; i < N; i = i + 1) begin
+        //     _command_read(CTRL_GET_DATA_PAGE_BYTE_CMD, rdData);
+        //     compare_byte(rdData, 8'hFF);
+        // end
 
         repeat (1000) @(posedge clk);
         $display("Test Compares:Failures: %0d:%0d", compares, fails);
@@ -232,8 +263,101 @@ module tb;
     // TASKS
     /******************************************************************************/
     /******************************************************************************/
+    // TESTS
+    /******************************************************************************/
+    task simple_page_test;
+        input page page_buf;
+        input int address;
+        input int num_cols;
+        page exp_page;
+        int i;
+        int j;
+        int col_addr;
+        begin
+            exp_page = page_buf;
+            write_page(page_buf, address);
+            page_buf = memset(page_buf, 0, `NUM_COLS);
+            read_page(page_buf, address);
+
+            for(col_addr = 0;col_addr < num_cols;col_addr++) begin
+               compare_byte(exp_page[col_addr], page_buf[col_addr]);
+            end
+        end
+    endtask
+
+    /******************************************************************************/
     // CONTROLLER OPERATIONS
     /******************************************************************************/
+    task init_nand;
+        begin
+            _command_write(INTERNAL_RESET_CMD);
+            _command_write(CTRL_CHIP_ENABLE_CMD);
+            _wait_nand_powerup();
+            _command_write(NAND_RESET_CMD);
+            _command_write(NAND_READ_ID_CMD);
+            repeat (200) @(posedge clk); // 200 cycle delay to make up for hardware t_RHW violation
+            _command_write(NAND_READ_PARAMETER_PAGE_CMD);
+            _command_write(CTRL_RESET_INDEX_CMD);
+            _command_write(CTRL_WRITE_ENABLE_CMD);
+            _command_read(CTRL_GET_STATUS_CMD, rdData);
+        end
+    endtask
+
+    task write_page;
+        input page page_buf;
+        input int address;
+        begin
+            _set_address(address);
+            _write_page(page_buf);
+        end
+    endtask
+
+    task _write_page;
+        input page page_buf;
+        int col_addr;
+        begin
+            _command_write(CTRL_RESET_INDEX_CMD);
+            for(col_addr = 0;col_addr < `PAGELEN;col_addr++) begin
+                _command_write_data(CTRL_SET_DATA_PAGE_BYTE_CMD, page_buf[col_addr]);
+            end
+            _command_write(NAND_PAGE_PROGRAM_CMD);
+        end
+    endtask
+
+    task read_page;
+        output page page_buf;
+        input int address;
+        begin
+        _set_address(address);
+        _read_page(page_buf);
+        end
+    endtask
+
+    task _read_page;
+        output page page_buf;
+        int col_addr;
+        page tmp_page;
+        begin
+            _command_write(NAND_READ_PAGE_CMD);
+            _command_write(CTRL_RESET_INDEX_CMD);
+            for(col_addr = 0;col_addr < `PAGELEN;col_addr++) begin
+                _command_read(CTRL_GET_DATA_PAGE_BYTE_CMD, tmp_page[col_addr]);
+            end
+            page_buf = tmp_page;
+        end
+    endtask
+
+    task _set_address;
+        input logic [8*5:0] addr;
+        int i;
+        begin
+            _command_write(CTRL_RESET_INDEX_CMD);
+            for(i = 0;i < 5;i++) begin
+                _command_write_data(CTRL_SET_CURRENT_ADDRESS_BYTE_CMD, ((addr >> (i*8)) & 8'hFF));
+            end
+        end
+    endtask
+
     task poll_busy;
         logic [7:0] rddata;
         begin
@@ -371,6 +495,19 @@ module tb;
         $display("%m at time %t: %0s", $time, msg);
     end
     endtask
+
+    function int gen_address(int block_idx, int page_idx, int col_idx);
+        return (block_idx << 24 | page_idx << 16 | col_idx);
+    endfunction
+
+    function page memset (page page_buf, int value, int length);
+    // Returns a page with length entries set to value
+        int col_addr;
+        for(col_addr = 0;col_addr < length;col_addr++) begin
+            page_buf[col_addr] = value;
+        end
+        return page_buf;
+    endfunction
 
     task reset_system;
         input active_high;
