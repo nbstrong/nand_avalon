@@ -8,9 +8,13 @@
 `define CLASSB
 
 // Nand Avalon Address Macros
-`define DATA_REG 2'h0
-`define CMD_REG  2'h1
-`define STATUS_REG 2'h2
+`define DATA_REG 3'h0
+`define CMD_REG  3'h1
+`define STATUS_REG 3'h2
+`define TIME_REG 3'h3
+`define CNTRL_REG 3'h4
+`define ESTATUS_REG 3'h5
+`define DELAY_REG 3'h6
 
 `define PRINT_CMDS 0
 `define PRINT_PASSES 0
@@ -66,7 +70,7 @@ module tb;
     logic [31: 0]   writedata;
     logic           pread;
     logic           pwrite;
-    logic [ 1: 0]   address;
+    logic [ 2: 0]   address;
     logic           nand_cle;
     logic           nand_ale;
     logic           nand_nwe;
@@ -87,7 +91,7 @@ module tb;
         nand_0.uut_0.READ_ID_BYTE7
     };
 
-    logic [7:0] rdData;
+    logic [31:0] rdData;
 
     /****************************************************************************/
     // INSTANTIATE DEVICES
@@ -147,10 +151,21 @@ module tb;
         // Initialize
         init_signals();
         reset_system(`RESET_ACTIVE_HIGH); // Assert our reset
-
         init_nand();
+        $sformat(msg, "NAND Initialization Complete");
+        INFO(msg);
 
-        page_buf = memset(page_buf, 0, `PAGELEN);
+        _write_delay_reg(31'h10E13);
+        _read_delay_reg(rdData);
+        _write_control_reg(31'h1);
+        _read_control_reg(rdData);
+        page_buf = memset(page_buf, 1, `NUM_COLS);
+        write_page(page_buf, address);
+
+        page_buf = memset(page_buf, 4, `NUM_COLS);
+        simple_page_test(page_buf, gen_address(0, 0, 0), `NUM_COLS);
+
+        // page_buf = memset(page_buf, 0, `PAGELEN);
 
         // for (j = 0; j < 1; j = j + 1) begin
         //   for (i = 0; i < 1; i = i + 1) begin
@@ -159,16 +174,11 @@ module tb;
         //   end
         // end
 
-        for (j = 0; j < 10; j = j + 1) begin
-          for (i = 0; i < 10; i = i + 1) begin
-            read_page(page_buf, gen_address(j, i, 0));
-          end
-        end
-
-        // page_buf = memset(page_buf, 4, `NUM_COLS);
-        // simple_page_test(page_buf, gen_address(0, 0, 0), `NUM_COLS);
-
-
+        // for (j = 0; j < 10; j = j + 1) begin
+        //   for (i = 0; i < 10; i = i + 1) begin
+        //     read_page(page_buf, gen_address(j, i, 0));
+        //   end
+        // end
 
         // // Wait for NAND to power up
         // _wait_nand_powerup();
@@ -411,14 +421,14 @@ module tb;
     // REGISTER ABSTRACTIONS
     /******************************************************************************/
     task _write_command_reg;
-        input [7:0] wrdata;
+        input [31:0] wrdata;
         begin
         _avalon_write(`CMD_REG, wrdata);
         end
     endtask
 
     task _read_command_reg;
-        output [7:0] rddata;
+        output [31:0] rddata;
         begin
         _avalon_read(`CMD_REG, rddata);
         end
@@ -432,16 +442,58 @@ module tb;
     endtask
 
     task _read_data_reg;
-        output [7:0] rddata;
+        output [31:0] rddata;
         begin
         _avalon_read(`DATA_REG, rddata);
         end
     endtask
 
     task _read_status_reg;
-        output [7:0] rddata;
+        output [31:0] rddata;
         begin
         _avalon_read(`STATUS_REG, rddata);
+        end
+    endtask
+
+    task _read_time_reg;
+        output [31:0] rddata;
+        begin
+        _avalon_read(`TIME_REG, rddata);
+        end
+    endtask
+
+    task _write_control_reg;
+        input [31:0] wrdata;
+        begin
+        _avalon_write(`CNTRL_REG, wrdata);
+        end
+    endtask
+
+    task _read_control_reg;
+        output [31:0] rddata;
+        begin
+        _avalon_read(`CNTRL_REG, rddata);
+        end
+    endtask
+
+    task _read_exten_status_reg;
+        output [31:0] rddata;
+        begin
+        _avalon_read(`ESTATUS_REG, rddata);
+        end
+    endtask
+
+    task _write_delay_reg;
+        input [31:0] wrdata;
+        begin
+        _avalon_write(`DELAY_REG, wrdata);
+        end
+    endtask
+
+    task _read_delay_reg;
+        output [31:0] rddata;
+        begin
+        _avalon_read(`DELAY_REG, rddata);
         end
     endtask
 
@@ -450,8 +502,8 @@ module tb;
     // HOLD = 1
     /******************************************************************************/
     task _avalon_write;
-        input [1:0] addr;
-        input [7:0] wrdata;
+        input [2:0] addr;
+        input [31:0] wrdata;
         begin
         address   = addr;
         pwrite    = 1'b0;
@@ -465,21 +517,21 @@ module tb;
     endtask
 
     task _avalon_read;
-        input [1:0] addr;
-        output [7:0] rddata;
+        input [2:0] addr;
+        output [31:0] rddata;
         begin
         address  = addr;
         pwrite   = 1'b1;
         pread    = 1'b0;
         @(posedge clk)
-        rddata = readdata[7:0];
+        rddata = readdata[31:0];
         init_signals();
         end
     endtask
 
     task init_signals;
         begin
-        address   = 2'hX;
+        address   = 3'hX;
         pwrite    = 1'bX;
         pread     = 1'bX;
         writedata = 31'hX;

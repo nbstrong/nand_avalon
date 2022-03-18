@@ -26,7 +26,7 @@ entity nand_avalon is
         writedata  : in    std_logic_vector(31 downto 0)  := x"00000000";
         pread      : in    std_logic                      := '1';
         pwrite     : in    std_logic                      := '1';
-        address    : in    std_logic_vector( 1 downto 0);
+        address    : in    std_logic_vector( 2 downto 0);
         -- NAND chip control hardware interface. These signals should be bound to physical pins.
         nand_cle   : out   std_logic                      := '0';
         nand_ale   : out   std_logic                      := '0';
@@ -45,7 +45,7 @@ architecture action of nand_avalon is
         port
         (
             nand_cle, nand_ale, nand_nwe, nand_nwp, nand_nce, nand_nre, busy: out std_logic;
-            clk, enable, nand_rnb, nreset, activate : in std_logic;
+            clk, enable, nand_rnb, nreset, activate, force_reset_cmd : in std_logic;
             data_out : out std_logic_vector(7 downto 0);
             data_in, cmd_in : in std_logic_vector(7 downto 0);
             nand_data : inout std_logic_vector(15 downto 0);
@@ -59,24 +59,47 @@ architecture action of nand_avalon is
         );
     end component;
 
-    signal nreset       : std_logic;
-    signal n_data_out   : std_logic_vector(7 downto 0);
-    signal n_data_in    : std_logic_vector(7 downto 0);
-    signal n_busy       : std_logic;
-    signal n_activate   : std_logic;
-    signal n_cmd_in     : std_logic_vector(7 downto 0);
-    signal prev_pwrite  : std_logic;
-    signal prev_address : std_logic_vector(1 downto 0);
-    signal rnb          : std_logic;
-    signal delay_slv    : std_logic_vector(15 downto 0);
-    signal state_slv    : std_logic_vector(5 downto 0);
-    signal substate_slv : std_logic_vector(3 downto 0);
-    signal cle_busy     : std_logic;
-    signal ale_busy     : std_logic;
-    signal io_rd_busy   : std_logic;
-    signal io_wr_busy   : std_logic;
-    signal nand_rnb_r   : std_logic;
-    signal nand_rnb_rr  : std_logic;
+    component extension_module
+        port
+        (
+            clkIn       : in    std_logic;
+            resetnIn    : in    std_logic;
+            -- Nand Signals
+            nand_rnbIn  : in    std_logic;
+            -- Registers
+            delayIn     : in    std_logic_vector(31 downto 0);
+            startIn     : in    std_logic;
+            timeOut     :   out std_logic_vector(31 downto 0);
+            statOut     :   out std_logic_vector(31 downto 0);
+            -- Discretes
+            resetCmdOut :   out std_logic
+        );
+    end component;
+
+    signal nreset                : std_logic;
+    signal n_data_out            : std_logic_vector(7 downto 0);
+    signal n_data_in             : std_logic_vector(7 downto 0);
+    signal n_busy                : std_logic;
+    signal n_activate            : std_logic;
+    signal n_cmd_in              : std_logic_vector(7 downto 0);
+    signal prev_pwrite           : std_logic;
+    signal prev_address          : std_logic_vector(address'range);
+    signal rnb                   : std_logic;
+    signal delay_slv             : std_logic_vector(15 downto 0);
+    signal state_slv             : std_logic_vector(5 downto 0);
+    signal substate_slv          : std_logic_vector(3 downto 0);
+    signal cle_busy              : std_logic;
+    signal ale_busy              : std_logic;
+    signal io_rd_busy            : std_logic;
+    signal io_wr_busy            : std_logic;
+    signal nand_rnb_r            : std_logic;
+    signal nand_rnb_rr           : std_logic;
+    signal extension_delay       : std_logic_vector(31 downto 0);
+    signal extension_cntrl_write : std_logic_vector(31 downto 0);
+    signal extension_time        : std_logic_vector(31 downto 0);
+    signal extension_cntrl_read  : std_logic_vector(31 downto 0);
+    signal extension_stat        : std_logic_vector(31 downto 0);
+    signal force_reset_cmd       : std_logic;
 begin
     NANDA: nand_master
     port map
@@ -97,6 +120,7 @@ begin
         nand_nce  => nand_nce,
         nand_nre  => nand_nre,
         nand_rnb  => nand_rnb_rr,
+        force_reset_cmd => force_reset_cmd,
         delay_slv    => delay_slv,
         state_slv    => state_slv,
         substate_slv => substate_slv,
@@ -106,15 +130,35 @@ begin
         io_wr_busy   => io_wr_busy
     );
 
+    EXTENSION: extension_module
+    port map
+    (
+      clkIn       => clk,
+      resetnIn    => resetn,
+      -- Nand Signals
+      nand_rnbIn  => nand_rnb_rr,
+      -- Registers
+      delayIn     => extension_delay,
+      startIn     => extension_cntrl_write(0),
+      timeOut     => extension_time,
+      statOut     => extension_stat,
+      -- Discretes
+      resetCmdOut => force_reset_cmd
+    );
+
     -- Registers:
     -- 0x00:        Data IO
     -- 0x04:        Command input
     -- 0x08:        Status output
-    readdata <= X"000000"&n_data_out          when address = "00" else
-      delay_slv&state_slv&substate_slv&cle_busy&ale_busy&io_rd_busy&io_wr_busy&rnb&n_busy when address = "10" else
-                            X"00000000";
+    readdata <= X"000000"&n_data_out                                                                when address = "000" else
+                delay_slv&state_slv&substate_slv&cle_busy&ale_busy&io_rd_busy&io_wr_busy&rnb&n_busy when address = "010" else
+                extension_time                                                                      when address = "011" else
+                extension_cntrl_read                                                                when address = "100" else
+                extension_stat                                                                      when address = "101" else
+                extension_delay                                                                     when address = "110" else
+                X"00000000";
 
-    n_activate <= '1' when (prev_address = "01" and prev_pwrite = '0' and pwrite = '1' and n_busy = '0') else
+    n_activate <= '1' when (prev_address = "001" and prev_pwrite = '0' and pwrite = '1' and n_busy = '0') else
                   '0';
 
     rnb <= '0' when nand_rnb = '0' else '1';
@@ -136,14 +180,26 @@ begin
     CONTROL_INPUTS:process(clk, resetn)
     begin
         if(resetn /= '1') then
-            n_data_in <= "00000000";
-            n_cmd_in  <= "00000000";
+            n_data_in             <= (others => '0');
+            n_cmd_in              <= (others => '0');
+            extension_cntrl_write <= (others => '0');
+            extension_delay       <= (others => '0');
         else
             if(rising_edge(clk))then
-                if(pwrite = '0' and address = "00")then
+                extension_cntrl_write <= (others => '0');
+
+                if   (pwrite = '0' and address = "000")then
                     n_data_in <= writedata(7 downto 0);
-                elsif(pwrite = '0' and address = "01")Then
+
+                elsif(pwrite = '0' and address = "001")then
                     n_cmd_in  <= writedata(7 downto 0);
+
+                elsif(pwrite = '0' and address = "100")then
+                    extension_cntrl_write <= writedata(31 downto 0);
+
+                elsif(pwrite = '0' and address = "110")then
+                    extension_delay <= writedata(31 downto 0);
+
                 end if;
             end if;
         end if;
@@ -152,7 +208,7 @@ begin
     TRACK_ADDRESS:process(clk, resetn)
     begin
       if(resetn /= '1') then
-          prev_address <= "00";
+          prev_address <= "000";
           prev_pwrite  <=  '0';
       else
           if(rising_edge(clk))then

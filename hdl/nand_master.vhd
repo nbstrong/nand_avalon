@@ -46,6 +46,9 @@ entity nand_master is
         activate               : in    std_logic;
         cmd_in                 : in    std_logic_vector(7 downto 0);
 
+       -- Extension interface
+        force_reset_cmd        : in    std_logic;
+
         -- Debug interface
         delay_slv              : out std_logic_vector(15 downto 0);
         state_slv              : out std_logic_vector(5 downto 0);
@@ -177,7 +180,8 @@ architecture struct of nand_master is
     signal status : std_logic_vector(7 downto 0) := x"00";
 begin
 
-    delay_slv    <= std_logic_vector(to_unsigned(delay, delay_slv'length));
+    -- delay_slv    <= std_logic_vector(to_unsigned(delay, delay_slv'length)); -- this produces warnings that I don't care to solve. Replace length with the integer length and slice into it if you care.
+    delay_slv    <= (others => '0');
     state_slv    <= std_logic_vector(to_unsigned(master_state_t'POS(state), state_slv'length));
     substate_slv <= std_logic_vector(to_unsigned(master_substate_t'POS(substate), substate_slv'length));
 
@@ -311,7 +315,9 @@ begin
         --     state <= state_switch(to_integer(unsigned(cmd_in)));
         else
             if(rising_edge(clk))then
-                if(enable = '0') then
+                if(force_reset_cmd = '1') then
+                  state <= M_NAND_RESET;
+                elsif(enable = '0') then
                     case state is
                         -- RESET state. Speaks for itself
                         when M_RESET =>

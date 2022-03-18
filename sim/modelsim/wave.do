@@ -24,11 +24,28 @@ add wave -noupdate -radix hexadecimal /tb/nand_nce
 add wave -noupdate -radix hexadecimal /tb/nand_nre
 add wave -noupdate -radix hexadecimal /tb/nand_rnb
 add wave -noupdate -radix hexadecimal /tb/rdData
+add wave -noupdate -divider MASTER
+add wave -noupdate /tb/dut/NANDA/state
+add wave -noupdate -divider EXTENSION
+add wave -noupdate /tb/dut/EXTENSION/clkIn
+add wave -noupdate /tb/dut/EXTENSION/resetnIn
+add wave -noupdate /tb/dut/EXTENSION/nand_rnbIn
+add wave -noupdate -radix hexadecimal /tb/dut/EXTENSION/ctrlIn
+add wave -noupdate -radix hexadecimal /tb/dut/EXTENSION/delayIn
+add wave -noupdate -radix hexadecimal /tb/dut/EXTENSION/delayUnsign
+add wave -noupdate -radix hexadecimal /tb/dut/EXTENSION/delayLatched
+add wave -noupdate -radix hexadecimal /tb/dut/EXTENSION/timeOut
+add wave -noupdate -radix hexadecimal /tb/dut/EXTENSION/ctrlOut
+add wave -noupdate -radix hexadecimal /tb/dut/EXTENSION/statOut
+add wave -noupdate /tb/dut/EXTENSION/state
+add wave -noupdate /tb/dut/EXTENSION/rnbFallingEdge
+add wave -noupdate /tb/dut/EXTENSION/rnbRisingEdge
+add wave -noupdate /tb/dut/EXTENSION/resetCmdOut
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {1225702109 ps} 0}
+WaveRestoreCursors {{Cursor 2} {2698790000 ps} 0}
 quietly wave cursor active 1
 configure wave -namecolwidth 150
-configure wave -valuecolwidth 100
+configure wave -valuecolwidth 128
 configure wave -justifyvalue left
 configure wave -signalnamewidth 1
 configure wave -snapdistance 10
@@ -41,4 +58,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ns
 update
-WaveRestoreZoom {1220574673 ps} {1231905328 ps}
+WaveRestoreZoom {2697728947 ps} {2700752225 ps}
