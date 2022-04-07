@@ -69,14 +69,29 @@ void _read_page(uint8_t *page_buf) {
     }
 }
 
+void print_time(uint64_t address) {
+  unsigned int ctrlr_timer_total;
+  ctrlr_timer_total = _read_time_reg();
+  printf("\n0x%llx : %u : %f ", address, ctrlr_timer_total, ((float)ctrlr_timer_total)/CONTROLLERCLOCKSPERSEC);
+}
+
+void print_extension_registers() {
+  unsigned int reg;
+  for(int i = 3; i < 7; i++) {
+    reg = *((volatile int*) AVALON_NAND_BASE + i);
+    printf("\n%i : %u", i, reg);
+  }
+}
+
 void print_status() {
     uint8_t status = 0;
     status = _command_read(CTRL_GET_STATUS_CMD);
-    printf("\n\n%hhx : is ONFI compliant          ", ((status >> 0) & 1));
+    printf("\n%hhx : is ONFI compliant          ", ((status >> 0) & 1));
     printf("\n%hhx : bus width (0 - x8 / 1 - x16) ", ((status >> 1) & 1));
     printf("\n%hhx : is chip enabled              ", ((status >> 2) & 1));
     printf("\n%hhx : is chip write protected      ", ((status >> 3) & 1));
     printf("\n%hhx : array pointer out of bounds  ", ((status >> 4) & 1));
+    printf("\n");
 }
 
 void print_page_buffer(uint8_t *page_buf, uint8_t num_cols) {
@@ -145,6 +160,14 @@ void _write_command_reg(int data) {
     *(volatile int*) NAND_CMD_8 = data;
 }
 
+void _write_cntrl_reg(int data) {
+    *(volatile int*) NAND_CNTRL_32 = data;
+}
+
+void _write_delay_reg(int data) {
+    *(volatile int*) NAND_DELAY_32 = data;
+}
+
 int _read_data_reg() {
     return *(volatile int*) NAND_DATA_32;
 }
@@ -155,4 +178,12 @@ int _read_command_reg() {
 
 int _read_status_reg() {
     return *(volatile int*) NAND_STATUS_8;
+}
+
+int _read_time_reg() {
+    return *(volatile int*) NAND_TIME_32;
+}
+
+int _read_estat_reg() {
+    return *(volatile int*) NAND_ESTAT_32;
 }

@@ -10,10 +10,16 @@
 #define NAND_DATA_32  ((volatile int*) AVALON_NAND_BASE+0)
 #define NAND_CMD_8    ((volatile int*) AVALON_NAND_BASE+1)
 #define NAND_STATUS_8 ((volatile int*) AVALON_NAND_BASE+2)
+#define NAND_TIME_32  ((volatile int*) AVALON_NAND_BASE+3)
+#define NAND_CNTRL_32 ((volatile int*) AVALON_NAND_BASE+4)
+#define NAND_ESTAT_32 ((volatile int*) AVALON_NAND_BASE+5)
+#define NAND_DELAY_32 ((volatile int*) AVALON_NAND_BASE+6)
 
 #define PAGELEN 18592 // Number of bytes per page
 #define BLOCKLEN 1024 // Number of pages per block
 #define DEVLEN 2192   // Number of blocks per device
+
+#define CONTROLLERCLOCKSPERSEC 100000000  // Controller runs off 100 MHz
 
 #define INTERNAL_RESET_CMD                 0
 #define NAND_RESET_CMD                     1
@@ -48,6 +54,8 @@ void write_page(uint8_t *page_buf, uint64_t address);
 void _write_page(uint8_t *page_buf);
 void read_page(uint8_t *page_buf, uint64_t address);
 void _read_page(uint8_t *page_buf);
+void print_time(uint64_t address);
+void print_extension_registers();
 void print_status();
 void print_page_buffer(uint8_t *page_buf, uint8_t num_cols);
 void _poll_busy();
@@ -57,8 +65,12 @@ void _command_write_data(int cmd, int data);
 int _command_read(int cmd);
 void _write_data_reg(int data);
 void _write_command_reg(int data);
+void _write_cntrl_reg(int data);
+void _write_delay_reg(int data);
 int _read_data_reg();
 int _read_command_reg();
 int _read_status_reg();
+int _read_time_reg();
+int _read_estat_reg();
 
 #endif	/* _NAND_H_ */

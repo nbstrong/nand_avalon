@@ -155,15 +155,27 @@ module tb;
         $sformat(msg, "NAND Initialization Complete");
         INFO(msg);
 
+        $sformat(msg, "First Page Test");
+        INFO(msg);
+        page_buf = memset(page_buf, 1, `NUM_COLS);
+        simple_page_test(page_buf, gen_address(0, 0, 0), `NUM_COLS);
+
+        $sformat(msg, "Interrupted Page Program Test");
+        INFO(msg);
         _write_delay_reg(31'h10E13);
         _read_delay_reg(rdData);
         _write_control_reg(31'h1);
         _read_control_reg(rdData);
         page_buf = memset(page_buf, 1, `NUM_COLS);
-        write_page(page_buf, address);
+        write_page(page_buf, gen_address(0, 1, 0));
 
+        _command_write(NAND_READ_PARAMETER_PAGE_CMD);
+
+        $sformat(msg, "Second Page Test");
+        INFO(msg);
         page_buf = memset(page_buf, 4, `NUM_COLS);
-        simple_page_test(page_buf, gen_address(0, 0, 0), `NUM_COLS);
+        simple_page_test(page_buf, gen_address(0, 2, 0), `NUM_COLS);
+
 
         // page_buf = memset(page_buf, 0, `PAGELEN);
 
@@ -380,9 +392,7 @@ module tb;
         logic [7:0] rddata;
         begin
         // Let nand chip get powered up
-        _read_status_reg(rddata);
-        while(rddata[1] == 1) _read_status_reg(rddata);
-        poll_busy();
+        repeat (11100) @(posedge clk);
         end
     endtask
 
