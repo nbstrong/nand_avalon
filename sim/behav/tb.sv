@@ -160,6 +160,15 @@ module tb;
         page_buf = memset(page_buf, 1, `NUM_COLS);
         simple_page_test(page_buf, gen_address(0, 0, 0), `NUM_COLS);
 
+        $sformat(msg, "Testing Extension Reset Condition on no trigger");
+        INFO(msg);
+        _write_delay_reg(31'h10E13000);
+        _read_delay_reg(rdData);
+        _write_control_reg(31'h1);
+        _read_control_reg(rdData);
+        page_buf = memset(page_buf, 1, `NUM_COLS);
+        write_page(page_buf, gen_address(0, 1, 0));
+
         $sformat(msg, "Interrupted Page Program Test");
         INFO(msg);
         _write_delay_reg(31'h10E13);
