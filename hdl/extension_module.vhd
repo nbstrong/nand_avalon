@@ -59,7 +59,7 @@ architecture behav of extension_module is
     signal clkIn      : in    std_logic;
     signal rstnIn     : in    std_logic;
     signal sigIn      : in    std_logic;
-    signal sigR       : inout std_logic; -- do not use
+    signal sigR       : inout std_logic; -- do not use, required because of var/signal incompatibility
     signal risingOut  :   out std_logic;
     signal fallingOut :   out std_logic) is
   begin
@@ -70,7 +70,7 @@ architecture behav of extension_module is
 
 begin --------------------------------------------------------------------------
 
-  statOut( 1 downto  0) <= std_logic_vector(to_unsigned(state_type'POS(state), 2));
+  statOut( 1 downto  0) <= std_logic_vector(to_unsigned(state_type'POS(state), 2)); -- Provides state enumeration as status
   statOut(31 downto  2) <= (others => '0');
   delayUnsign           <= unsigned(delayIn);
   timeOut               <= std_logic_vector(timeUnsign);
@@ -114,7 +114,9 @@ begin --------------------------------------------------------------------------
             end if;
 
           when DELAY =>
-            if(delayLatched = timeUnsign) then
+            if(rnbRisingEdge = '1') then
+              state <= INIT;
+            elsif(delayLatched = timeUnsign) then
               state <= CMD;
               resetCmdOut <= '1';
             end if;
