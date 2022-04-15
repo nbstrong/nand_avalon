@@ -46,12 +46,15 @@ void write_page(uint8_t *page_buf, uint64_t address) {
 
 void _write_page(uint8_t *page_buf) {
     // Writes an entire page
+    _write_controller_buffer(page_buf);
+    _command_write(NAND_PAGE_PROGRAM_CMD);
+}
 
+void _write_controller_buffer(uint8_t *page_buf) {
     _command_write(CTRL_RESET_INDEX_CMD);
     for(uint16_t col_addr = 0; col_addr < PAGELEN; col_addr++) {
         _command_write_data(CTRL_SET_DATA_PAGE_BYTE_CMD, page_buf[col_addr]);
     }
-    _command_write(NAND_PAGE_PROGRAM_CMD);
 }
 
 void read_page(uint8_t *page_buf, uint64_t address) {
@@ -61,8 +64,11 @@ void read_page(uint8_t *page_buf, uint64_t address) {
 
 void _read_page(uint8_t *page_buf) {
     // Reads an entire page
-
     _command_write(NAND_READ_PAGE_CMD);
+    _read_controller_buffer(page_buf);
+}
+
+void _read_controller_buffer(uint8_t *page_buf) {
     _command_write(CTRL_RESET_INDEX_CMD);
     for(uint16_t col_addr = 0; col_addr < PAGELEN; col_addr++) {
         page_buf[col_addr] = _command_read(CTRL_GET_DATA_PAGE_BYTE_CMD);
@@ -94,13 +100,13 @@ void print_status() {
     printf("\n");
 }
 
-void print_page_buffer(uint8_t *page_buf, uint8_t num_cols) {
+void print_page_buffer(uint8_t *page_buf, uint32_t num_bytes, uint8_t num_cols) {
     printf("\n");
-    for(uint8_t i = 0; i < num_cols; i++) {
-        if(i % 8 == 0){
-            printf("\n");
+    for(uint32_t addr = 0; addr < num_bytes; addr++) {
+        if(addr % num_cols == 0){
+            printf("\n 0x%03x : ", addr);
         }
-        printf("%x ", page_buf[i]);
+        printf("%02x ", page_buf[addr]);
     }
     printf("\n");
 }
