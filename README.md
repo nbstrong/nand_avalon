@@ -20,6 +20,7 @@ BATCH:
 ## Branches
 
 master - Only includes ONFI controller
+
 extension_module - Includes ONFI Controller + Extension Module design
 
 ## System Project
