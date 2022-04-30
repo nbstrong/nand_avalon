@@ -17,6 +17,11 @@ BATCH:
 `vsim -batch -do sim.do`  
 * Batch is current broken. See issue [#5](https://github.com/nbstrong/nand_avalon/issues/5)
 
+## Branches
+
+master - Only includes ONFI controller
+extension_module - Includes ONFI Controller + Extension Module design
+
 ## System Project
 For hardware testing, this controller has been integrated into the current project here:  
 https://github.com/nbstrong/DE1_SoC_Computer
