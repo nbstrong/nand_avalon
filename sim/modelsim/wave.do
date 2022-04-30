@@ -33,6 +33,7 @@ add wave -noupdate /tb/dut/NANDA/byte_count
 add wave -noupdate -divider EXTENSION
 add wave -noupdate /tb/dut/EXTENSION/clkIn
 add wave -noupdate /tb/dut/EXTENSION/resetnIn
+add wave -noupdate /tb/dut/EXTENSION/startIn
 add wave -noupdate /tb/dut/EXTENSION/nand_rnbIn
 add wave -noupdate -radix hexadecimal /tb/dut/EXTENSION/delayIn
 add wave -noupdate -radix hexadecimal /tb/dut/EXTENSION/delayUnsign
@@ -44,7 +45,7 @@ add wave -noupdate /tb/dut/EXTENSION/rnbFallingEdge
 add wave -noupdate /tb/dut/EXTENSION/rnbRisingEdge
 add wave -noupdate /tb/dut/EXTENSION/resetCmdOut
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 2} {5679730134 ps} 0}
+WaveRestoreCursors {{Cursor 2} {5160940000 ps} 0}
 quietly wave cursor active 1
 configure wave -namecolwidth 150
 configure wave -valuecolwidth 128
@@ -60,4 +61,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ns
 update
-WaveRestoreZoom {5664414591 ps} {5713046015 ps}
+WaveRestoreZoom {0 ps} {12044718 ns}

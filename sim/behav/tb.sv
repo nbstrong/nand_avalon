@@ -162,7 +162,7 @@ module tb;
 
         $sformat(msg, "Testing Extension Reset Condition on no trigger");
         INFO(msg);
-        _write_delay_reg(31'h10E13000);
+        _write_delay_reg(31'h10E13);
         _read_delay_reg(rdData);
         _write_control_reg(31'h1);
         _read_control_reg(rdData);
@@ -181,6 +181,7 @@ module tb;
         _command_write(NAND_READ_PARAMETER_PAGE_CMD);
 
         $sformat(msg, "Second Page Test");
+        _write_control_reg(31'h0);
         INFO(msg);
         page_buf = memset(page_buf, 4, `NUM_COLS);
         simple_page_test(page_buf, gen_address(0, 2, 0), `NUM_COLS);

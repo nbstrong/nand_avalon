@@ -114,7 +114,7 @@ begin --------------------------------------------------------------------------
             end if;
 
           when DELAY =>
-            if(rnbRisingEdge = '1') then
+            if(rnbRisingEdge = '1' or startIn = '0') then
               state <= INIT;
             elsif(delayLatched = timeUnsign) then
               state <= CMD;

@@ -186,7 +186,6 @@ begin
             extension_delay       <= (others => '0');
         else
             if(rising_edge(clk))then
-                extension_cntrl_write <= (others => '0');
 
                 if   (pwrite = '0' and address = "000")then
                     n_data_in <= writedata(7 downto 0);
